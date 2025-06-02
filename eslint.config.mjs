@@ -22,6 +22,7 @@ export default defineConfig([
       "js/recommended",
       tseslint.configs.recommendedTypeChecked
     ],
+    ignores:["build/*"],
     rules: {
       '@stylistic/semi': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',
