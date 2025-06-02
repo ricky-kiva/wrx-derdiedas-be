@@ -4,6 +4,8 @@
   "description": "Backend for DerDieDas project by Rickyslash",
   "main": "index.js",
   "scripts": {
+    "dev": "ts-node-dev src/app.ts",
+    "lint": "eslint .",
     "tsc": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
