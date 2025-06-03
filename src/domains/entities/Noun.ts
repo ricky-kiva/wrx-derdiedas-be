@@ -1,4 +1,6 @@
-export type Gender = 'masculine' | 'feminine' | 'neuter';
+export const GENDER_VALUES = ['masculine', 'feminine', 'neuter'] as const;
+
+export type Gender = typeof GENDER_VALUES[number];
 
 export interface NounPayload {
     word: string,
