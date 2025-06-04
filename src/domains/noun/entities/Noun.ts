@@ -7,7 +7,7 @@ export interface NounPayload {
     gender: Gender
 }
 
-class Noun {
+export default class Noun {
     public word: string;
     public gender: Gender;
 
@@ -18,5 +18,3 @@ class Noun {
         this.gender = gender;
     }
 }
-
-export default Noun;
