@@ -1,9 +1,7 @@
-import { Gender, NounPayload } from './entities/Noun';
+import Noun, { Gender, NounPayload } from './entities/Noun';
 
-interface NounRepository {
-    addNoun(payload: NounPayload): Promise<void>;
+export default interface NounRepository {
+    addNoun(payload: NounPayload): Promise<Noun>;
     getGenderByWord(word: string): Promise<Gender>;
     verifyNounExist(word: string): Promise<void>;
 }
-
-export default NounRepository;
