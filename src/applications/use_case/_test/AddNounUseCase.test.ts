@@ -7,18 +7,16 @@ describe('AddNounUseCase', () => {
   it('should orchestrate the action correctly', async () => {
     const useCasePayload: NounPayload = {
       id: 'noun-123',
-      word: 'katze',
+      word: 'Katze',
       gender: 'feminine'
     };
 
     const mockNounEntity = new Noun(useCasePayload);
 
-    const mockPartialNounRepository: Partial<jest.Mocked<NounRepository>> = {
+    const mockNounRepository: NounRepository = {
       addNoun: jest.fn().mockResolvedValue(mockNounEntity),
       verifyNounAvailability: jest.fn().mockResolvedValue(undefined)
-    };
-
-    const mockNounRepository = mockPartialNounRepository as NounRepository;
+    } as Partial<jest.Mocked<NounRepository>> as NounRepository;
 
     const addNounUseCase = new AddNounUseCase(mockNounRepository);
 
