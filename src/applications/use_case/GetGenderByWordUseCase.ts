@@ -1,7 +1,7 @@
 import { Gender } from '../../domains/noun/entities/Noun';
 import NounRepository from '../../domains/noun/NounRepository';
 
-export default class getGenderByWordUseCase {
+export default class GetGenderByWordUseCase {
   constructor(private readonly nounRepository: NounRepository) {};
 
   async execute(word: string): Promise<Gender> {
