@@ -3,6 +3,7 @@ import Noun, { GENDER_VALUES, NounPayload } from '../Noun';
 describe('Noun', () => {
   it('should create an object correctly', () => {
     const payload: NounPayload = {
+      id: 'noun-123',
       word: 'actor',
       gender: 'masculine',
     };
@@ -15,7 +16,7 @@ describe('Noun', () => {
 
   it('accepts all valid gender values', () => {
     GENDER_VALUES.forEach((gender) => {
-      const noun = new Noun({ word: 'test', gender });
+      const noun = new Noun({ id: 'noun-123', word: 'test', gender });
       expect(noun.gender).toBe(gender);
     });
   });
