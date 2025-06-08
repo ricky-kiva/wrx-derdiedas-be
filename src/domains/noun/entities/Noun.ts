@@ -3,9 +3,12 @@ export const GENDER_VALUES = ['masculine', 'feminine', 'neuter'] as const;
 export type Gender = typeof GENDER_VALUES[number];
 
 export interface NounPayload {
-  id: string,
   word: string,
   gender: Gender
+}
+
+export interface NounParams extends NounPayload {
+  id: string
 }
 
 export default class Noun {
@@ -13,8 +16,8 @@ export default class Noun {
   public word: string;
   public gender: Gender;
 
-  constructor(payload: NounPayload) {
-    const { id, word, gender } = payload;
+  constructor(params: NounParams) {
+    const { id, word, gender } = params;
 
     this.id = id;
     this.word = word;
