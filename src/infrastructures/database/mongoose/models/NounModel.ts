@@ -1,13 +1,12 @@
-import mongoose, { Document } from 'mongoose';
-import Noun, { GENDER_VALUES } from '../../../../domains/noun/entities/Noun';
+import mongoose, { Schema, Document, Types } from 'mongoose';
+import { GENDER_VALUES, NounParams } from '../../../../domains/noun/entities/Noun';
 
-type NounType = (ConstructorParameters<typeof Noun>[0]);
+export interface NounDocument extends Document, Omit<NounParams, 'id'> {
+  _id: Types.ObjectId;
+}
 
-interface NounDocument extends Omit<Document, 'id'>, NounType {}
-
-const nounSchema = new mongoose.Schema<NounDocument>({
-  id: { type: String, required: true, unique: true },
-  word: { type: String, required: true, unique: true },
+const nounSchema = new Schema<NounDocument>({
+  word: { type: String, required: true },
   gender: { type: String, enum: GENDER_VALUES, required: true }
 });
 
