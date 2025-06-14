@@ -1,14 +1,18 @@
-import Noun, { GENDER_VALUES, NounPayload } from '../Noun';
+import Noun, { GENDER_VALUES, NounParams, NounPayload } from '../Noun';
 
 describe('Noun', () => {
   it('should create an object correctly', () => {
-    const payload: NounPayload = {
-      id: 'noun-123',
+    const nounPayload: NounPayload = {
       word: 'actor',
       gender: 'masculine',
     };
 
-    const noun = new Noun(payload);
+    const nounParams: NounParams = {
+      ...nounPayload,
+      id: 'noun-123'
+    };
+
+    const noun = new Noun(nounParams);
 
     expect(noun.word).toBe('actor');
     expect(noun.gender).toBe('masculine');
