@@ -34,7 +34,7 @@ function getEnvVar(key: string, fallback?: string): string {
 
 const config: Config = {
   app: {
-    port: Number(getEnvVar('PORT')),
+    port: Number(process.env.PORT),
     host: process.env.NODE_ENV !== 'production'
       ? 'localhost'
       : '0.0.0.0'
