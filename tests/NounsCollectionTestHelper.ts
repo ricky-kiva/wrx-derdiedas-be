@@ -4,8 +4,13 @@ import { Gender, NounPayload } from '../src/domains/noun/entities/Noun';
 import NounModel from '../src/infrastructures/database/mongoose/models/NounModel';
 
 const NounsCollectionTestHelper = {
-  async addNoun({ word='Katze', gender='feminine' }: NounPayload): Promise<void> {
-    await NounModel.create({ word: word, gender: gender });
+  async addNoun(
+    payload: Partial<NounPayload> = { 
+      word: 'Katze', 
+      gender: 'feminine' 
+    }
+  ): Promise<void> {
+    await NounModel.create(payload);
   },
   async cleanCollection(): Promise<void> {
     await NounModel.deleteMany({});
