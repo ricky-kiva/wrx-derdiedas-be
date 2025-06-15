@@ -11,7 +11,7 @@ export default async function connectToDatabase(): Promise<void> {
 
   try {
     await mongoose.connect(uri);
-    console.log('✅ MongoDB connected!');
+    console.log(`MongoDB connected! (${database})`);
   } catch (e) {
     console.error(`MongoDB connection error: ${e}`);
     process.exit(1);
