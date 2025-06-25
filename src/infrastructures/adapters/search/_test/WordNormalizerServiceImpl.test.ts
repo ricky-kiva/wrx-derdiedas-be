@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import WordNormalizerServiceImpl from '../WordNormalizerServiceImpl';
 
 describe('WordNormalizerServiceImpl', () => {
