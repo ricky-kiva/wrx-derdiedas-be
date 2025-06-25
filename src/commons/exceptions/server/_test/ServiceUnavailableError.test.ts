@@ -6,7 +6,7 @@ describe('ServiceUnavailableError', () => {
 
     const serviceUnavailableError = new ServiceUnavailableError(errorMessage);
 
-    expect(serviceUnavailableError.statusCode).toEqual(404);
+    expect(serviceUnavailableError.statusCode).toEqual(503);
     expect(serviceUnavailableError.message).toEqual(errorMessage);
     expect(serviceUnavailableError.name).toEqual('ServiceUnavailableError');
   });
