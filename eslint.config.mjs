@@ -3,15 +3,19 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import stylistic from "@stylistic/eslint-plugin";
 import { defineConfig } from "eslint/config";
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig([
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       globals: globals.node,
       parserOptions: {
-        project: true,
-        tsconfigRootDir: import.meta.dirname
+        project: path.join(__dirname, 'tsconfig.json'),
+        tsconfigRootDir: __dirname,
       }
     },
     plugins: {
