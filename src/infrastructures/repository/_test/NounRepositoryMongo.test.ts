@@ -6,7 +6,7 @@ import Noun, { NounPayload } from '../../../domains/noun/entities/Noun';
 import NounRepositoryMongo from '../NounRepositoryMongo';
 import NounModel from '../../database/mongoose/models/NounModel';
 import connectToDatabase from '../../database/mongoose/connection';
-import { InvariantError, NotFoundError } from '../../../commons/exceptions/client';
+import { InvariantError, NotFoundError } from '../../../commons/exceptions';
 
 describe('NounRepositoryMongo', () => {
   beforeAll(async () => {
