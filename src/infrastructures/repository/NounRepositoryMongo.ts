@@ -1,17 +1,14 @@
 import { Model } from 'mongoose';
 import NounRepository from '../../domains/noun/NounRepository';
 import { NounDocument } from '../database/mongoose/models/NounModel';
-import Noun, { Gender, NounPayload } from '../../domains/noun/entities/Noun';
-import { InvariantError, NotFoundError } from '../../commons/exceptions/client';
-import { injectable } from 'tsyringe';
+import Noun, { Gender, NounPayload, NounRaw } from '../../domains/noun/entities/Noun';
+import { NotFoundError, InvariantError } from '../../commons/exceptions';
+import { inject, injectable } from 'tsyringe';
+import { ContainerTokens as Tokens } from '../../commons/containerTokens';
 
 @injectable()
 export default class NounRepositoryMongo implements NounRepository {
-  private readonly model: Model<NounDocument>;
-  
-  constructor(model: Model<NounDocument>) {
-    this.model = model;
-  }
+  constructor(@inject(Tokens.NounModel) private readonly model: Model<NounDocument>) {}
 
   async addNoun(payload: NounPayload): Promise<Noun> {
     const noun = await this.model.create(payload); // TODO: Zod here
@@ -20,6 +17,16 @@ export default class NounRepositoryMongo implements NounRepository {
       word: noun.word,
       gender: noun.gender
     });
+  }
+
+  async getRawAll(): Promise<NounRaw[]> {
+    const nouns = await this.model.find().lean().exec();
+    return nouns.map(n => ({
+      id: n._id.toString(),
+      word: n.word, 
+      gender: n.gender, 
+      normalized: n.normalized
+    }));
   }
 
   async getGenderByWord(word: string): Promise<Gender> {
