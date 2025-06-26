@@ -1,9 +1,8 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
-import { GENDER_VALUES, NounParams } from '../../../../domains/noun/entities/Noun';
+import { GENDER_VALUES, NounRaw } from '../../../../domains/noun/entities/Noun';
 
-export interface NounDocument extends Document, Omit<NounParams, 'id'> {
+export interface NounDocument extends Document, Omit<NounRaw, 'id'> {
   _id: Types.ObjectId,
-  normalized: string
 }
 
 const nounSchema = new Schema<NounDocument>({
