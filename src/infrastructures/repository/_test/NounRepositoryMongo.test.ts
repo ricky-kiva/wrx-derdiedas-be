@@ -2,11 +2,10 @@ import 'reflect-metadata';
 
 import mongoose from 'mongoose';
 import NounsCollectionTestHelper from '../../../../tests/NounsCollectionTestHelper';
-import Noun, { NounPayload } from '../../../domains/noun/entities/Noun';
+import connectToDatabase from '../../database/mongoose/connection';
 import NounRepositoryMongo from '../NounRepositoryMongo';
 import NounModel from '../../database/mongoose/models/NounModel';
-import connectToDatabase from '../../database/mongoose/connection';
-import { InvariantError, NotFoundError } from '../../../commons/exceptions';
+import { NounRaw } from '../../../domains/noun/entities/Noun';
 
 describe('NounRepositoryMongo', () => {
   beforeAll(async () => {
@@ -21,83 +20,38 @@ describe('NounRepositoryMongo', () => {
     await mongoose.connection.close();
   });
 
-  describe('addNoun function', () => {
-    it('should persist Noun', async () => {
-      const nounPayload: NounPayload = {
-        word: 'Katze',
-        gender: 'feminine'
-      };
-
+  describe('getRawAll', () => {
+    it('should return all nouns in raw format with correct fields', async () => {
       const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
 
-      const noun: Noun = await nounRepositoryMongo.addNoun(nounPayload);
+      const normalizedNounPayloads: Partial<NounRaw>[] = [
+        { word: 'Katze', gender: 'feminine', normalized: 'katze' },
+        { word: 'Ei', gender: 'neuter', normalized: 'ei' },
+      ];
 
-      const nouns = await NounModel.find({ _id: noun.id });
+      for (const noun of normalizedNounPayloads) {
+        await NounsCollectionTestHelper.addNoun(noun);
+      }
 
-      expect(nouns).toHaveLength(1);
-    });
-
-    it('should return the correct Noun', async () => {
-      const nounPayload: NounPayload = {
-        word: 'Katze',
-        gender: 'feminine'
-      };
-
-      const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
-
-      const noun: Noun = await nounRepositoryMongo.addNoun(nounPayload);
-
-      expect(noun).toStrictEqual(new Noun({
-        id: noun.id,
-        word: noun.word,
-        gender: noun.gender
-      }));
-    });
-  });
-
-  describe('getGenderByWord', () => {
-    it('should throw NotFoundError when Noun not found', () => {
-      const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
-
-      return expect(nounRepositoryMongo.getGenderByWord('Rezy'))
-        .rejects.toThrow(NotFoundError);
-    });
-
-    it('should return Gender when Noun is found', async () => {
-      const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
-      const nounPayload: NounPayload = {
-        word: 'Katze',
-        gender: 'feminine'
-      };
-
-      await NounsCollectionTestHelper.addNoun(nounPayload);
-
-      const gender = await nounRepositoryMongo.getGenderByWord(nounPayload.word);
+      const results = await nounRepositoryMongo.getRawAll();
       
-      expect(gender).toBe(nounPayload.gender);
-    });
-  });
+      for (const result of results) {
+        expect(result).toHaveProperty('id');
+        expect(result).toHaveProperty('word');
+        expect(result).toHaveProperty('gender');
+        expect(result).toHaveProperty('normalized');
+      }
 
-  describe('verifyAvailableNoun', () => {
-    it('should throw InvariantError when Noun not available', async () => {
-      const nounPayload: NounPayload = {
-        word: 'Katze',
-        gender: 'feminine'
-      };
-
-      await NounsCollectionTestHelper.addNoun(nounPayload);
-
-      const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
-
-      await expect(nounRepositoryMongo.verifyNounAvailability(nounPayload.word))
-        .rejects.toThrow(InvariantError);
+      expect(results.map(r => r.word).sort())
+        .toEqual(['Ei', 'Katze']);
     });
 
-    it('does not throw InvariantError when Noun is available', async () => {
+    it('should return empty array when no nouns exist', async () => {
       const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
+      
+      const rawResults = await nounRepositoryMongo.getRawAll();
 
-      await expect(nounRepositoryMongo.verifyNounAvailability('Katze'))
-        .resolves.not.toThrow(InvariantError);
+      expect(rawResults).toEqual([]);
     });
   });
 });
