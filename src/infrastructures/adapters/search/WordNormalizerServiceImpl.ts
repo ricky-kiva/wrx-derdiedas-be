@@ -1,5 +1,7 @@
+import { injectable } from 'tsyringe';
 import WordNormalizerService from '../../../applications/ports/search/WordNormalizerService';
 
+@injectable()
 export default class WordNormalizerServiceImpl implements WordNormalizerService {
   normalize(word: string): string {
     return word
