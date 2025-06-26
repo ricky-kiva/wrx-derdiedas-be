@@ -11,6 +11,10 @@ export interface NounParams extends NounPayload {
   id: string
 }
 
+export interface NounRaw extends NounParams {
+  normalized: string
+}
+
 export default class Noun {
   public readonly id: string;
   public word: string;
