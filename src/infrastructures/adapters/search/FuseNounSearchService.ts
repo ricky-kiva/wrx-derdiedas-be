@@ -8,8 +8,6 @@ import { ContainerTokens as Tokens } from '../../../commons/containerTokens';
 import NounRepository from '../../../domains/noun/NounRepository';
 import { NounRaw } from '../../../domains/noun/entities/Noun';
 
-// TO DO: Add test for this
-
 @injectable()
 export default class FuseNounSearchService implements NounSearchService {
   private fuse?: Fuse<NounRaw>;
@@ -26,11 +24,12 @@ export default class FuseNounSearchService implements NounSearchService {
       keys: ['normalized'],
       threshold: 0.3,
       distance: 100,
-      ignoreLocation: true
+      ignoreLocation: true,
+      includeScore: true
     });
   }
   
-  search(word: string, limit: number): SearchResultDTO<NounRaw>[] {
+  search(word: string, limit: number=5): SearchResultDTO<NounRaw>[] {
     if (!this.fuse) throw new ServiceUnavailableError(`${this.constructor.name} not initialized`);
 
     const normalizedWord = this.normalizer.normalize(word);
