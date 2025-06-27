@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { inject, injectable } from 'tsyringe';
-import zodParser from '../../adapters/validation/zodParser';
+import zodParser from '../../middlewares/validation/zodParser';
 import { SearchNounPayloadSchema } from '../../adapters/validation/searchNoun/schemas';
 import SearchNounHandler from './handler';
 import { DITokens } from '../../../../commons/DITokens';
