@@ -6,6 +6,7 @@ import NounSearchService from '../../../applications/ports/search/NounSearchServ
 import { inject, injectable } from 'tsyringe';
 import { ContainerTokens as Tokens } from '../../../commons/containerTokens';
 import NounRepository from '../../../domains/noun/NounRepository';
+import { NounDTO } from '../../../applications/dto/NounDTO';
 import { NounRaw } from '../../../domains/noun/entities/Noun';
 
 @injectable()
@@ -29,7 +30,7 @@ export default class FuseNounSearchService implements NounSearchService {
     });
   }
   
-  search(word: string, limit: number=5): SearchResultDTO<NounRaw>[] {
+  search(word: string, limit: number=5): SearchResultDTO<NounDTO>[] {
     if (!this.fuse) throw new ServiceUnavailableError(`${this.constructor.name} not initialized`);
 
     const normalizedWord = this.normalizer.normalize(word);
@@ -38,7 +39,11 @@ export default class FuseNounSearchService implements NounSearchService {
     return results
       .slice(0, limit)
       .map(result => ({
-        item: result.item,
+        item: {
+          id: result.item.id,
+          word: result.item.word,
+          gender: result.item.gender
+        },
         score: result.score
       }));
   }
