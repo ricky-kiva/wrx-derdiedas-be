@@ -1,4 +1,4 @@
 import { z } from 'zod';
-import { SearchNounPayloadSchema } from '../schemas/SearchNounPayloadSchema';
+import { SearchNounPayloadSchema } from './schemas';
 
 export type SearchNounPayload = z.infer<typeof SearchNounPayloadSchema>;
