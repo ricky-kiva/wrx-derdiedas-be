@@ -4,7 +4,7 @@ import { ServiceUnavailableError } from '../../../commons/exceptions';
 import SearchResultDTO from '../../../applications/dto/SearchResultDTO';
 import NounSearchService from '../../../applications/ports/search/NounSearchService';
 import { inject, injectable } from 'tsyringe';
-import { ContainerTokens as Tokens } from '../../../commons/containerTokens';
+import { DITokens } from '../../../commons/DITokens';
 import NounRepository from '../../../domains/noun/NounRepository';
 import { NounDTO } from '../../../applications/dto/NounDTO';
 import { NounRaw } from '../../../domains/noun/entities/Noun';
@@ -14,8 +14,8 @@ export default class FuseNounSearchService implements NounSearchService {
   private fuse?: Fuse<NounRaw>;
 
   constructor(
-    @inject(Tokens.WordNormalizerService) private readonly normalizer: WordNormalizerService,
-    @inject(Tokens.NounRepository) private readonly nounRepository: NounRepository
+    @inject(DITokens.WordNormalizerService) private readonly normalizer: WordNormalizerService,
+    @inject(DITokens.NounRepository) private readonly nounRepository: NounRepository
   ) {}
 
   async initialize(): Promise<void> {
