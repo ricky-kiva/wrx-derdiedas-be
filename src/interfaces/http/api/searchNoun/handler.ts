@@ -3,6 +3,7 @@ import SearchNounUseCase from '../../../../applications/use_case/SearchNounUseCa
 import { Request, Response } from 'express';
 import { SearchNounPayload } from '../../adapters/validation/searchNoun/types';
 import { DITokens } from '../../../../commons/DITokens';
+import ApiResponse from '../../types/ApiResponse';
 
 @injectable()
 export default class SearchNounHandler {
@@ -18,6 +19,9 @@ export default class SearchNounHandler {
     
     const results = this.searchNounUseCase.execute(word);
 
-    res.json(results);
+    res.json({
+      status: 'success',
+      data: results
+    } satisfies ApiResponse);
   }
 }
