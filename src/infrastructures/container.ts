@@ -8,7 +8,6 @@ import WordNormalizerServiceImpl from './adapters/search/WordNormalizerServiceIm
 import FuseNounSearchService from './adapters/search/FuseNounSearchService';
 import SearchNounUseCase from '../applications/use_case/SearchNounUseCase';
 import SearchNounHandler from '../interfaces/http/api/searchNoun/handler';
-import SearchNounRouter from '../interfaces/http/api/searchNoun/routes';
 
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
@@ -19,7 +18,6 @@ container.register(DITokens.SearchNounUseCase, {
 container.register(DITokens.NounModel, { useValue: NounModel });
 container.register(DITokens.NounRepository, { useClass: NounRepositoryMongo });
 container.register(DITokens.SearchNounHandler, { useClass: SearchNounHandler });
-container.register(DITokens.SearchNounRouter, { useClass: SearchNounRouter });
 container.register(DITokens.NounSearchService, { useClass: FuseNounSearchService });
 container.register(DITokens.WordNormalizerService, { useClass: WordNormalizerServiceImpl });
 
