@@ -1,10 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { NotFoundError, ServiceUnavailableError } from '../../../../../commons/exceptions';
 import errorPreResponse from '../errorPreReponse';
 
 describe('errorPreResponse Middleware', () => {
   let mockReq: Request;
   let mockRes: Response;
+  let mockNext: NextFunction;
   let mockResponseStatusValue: jest.Mock;
   let mockResponseJsonValue: jest.Mock;
 
@@ -25,16 +26,21 @@ describe('errorPreResponse Middleware', () => {
     return res;
   };
 
+  const createMockNext = (): jest.MockedFunction<NextFunction> => {
+    return jest.fn();
+  };
+
   beforeEach(() => {
     mockReq = createMockRequest();
     mockRes = createMockResponse() as Response;
+    mockNext = createMockNext();
   });
 
-  it('responds with 4XX and status "fail" for ClientError', () => {
+  it('responds with 4XX and status "fail" for ClientError', async () => {
     const errorMessage = 'not found';
     const error = new NotFoundError(errorMessage);
 
-    errorPreResponse(error, mockReq, mockRes);
+    await errorPreResponse(error, mockReq, mockRes, mockNext);
 
     expect(mockResponseStatusValue).toHaveBeenCalledWith(error.statusCode);
     expect(mockResponseJsonValue).toHaveBeenCalledWith({
@@ -43,11 +49,11 @@ describe('errorPreResponse Middleware', () => {
     });
   });
 
-  it('responds with 5XX and status "error" for ServerError', () => {
+  it('responds with 5XX and status "error" for ServerError', async () => {
     const errorMessage = 'service not available yet';
     const error = new ServiceUnavailableError(errorMessage);
 
-    errorPreResponse(error, mockReq, mockRes);
+    await errorPreResponse(error, mockReq, mockRes, mockNext);
 
     expect(mockResponseStatusValue).toHaveBeenCalledWith(error.statusCode);
     expect(mockResponseJsonValue).toHaveBeenCalledWith({
@@ -56,11 +62,11 @@ describe('errorPreResponse Middleware', () => {
     });
   });
 
-  it('responds with 500 and generic error message for unknown error', () => {
+  it('responds with 500 and generic error message for unknown error', async () => {
     const errorMessage = 'unknwon error';
     const error = new Error(errorMessage);
 
-    errorPreResponse(error, mockReq, mockRes);
+    await errorPreResponse(error, mockReq, mockRes, mockNext);
 
     expect(mockResponseStatusValue).toHaveBeenCalledWith(500);
     expect(mockResponseJsonValue).toHaveBeenCalledWith({
