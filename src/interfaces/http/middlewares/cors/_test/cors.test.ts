@@ -1,7 +1,7 @@
 import { CorsError } from '../../../../../commons/exceptions';
 import { originCallback } from '../cors';
 
-describe('cors origin callback', () => {
+describe('CORS Middleware\'s Origin Callback', () => {
   test('allows requests with no origin (e.g. curl, server-to--server)', done => {
     originCallback(undefined, (err, allowed) => {
       expect(err).toBeNull();
