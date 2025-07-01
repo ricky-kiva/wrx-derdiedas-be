@@ -1,7 +1,7 @@
 import express from 'express';
 import searchNounRoutes from '../../interfaces/http/api/searchNoun/routes';
 import { DependencyContainer } from 'tsyringe';
-import errorPreResponse from '../../interfaces/http/middlewares/error/errorPreReponse';
+import errorPreResponse from '../../interfaces/http/middlewares/error/errorPreResponse';
 
 import cors from '../../interfaces/http/middlewares/cors/cors';
 import rootRoutes from '../../interfaces/http/api/root/routes';

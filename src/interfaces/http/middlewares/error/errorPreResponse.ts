@@ -1,6 +1,7 @@
 import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { ClientError, ServerError } from '../../../../commons/exceptions';
 import ApiResponse from '../../types/ApiResponse';
+import { ZodError } from 'zod';
 
 const errorPreResponse: ErrorRequestHandler = (
   err: Error, 
@@ -8,6 +9,15 @@ const errorPreResponse: ErrorRequestHandler = (
   res: Response, 
   _next: NextFunction
 ) => {
+  if (err instanceof ZodError) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.errors[0].message
+    } satisfies ApiResponse);
+
+    return;
+  }
+
   if (err instanceof ClientError) {
     res.status(err.statusCode).json({
       status: 'fail',

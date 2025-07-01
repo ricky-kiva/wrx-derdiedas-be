@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { NotFoundError, ServiceUnavailableError } from '../../../../../commons/exceptions';
-import errorPreResponse from '../errorPreReponse';
+import errorPreResponse from '../errorPreResponse';
 
 describe('errorPreResponse Middleware', () => {
   let mockReq: Request;
