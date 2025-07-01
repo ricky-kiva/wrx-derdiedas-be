@@ -6,6 +6,7 @@ import errorPreResponse from '../../interfaces/http/middlewares/error/errorPreRe
 import cors from '../../interfaces/http/middlewares/cors/cors';
 import rootRoutes from '../../interfaces/http/api/root/routes';
 import helmet from '../../interfaces/http/middlewares/helmet/helmet';
+import notFound from '../../interfaces/http/middlewares/notFound/notFound';
 
 const createServer = (c: DependencyContainer) => {
   const app = express();
@@ -20,6 +21,7 @@ const createServer = (c: DependencyContainer) => {
   app.use('/', rootRoutes(c));
   app.use('/search', searchNounRoutes(c));  
 
+  app.use(notFound);
   app.use(errorPreResponse);
 
   return app;
