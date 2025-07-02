@@ -14,7 +14,8 @@ describe('SearchNounUseCase', () => {
           id: 'noun-101',
           word: 'Schauspieler',
           gender: 'masculine',
-          normalized: 'schauspieler'
+          normalized: 'schauspieler',
+          meanings: []
         },
         score: 0.01
       },
@@ -23,7 +24,8 @@ describe('SearchNounUseCase', () => {
           id: 'noun-102',
           word: 'Schauspielerin',
           gender: 'feminine',
-          normalized: 'schauspielerin'
+          normalized: 'schauspielerin',
+          meanings: []
         },
         score: 0.02
       }

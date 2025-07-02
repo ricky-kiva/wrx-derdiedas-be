@@ -42,7 +42,8 @@ export default class FuseNounSearchService implements NounSearchService {
         item: {
           id: result.item.id,
           word: result.item.word,
-          gender: result.item.gender
+          gender: result.item.gender,
+          meanings: result.item.meanings
         },
         score: result.score
       }));

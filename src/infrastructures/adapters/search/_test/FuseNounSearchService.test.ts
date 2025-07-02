@@ -8,10 +8,10 @@ import { ServiceUnavailableError } from '../../../../commons/exceptions';
 
 describe('FuseNounSearchService', () => {
   const nouns: NounRaw[] = [
-    { id: 'noun-101', word: 'Katze', gender: 'feminine', normalized: 'katze' },
-    { id: 'noun-102', word: 'Ei', gender: 'neuter', normalized: 'ei' },
-    { id: 'noun-103', word: 'Schauspieler', gender: 'masculine', normalized: 'schauspieler' },
-    { id: 'noun-104', word: 'Schauspielerin', gender: 'feminine', normalized: 'schauspielerin' }
+    { id: 'noun-101', word: 'Katze', gender: 'feminine', normalized: 'katze', meanings: [] },
+    { id: 'noun-102', word: 'Ei', gender: 'neuter', normalized: 'ei', meanings: [] },
+    { id: 'noun-103', word: 'Schauspieler', gender: 'masculine', normalized: 'schauspieler', meanings: [] },
+    { id: 'noun-104', word: 'Schauspielerin', gender: 'feminine', normalized: 'schauspielerin', meanings: [] }
   ];
 
   const mockNormalizeMethod: jest.Mock<string, [string]> = jest

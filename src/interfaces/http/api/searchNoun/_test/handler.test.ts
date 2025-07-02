@@ -43,7 +43,7 @@ describe('SearchNounHandler', () => {
   it('responds with results & calls use case', () => {
     const mockResults: SearchResultDTO<NounDTO>[] = [
       {
-        item: { id: 'noun-101', word: 'Katze', gender: 'feminine' },
+        item: { id: 'noun-101', word: 'Katze', gender: 'feminine', meanings: [] },
         score: 0.01
       }
     ];

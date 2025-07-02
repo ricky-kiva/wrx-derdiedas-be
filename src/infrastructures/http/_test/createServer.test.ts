@@ -55,7 +55,7 @@ describe('createServer', () => {
   it('responds to POST `/search` with search results', async () => {
     const mockResult: SearchResultDTO<NounDTO>[] = [
       {
-        item: { id: 'noun-101', word: 'Katze', gender: 'feminine' } satisfies NounDTO,
+        item: { id: 'noun-101', word: 'Katze', gender: 'feminine', meanings: [] } satisfies NounDTO,
         score: 0.01
       } satisfies SearchResultDTO<NounDTO>
     ];

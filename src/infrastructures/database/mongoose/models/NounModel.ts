@@ -8,6 +8,7 @@ export interface NounDocument extends Document, Omit<NounRaw, 'id'> {
 const nounSchema = new Schema<NounDocument>({
   word: { type: String, required: true },
   gender: { type: String, enum: GENDER_VALUES, required: true },
+  meanings: { type: [String], required: true },
   normalized: { type: String, required: true }
 });
 

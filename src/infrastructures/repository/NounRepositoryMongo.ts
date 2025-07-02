@@ -15,6 +15,7 @@ export default class NounRepositoryMongo implements NounRepository {
       id: n._id.toString(),
       word: n.word, 
       gender: n.gender, 
+      meanings: n.meanings,
       normalized: n.normalized
     }));
   }
