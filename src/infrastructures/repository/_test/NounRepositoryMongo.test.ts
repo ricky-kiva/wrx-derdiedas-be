@@ -9,13 +9,14 @@ import { NounRaw } from '../../../domains/noun/entities/Noun';
 import NounRepository from '../../../domains/noun/NounRepository';
 import WordNormalizerServiceImpl from '../../adapters/search/WordNormalizerServiceImpl';
 
+jest.spyOn(console, 'log').mockImplementation(() => {});
+
 describe('NounRepositoryMongo', () => {
   let repository: NounRepository;
   const wordNormalizerService = new WordNormalizerServiceImpl();
 
   beforeAll(async () => {
     await connectToDatabase();
-
     repository = new NounRepositoryMongo(NounModel, wordNormalizerService);
   });
 
@@ -25,6 +26,7 @@ describe('NounRepositoryMongo', () => {
 
   afterAll(async () => {
     await mongoose.connection.close();
+    jest.restoreAllMocks();
   });
 
   describe('getRawAll', () => {

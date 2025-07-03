@@ -7,6 +7,8 @@ import { NounSetMetadataRepositoryMongo } from '../NounSetMetadataRepositoryMong
 import NounSetMetadataModel from '../../database/mongoose/models/NounSetMetadataModel';
 import { NounSetMetadataPayload } from '../../../domains/nounSetMetadata/entities/NounSetMetadata';
 
+jest.spyOn(console, 'log').mockImplementation(() => {});
+
 describe('NounSetMetadataRepositoryMongo', () => {
   let repository: NounSetMetadataRepositoryMongo;
   
@@ -30,7 +32,7 @@ describe('NounSetMetadataRepositoryMongo', () => {
   };
 
   beforeAll(async () => {
-    await connectToDatabase();
+    await connectToDatabase();  
     repository = new NounSetMetadataRepositoryMongo(NounSetMetadataModel);
   });
 
@@ -40,6 +42,7 @@ describe('NounSetMetadataRepositoryMongo', () => {
 
   afterAll(async () => {
     await mongoose.connection.close();
+    jest.restoreAllMocks();
   });
 
   describe('find', () => {
