@@ -9,6 +9,8 @@ import FuseNounSearchService from './adapters/search/FuseNounSearchService';
 import SearchNounUseCase from '../applications/use_case/SearchNounUseCase';
 import SearchNounHandler from '../interfaces/http/api/searchNoun/handler';
 import RootHandler from '../interfaces/http/api/root/handler';
+import NounSetMetadataModel from './database/mongoose/models/NounSetMetadataModel';
+import { NounSetMetadataRepositoryMongo } from './repository/NounSetMetadataRepositoryMongo';
 
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
@@ -18,6 +20,8 @@ container.register(DITokens.SearchNounUseCase, {
 
 container.register(DITokens.NounModel, { useValue: NounModel });
 container.register(DITokens.NounRepository, { useClass: NounRepositoryMongo });
+container.register(DITokens.NounSetMetadataModel, { useValue: NounSetMetadataModel });
+container.register(DITokens.NounSetMetadataRepository, { useClass: NounSetMetadataRepositoryMongo });
 container.register(DITokens.RootHandler, { useClass: RootHandler });
 container.register(DITokens.SearchNounHandler, { useClass: SearchNounHandler });
 container.register(DITokens.NounSearchService, { useClass: FuseNounSearchService });
