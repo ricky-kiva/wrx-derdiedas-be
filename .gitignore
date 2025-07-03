@@ -1,4 +1,5 @@
 .env
 .test.env
 build
+data
 node_modules
