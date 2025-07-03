@@ -6,10 +6,17 @@ import connectToDatabase from '../../database/mongoose/connection';
 import NounRepositoryMongo from '../NounRepositoryMongo';
 import NounModel from '../../database/mongoose/models/NounModel';
 import { NounRaw } from '../../../domains/noun/entities/Noun';
+import NounRepository from '../../../domains/noun/NounRepository';
+import WordNormalizerServiceImpl from '../../adapters/search/WordNormalizerServiceImpl';
 
 describe('NounRepositoryMongo', () => {
+  let repository: NounRepository;
+  const wordNormalizerService = new WordNormalizerServiceImpl();
+
   beforeAll(async () => {
     await connectToDatabase();
+
+    repository = new NounRepositoryMongo(NounModel, wordNormalizerService);
   });
 
   afterEach(async () => {
@@ -22,8 +29,6 @@ describe('NounRepositoryMongo', () => {
 
   describe('getRawAll', () => {
     it('should return all nouns in raw format with correct fields', async () => {
-      const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
-
       const normalizedNounPayloads: Partial<NounRaw>[] = [
         { word: 'Katze', gender: 'feminine', normalized: 'katze' },
         { word: 'Ei', gender: 'neuter', normalized: 'ei' },
@@ -33,7 +38,7 @@ describe('NounRepositoryMongo', () => {
         await NounsCollectionTestHelper.addNoun(noun);
       }
 
-      const results = await nounRepositoryMongo.getRawAll();
+      const results = await repository.getRawAll();
       
       for (const result of results) {
         expect(result).toHaveProperty('id');
@@ -46,10 +51,8 @@ describe('NounRepositoryMongo', () => {
         .toEqual(['Ei', 'Katze']);
     });
 
-    it('should return empty array when no nouns exist', async () => {
-      const nounRepositoryMongo = new NounRepositoryMongo(NounModel);
-      
-      const rawResults = await nounRepositoryMongo.getRawAll();
+    it('should return empty array when no nouns exist', async () => {      
+      const rawResults = await repository.getRawAll();
 
       expect(rawResults).toEqual([]);
     });
