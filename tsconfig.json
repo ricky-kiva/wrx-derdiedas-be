@@ -13,5 +13,9 @@
     "noFallthroughCasesInSwitch": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true                    
-  }
+  },
+  "exclude": [
+    "tests",
+    "**/*.test.ts"
+  ]
 }
