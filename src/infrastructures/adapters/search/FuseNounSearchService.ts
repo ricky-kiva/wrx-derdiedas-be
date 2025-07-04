@@ -19,15 +19,50 @@ export default class FuseNounSearchService implements NounSearchService {
   ) {}
 
   async initialize(): Promise<void> {
+    const fetchStartTime = Date.now();
+    let fetchElapsed = 0;
+
+    const updateFetchInterval = setInterval(() => {
+      fetchElapsed = Math.round((Date.now() - fetchStartTime) / 1000);
+      process.stdout.write(`\rSearch Service initialization: Fetching nouns.. | ${fetchElapsed}s`);
+    }, 1000);
+
     const searchable: NounRaw[] = await this.nounRepository.getRawAll();
 
-    this.fuse = new Fuse<NounRaw>(searchable, {
+    clearInterval(updateFetchInterval);
+
+    process.stdout.write(`\n`);
+    console.log(`Search Service initialization: Fetched ${searchable.length} nouns (${fetchElapsed}s)`);
+
+    const batchSize = 100;
+    const totalData = searchable.length;
+    const indexStartTime = Date.now();
+
+    this.fuse = new Fuse<NounRaw>([], {
       keys: ['normalized'],
       threshold: 0.3,
       distance: 100,
       ignoreLocation: true,
       includeScore: true
     });
+
+    for (let i = 0; i < totalData; i += batchSize) {
+      const batch = searchable.slice(i, i + batchSize);
+      
+      for (const item of batch) {
+        this.fuse.add(item);
+      }
+      
+      const progress = Math.min(((i + batchSize) / totalData) * 100, 100).toFixed(1);
+      const indexElapsed = Math.round((Date.now() - indexStartTime) / 1000);
+
+      process.stdout.write(`\rBuilding Search Service Index: ${progress}% (${i + batch.length}/${totalData}) | ${indexElapsed}s`);
+    }
+
+    const totalElapsed = Math.round((Date.now() - fetchStartTime) / 1000);
+
+    process.stdout.write('\n');
+    console.log(`Search Service initialization completed successfully! (${totalElapsed}s)`);
   }
   
   search(word: string, limit: number=5): SearchResultDTO<NounDTO>[] {
