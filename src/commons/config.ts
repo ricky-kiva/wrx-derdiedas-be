@@ -1,6 +1,8 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
+dotenv.config();
+
 interface AppConfig {
   port: number,
   host: string
