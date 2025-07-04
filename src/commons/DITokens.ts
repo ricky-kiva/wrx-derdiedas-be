@@ -2,6 +2,7 @@ export const DITokens = {
   NounModel: Symbol.for("NounModel"),
   NounRepository: Symbol.for("NounRepository"),
   NounSearchService: Symbol.for("NounSearchService"),
+  NounSeeder: Symbol.for("NounSeeder"),
   NounSetMetadataModel: Symbol.for("NounSetMetadataModel"),
   NounSetMetadataRepository: Symbol.for("NounSetMetadataRepository"),
   RootHandler: Symbol.for("RootHandler"),
