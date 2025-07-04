@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 import { container } from 'tsyringe';
 import { DITokens } from '../commons/DITokens';
 import NounRepositoryMongo from './repository/NounRepositoryMongo';
@@ -11,6 +9,7 @@ import SearchNounHandler from '../interfaces/http/api/searchNoun/handler';
 import RootHandler from '../interfaces/http/api/root/handler';
 import NounSetMetadataModel from './database/mongoose/models/NounSetMetadataModel';
 import { NounSetMetadataRepositoryMongo } from './repository/NounSetMetadataRepositoryMongo';
+import NounSeeder from './database/bootstrap/NounSeeder';
 
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
@@ -20,11 +19,13 @@ container.register(DITokens.SearchNounUseCase, {
 
 container.register(DITokens.NounModel, { useValue: NounModel });
 container.register(DITokens.NounRepository, { useClass: NounRepositoryMongo });
+container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 container.register(DITokens.NounSetMetadataModel, { useValue: NounSetMetadataModel });
 container.register(DITokens.NounSetMetadataRepository, { useClass: NounSetMetadataRepositoryMongo });
 container.register(DITokens.RootHandler, { useClass: RootHandler });
 container.register(DITokens.SearchNounHandler, { useClass: SearchNounHandler });
-container.register(DITokens.NounSearchService, { useClass: FuseNounSearchService });
 container.register(DITokens.WordNormalizerService, { useClass: WordNormalizerServiceImpl });
+
+container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
 
 export default container;
