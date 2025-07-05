@@ -12,8 +12,6 @@ import NounSetMetadata from '../../../../domains/nounSetMetadata/entities/NounSe
 jest.mock('fs/promises');
 
 describe('NounSeeder', () => {
-  const jsonPath = 'fake/path.json';
-
   let nounRepository: NounRepository;
   let metadataRepository: NounSetMetadataRepository;
   let seeder: NounSeeder;
@@ -46,6 +44,7 @@ describe('NounSeeder', () => {
     seeder = new NounSeeder(nounRepository, metadataRepository);
 
     jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
   });
 
   afterEach(() => {
@@ -55,13 +54,13 @@ describe('NounSeeder', () => {
   it('should seed when no existing metadata', async () => {
     mockFindMethod.mockResolvedValue(null);
 
-    await seeder.seed(jsonPath);
+    await seeder.seed();
 
-    expect(fs.readFile).toHaveBeenCalledWith(jsonPath, 'utf-8');
     expect(mockFindMethod).toHaveBeenCalled();
     expect(mockDeleteAllMethod).toHaveBeenCalled();
+    expect(mockInsertManyMethod).toHaveBeenCalledTimes(1);
     expect(mockInsertManyMethod).toHaveBeenCalledWith(mockSeedData.data);
-    expect(mockSaveMethod).toHaveBeenCalledWith(mockSeedData.metadata);
+    expect(mockInsertManyMethod).toHaveBeenCalledWith(mockSeedData.data);
   });
 
   it('should seed when dateUpdated metadata is different', async () => {
@@ -69,7 +68,7 @@ describe('NounSeeder', () => {
       dateUpdated: 'some-date'
     } as Partial<NounSetMetadata> as NounSetMetadata);
 
-    await seeder.seed(jsonPath);
+    await seeder.seed();
 
     expect(mockDeleteAllMethod).toHaveBeenCalled();
     expect(mockInsertManyMethod).toHaveBeenCalled();
@@ -79,7 +78,7 @@ describe('NounSeeder', () => {
   it('should skip seeding when metadata is up to date', async () => {
     mockFindMethod.mockResolvedValue(mockSeedData.metadata);
 
-    await seeder.seed(jsonPath);
+    await seeder.seed();
 
     expect(mockDeleteAllMethod).not.toHaveBeenCalled();
     expect(mockInsertManyMethod).not.toHaveBeenCalled();
