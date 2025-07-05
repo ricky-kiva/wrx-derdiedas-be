@@ -11,6 +11,8 @@ import { ServiceInfoResponse } from '../../../interfaces/http/types/ServiceInfoR
 import SearchResultDTO from '../../../applications/dto/SearchResultDTO';
 import { NounDTO } from '../../../applications/dto/NounDTO';
 import ApiResponse from '../../../interfaces/http/types/ApiResponse';
+import LogMW from '../../../interfaces/http/middlewares/log/LogMW';
+import WinstonLoggerService from '../../adapters/logger/WinstonLoggerService';
 
 describe('createServer', () => {
   let mockSearchNounUseCase: jest.Mocked<SearchNounUseCase>;
@@ -22,6 +24,8 @@ describe('createServer', () => {
     
     testContainer.register(DITokens.RootHandler, { useClass: RootHandler });
     testContainer.register(DITokens.SearchNounHandler, { useClass: SearchNounHandler });
+    testContainer.register(DITokens.LoggerService, { useClass: WinstonLoggerService });
+    testContainer.register(DITokens.LogMW, { useClass: LogMW });
 
     const mockExecuteMethod = jest.fn();
 
