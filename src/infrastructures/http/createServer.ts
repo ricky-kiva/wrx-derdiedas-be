@@ -10,9 +10,10 @@ import notFound from '../../interfaces/http/middlewares/notFound/notFound';
 
 const createServer = (c: DependencyContainer) => {
   const app = express();
-
-  // TO DO: Swagger API documentation
+  
   // TO DO: Winston logging
+
+  app.set('trust proxy', true);
 
   app.use(cors);
   app.use(helmet);
