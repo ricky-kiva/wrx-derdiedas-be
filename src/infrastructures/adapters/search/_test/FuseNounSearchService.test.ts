@@ -31,6 +31,13 @@ describe('FuseNounSearchService', () => {
 
   beforeEach(() => {
     fuseNounSearchService = new FuseNounSearchService(mockNormalizer, mockNounRepository);
+    
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   describe('initialize', () => {
