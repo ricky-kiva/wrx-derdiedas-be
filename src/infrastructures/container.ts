@@ -10,6 +10,8 @@ import RootHandler from '../interfaces/http/api/root/handler';
 import NounSetMetadataModel from './database/mongoose/models/NounSetMetadataModel';
 import { NounSetMetadataRepositoryMongo } from './repository/NounSetMetadataRepositoryMongo';
 import NounSeeder from './database/bootstrap/NounSeeder';
+import WinstonLoggerService from './adapters/logger/WinstonLoggerService';
+import LogMW from '../interfaces/http/middlewares/log/LogMW';
 
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
@@ -17,6 +19,8 @@ container.register(DITokens.SearchNounUseCase, {
   )
 });
 
+container.register(DITokens.LoggerService, { useClass: WinstonLoggerService });
+container.register(DITokens.LogMW, { useClass: LogMW });
 container.register(DITokens.NounModel, { useValue: NounModel });
 container.register(DITokens.NounRepository, { useClass: NounRepositoryMongo });
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
