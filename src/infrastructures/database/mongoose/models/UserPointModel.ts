@@ -6,7 +6,8 @@ const userPointSchema = new Schema({
     required: true,
     unique: true 
   },
-  point: { type: Number, default: 0 }
+  point: { type: Number, default: 0 },
+  updatedAt: { type: Date, required: true }
 });
 
 const UserPointModel = mongoose.model('UserPoint', userPointSchema);
