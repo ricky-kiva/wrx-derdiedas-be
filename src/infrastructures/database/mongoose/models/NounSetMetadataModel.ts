@@ -23,8 +23,8 @@ const NounSetMetadataSchema = new Schema<NounSetMetadataDocument>({
   _id: { type: String, required: true },
   name: { type: String, required: true },
   version: { type: String, required: true },
-  dateCreated: { type: String, required: true },
-  dateUpdated: { type: String, required: true },
+  createdAt: { type: String, required: true },
+  updatedAt: { type: String, required: true },
   description: { type: String, required: true },
   source: { type: String, required: true },
   curator: { type: CuratorSchema, required: true }

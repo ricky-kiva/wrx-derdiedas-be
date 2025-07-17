@@ -16,8 +16,8 @@ describe('NounSetMetadataRepositoryMongo', () => {
     name: 'derdiedas-dataset',
     version: '1.0.0',
     description: 'A list of German nouns',
-    dateCreated: '2025-06-22T12:41+00:00',
-    dateUpdated: '2025-07-03T14:00+00:00',
+    createdAt: '2025-06-22T12:41+00:00',
+    updatedAt: '2025-07-03T14:00+00:00',
     source: 'https://kaikki.org/',
     curator: {
       name: 'Rickyslash',
@@ -53,7 +53,7 @@ describe('NounSetMetadataRepositoryMongo', () => {
 
       expect(result).toBeTruthy();
       expect(result?.name).toBe(payload.name);
-      expect(result?.dateUpdated).toBe(payload.dateUpdated);
+      expect(result?.updatedAt).toBe(payload.updatedAt);
       expect(result?.curator?.name).toBe(payload.curator.name);
       expect(result?.curator?.contact?.github).toBe(payload.curator.contact.github);
     });
@@ -69,7 +69,7 @@ describe('NounSetMetadataRepositoryMongo', () => {
 
       expect(persistedMetadata).toBeTruthy();
       expect(persistedMetadata?.name).toBe(payload.name);
-      expect(persistedMetadata?.dateUpdated).toBe(payload.dateUpdated);
+      expect(persistedMetadata?.updatedAt).toBe(payload.updatedAt);
       expect(persistedMetadata?.curator?.name).toBe(payload.curator.name);
       expect(persistedMetadata?.curator?.contact?.github).toBe(payload.curator.contact.github);
     });

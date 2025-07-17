@@ -22,7 +22,7 @@ export default class NounSeeder {
     const existingMetadata = await this.metadataRepository.find();
 
     if (!existingMetadata 
-      || existingMetadata.dateUpdated !== seedData.metadata.dateUpdated
+      || existingMetadata.updatedAt !== seedData.metadata.updatedAt
     ) {
       await this.nounRepository.deleteAll();
 

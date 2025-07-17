@@ -5,8 +5,8 @@ const metadataPayload: NounSetMetadataPayload = {
   name: 'derdiedas-dataset',
   version: '1.0.0',
   description: 'A list of German nouns',
-  dateCreated: '2025-06-22T12:41+00:00',
-  dateUpdated: '2025-07-03T14:00+00:00',
+  createdAt: '2025-06-22T12:41+00:00',
+  updatedAt: '2025-07-03T14:00+00:00',
   source: 'https://kaikki.org/',
   curator: {
     name: 'Rickyslash',

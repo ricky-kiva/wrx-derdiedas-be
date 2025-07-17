@@ -63,9 +63,9 @@ describe('NounSeeder', () => {
     expect(mockInsertManyMethod).toHaveBeenCalledWith(mockSeedData.data);
   });
 
-  it('should seed when dateUpdated metadata is different', async () => {
+  it('should seed when updatedAt metadata is different', async () => {
     mockFindMethod.mockResolvedValue({
-      dateUpdated: 'some-date'
+      updatedAt: 'some-date'
     } as Partial<NounSetMetadata> as NounSetMetadata);
 
     await seeder.seed();

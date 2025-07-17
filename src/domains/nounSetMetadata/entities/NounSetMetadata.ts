@@ -15,8 +15,8 @@ export interface NounSetMetadataPayload {
   name: string;
   version: string;
   description: string;
-  dateCreated: string;
-  dateUpdated: string;
+  createdAt: string;
+  updatedAt: string;
   source: string;
   curator: NounSetMetadataCurator;
 }
@@ -27,21 +27,21 @@ export default class NounSetMetadata {
   public name: string;
   public version: string;
   public description: string;
-  public dateCreated: string;
-  public dateUpdated: string;
+  public createdAt: string;
+  public updatedAt: string;
   public source: string;
   public curator: NounSetMetadataCurator;
 
   constructor(params: NounSetMetadataParams) {
     const { 
-      name, version, description, dateCreated, dateUpdated, source, curator 
+      name, version, description, createdAt, updatedAt, source, curator 
     } = params;
 
     this.name = name;
     this.version = version;
     this.description = description;
-    this.dateCreated = dateCreated;
-    this.dateUpdated = dateUpdated;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
     this.source = source;
     this.curator = curator;
   }

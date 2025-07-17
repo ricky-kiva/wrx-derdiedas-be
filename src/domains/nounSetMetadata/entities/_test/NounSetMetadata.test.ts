@@ -5,8 +5,8 @@ describe('NounSetMetadata', () => {
     const nounSetMetadataPayload: NounSetMetadataPayload = {
       name: "derdiedas-dataset",
       version: "1.0.0",
-      dateCreated: "2025-06-22T12:41Z",
-      dateUpdated: "2025-07-02T08:21Z",
+      createdAt: "2025-06-22T12:41Z",
+      updatedAt: "2025-07-02T08:21Z",
       description: "A list of German nouns with gender & meanings",
       source: "https://kaikki.org/",
       curator: {
@@ -27,8 +27,8 @@ describe('NounSetMetadata', () => {
 
     expect(nounSetMetadata.name).toBe(nounSetMetadataPayload.name);
     expect(nounSetMetadata.version).toBe(nounSetMetadataPayload.version);
-    expect(nounSetMetadata.dateCreated).toBe(nounSetMetadataPayload.dateCreated);
-    expect(nounSetMetadata.dateUpdated).toBe(nounSetMetadataPayload.dateUpdated);
+    expect(nounSetMetadata.createdAt).toBe(nounSetMetadataPayload.createdAt);
+    expect(nounSetMetadata.updatedAt).toBe(nounSetMetadataPayload.updatedAt);
     expect(nounSetMetadata.description).toBe(nounSetMetadataPayload.description);
     expect(nounSetMetadata.source).toBe(nounSetMetadataPayload.source);
   
