@@ -34,7 +34,6 @@ export default class WinstonLoggerService implements LoggerService {
       return info;
     });
 
-
     const loggerFormat = format.combine(
       format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       format.errors({ stack: true }),
