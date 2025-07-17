@@ -7,7 +7,9 @@ export interface UserDocument extends Document, UserPayload {
 
 const userSchema = new Schema<UserDocument>({
   username: { type: String, required: true },
-  googleId: { type: String, required: false }
+  googleId: { type: String, required: false },
+  email: { type: String, required: false },
+  picture: { type: String, required: false }
 });
 
 const UserModel = mongoose.model<UserDocument>('User', userSchema);
