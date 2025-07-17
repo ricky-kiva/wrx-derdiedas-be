@@ -14,9 +14,14 @@ interface DatabaseConfig {
   password: string
 }
 
+interface ClientIdConfig {
+  google: string
+}
+
 interface Config {
   app: AppConfig,
-  database: DatabaseConfig
+  database: DatabaseConfig,
+  clientId: ClientIdConfig
 }
 
 const envFile = (process.env.NODE_ENV === 'test')
@@ -45,6 +50,9 @@ const config: Config = {
     database: getEnvVar('MONGO_DATABASE'),
     user: getEnvVar('MONGO_USER'),
     password: getEnvVar('MONGO_PASSWORD')
+  },
+  clientId: {
+    google: String(process.env.GOOGLE_CLIENT_ID)
   }
 };
 
