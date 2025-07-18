@@ -18,10 +18,16 @@ interface ClientIdConfig {
   google: string
 }
 
+interface JwtConfig {
+  accessTokenSecret: string,
+  refreshTokenSecret: string
+}
+
 interface Config {
   app: AppConfig,
+  clientId: ClientIdConfig,
   database: DatabaseConfig,
-  clientId: ClientIdConfig
+  jwt: JwtConfig
 }
 
 const envFile = (process.env.NODE_ENV === 'test')
@@ -44,6 +50,9 @@ const config: Config = {
       ? 'localhost'
       : '0.0.0.0'
   },
+  clientId: {
+    google: String(process.env.GOOGLE_CLIENT_ID)
+  },
   database: {
     host: getEnvVar('MONGO_HOST'),
     port: Number(getEnvVar('MONGO_PORT')),
@@ -51,8 +60,9 @@ const config: Config = {
     user: getEnvVar('MONGO_USER'),
     password: getEnvVar('MONGO_PASSWORD')
   },
-  clientId: {
-    google: String(process.env.GOOGLE_CLIENT_ID)
+  jwt: {
+    accessTokenSecret: String(process.env.JWT_ACCESS_TOKEN_SECRET),
+    refreshTokenSecret: String(process.env.JWT_REFRESH_TOKEN_SECRET)
   }
 };
 
