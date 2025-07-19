@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
 import TokenStore from '../../../applications/ports/security/TokenStore';
-import { InvariantError } from '../../../commons/exceptions';
+import { AuthenticationError } from '../../../commons/exceptions';
 import config from '../../../commons/config';
 
 export default class RedisTokenStore implements TokenStore {
@@ -27,7 +27,7 @@ export default class RedisTokenStore implements TokenStore {
 
   async verifyStoredRefreshToken(userId: string, token: string): Promise<void> {
     const stored = await this.redis.get(this.refreshKey(userId));
-    if (stored !== token) throw new InvariantError('Refresh token is invalid');
+    if (stored !== token) throw new AuthenticationError('Refresh token is invalid');
   }
 
   async deleteRefreshToken(userId: string): Promise<void> {

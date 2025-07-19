@@ -2,7 +2,7 @@ import JwtPayloadDTO from '../../../applications/dto/JwtPayloadDTO';
 import TokenManager from '../../../applications/ports/security/TokenManager';
 import jwt from 'jsonwebtoken';
 import config from '../../../commons/config';
-import { InvariantError } from '../../../commons/exceptions';
+import { AuthenticationError } from '../../../commons/exceptions';
 import { isJwtPayloadDTO } from '../../validation/security/typeguards';
 
 export default class JwtTokenManager implements TokenManager {
@@ -18,7 +18,7 @@ export default class JwtTokenManager implements TokenManager {
     try {
       jwt.verify(token, config.jwt.refreshToken.secret);
     } catch {
-      throw new InvariantError('Invalid refresh token');
+      throw new AuthenticationError('Invalid refresh token');
     }
   }
 
@@ -29,6 +29,6 @@ export default class JwtTokenManager implements TokenManager {
       return decoded;
     }
 
-    throw new InvariantError('Invalid JWT payload');
+    throw new AuthenticationError('Invalid JWT payload');
   }
 }
