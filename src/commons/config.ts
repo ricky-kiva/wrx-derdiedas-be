@@ -1,34 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
-
-interface AppConfig {
-  port: number,
-  host: string
-}
-
-interface DatabaseConfig {
-  host: string,
-  port: number,
-  database: string,
-  user: string,
-  password: string
-}
-
-interface ClientIdConfig {
-  google: string
-}
-
-interface JwtConfig {
-  accessTokenSecret: string,
-  refreshTokenSecret: string
-}
-
-interface Config {
-  app: AppConfig,
-  clientId: ClientIdConfig,
-  database: DatabaseConfig,
-  jwt: JwtConfig
-}
+import { Config } from './types';
 
 const envFile = (process.env.NODE_ENV === 'test')
   ? '.test.env'
@@ -54,11 +26,17 @@ const config: Config = {
     google: String(process.env.GOOGLE_CLIENT_ID)
   },
   database: {
-    host: getEnvVar('MONGO_HOST'),
-    port: Number(getEnvVar('MONGO_PORT')),
-    database: getEnvVar('MONGO_DATABASE'),
-    user: getEnvVar('MONGO_USER'),
-    password: getEnvVar('MONGO_PASSWORD')
+    mongodb: {
+      host: getEnvVar('MONGO_HOST'),
+      port: Number(getEnvVar('MONGO_PORT')),
+      database: getEnvVar('MONGO_DATABASE'),
+      user: getEnvVar('MONGO_USER'),
+      password: getEnvVar('MONGO_PASSWORD')
+    },
+    redis: {
+      database: Number(getEnvVar('REDIS_DATABASE')),
+      password: getEnvVar('REDIS_PASSWORD')
+    }
   },
   jwt: {
     accessTokenSecret: String(process.env.JWT_ACCESS_TOKEN_SECRET),
