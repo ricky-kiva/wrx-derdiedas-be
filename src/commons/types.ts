@@ -25,9 +25,14 @@ interface ClientIdConfig {
   google: string
 }
 
+interface JwtTokenConfig {
+  secret: string,
+  expiry: number
+}
+
 interface JwtConfig {
-  accessTokenSecret: string,
-  refreshTokenSecret: string
+  accessToken: JwtTokenConfig,
+  refreshToken: JwtTokenConfig
 }
 
 export interface Config {

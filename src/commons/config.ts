@@ -39,8 +39,14 @@ const config: Config = {
     }
   },
   jwt: {
-    accessTokenSecret: String(process.env.JWT_ACCESS_TOKEN_SECRET),
-    refreshTokenSecret: String(process.env.JWT_REFRESH_TOKEN_SECRET)
+    accessToken: {
+      secret: String(process.env.JWT_ACCESS_TOKEN_SECRET),
+      expiry: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY)
+    },
+    refreshToken: {
+      secret: String(process.env.JWT_REFRESH_TOKEN_SECRET),
+      expiry: Number(process.env.JWT_REFRESH_TOKEN_EXPIRY)
+    }
   }
 };
 
