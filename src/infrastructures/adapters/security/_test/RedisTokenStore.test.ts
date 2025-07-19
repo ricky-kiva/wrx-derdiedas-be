@@ -35,20 +35,20 @@ describe('RedisTokenStore', () => {
     });
   });
 
-  describe('verifyRefreshToken', () => {
+  describe('verifyStoredRefreshToken', () => {
     it('should succeed if token matches', async () => {
       await redis.set(`refresh:${userId}`, token);      
-      await expect(store.verifyRefreshToken(userId, token)).resolves.not.toThrow();
+      await expect(store.verifyStoredRefreshToken(userId, token)).resolves.not.toThrow();
     });
 
     it('should throw InvariantError if token is wrong', async () => {
       await redis.set(`refresh:${userId}`, token);
-      await expect(store.verifyRefreshToken(userId, 'wrong-token')).rejects.toThrow(InvariantError);
+      await expect(store.verifyStoredRefreshToken(userId, 'wrong-token')).rejects.toThrow(InvariantError);
     });
 
     it('should throw InvariantError if token is missing', async () => {
       await redis.del(`refresh:${userId}`);
-      await expect(store.verifyRefreshToken(userId, token)).rejects.toThrow(InvariantError);
+      await expect(store.verifyStoredRefreshToken(userId, token)).rejects.toThrow(InvariantError);
     });
   });
 
