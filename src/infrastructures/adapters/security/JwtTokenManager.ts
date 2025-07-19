@@ -7,28 +7,28 @@ import { isJwtPayloadDTO } from '../../validation/security/typeguards';
 
 export default class JwtTokenManager implements TokenManager {
   generateAccessToken(payload: JwtPayloadDTO): string {
-    return jwt.sign(payload, config.jwt.accessTokenSecret, { expiresIn: '15m' });
+    return jwt.sign(payload, config.jwt.accessToken.secret, { expiresIn: config.jwt.accessToken.expiry });
   }
 
   generateRefreshToken(payload: JwtPayloadDTO): string {
-    return jwt.sign(payload, config.jwt.refreshTokenSecret, { expiresIn: '30d' });
+    return jwt.sign(payload, config.jwt.refreshToken.secret, { expiresIn: config.jwt.refreshToken.expiry });
   }
 
   verifyRefreshToken(token: string): void {
     try {
-      jwt.verify(token, config.jwt.refreshTokenSecret);
+      jwt.verify(token, config.jwt.refreshToken.secret);
     } catch {
       throw new InvariantError('Invalid refresh token');
     }
   }
 
-  decodePayload(token: string): JwtPayloadDTO | null {
+  decodePayload(token: string): JwtPayloadDTO {
     const decoded = jwt.decode(token);
 
     if (isJwtPayloadDTO(decoded)) {
       return decoded;
     }
 
-    return null;
+    throw new InvariantError('Invalid JWT payload');
   }
 }
