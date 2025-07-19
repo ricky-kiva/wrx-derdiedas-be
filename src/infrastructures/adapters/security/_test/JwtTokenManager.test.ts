@@ -40,10 +40,10 @@ describe('JwtTokenManager', () => {
     expect(decoded).toEqual(expect.objectContaining(payload));
   });
 
-  it('decodePayload should return null if payload is invalid shape', () => {
-    const badToken = jwt.sign({ foo: 'bar' }, config.jwt.accessTokenSecret);
-    const malformed = tokenManager.decodePayload(badToken);
+  it('decodePayload should throw error if payload is invalid shape', () => {
+    const badToken = jwt.sign({ foo: 'bar' }, config.jwt.accessToken.secret);
+    const decodePayload = () => tokenManager.decodePayload(badToken);
 
-    expect(malformed).toBeNull();
+    expect(decodePayload).toThrow(InvariantError);
   });
 });
