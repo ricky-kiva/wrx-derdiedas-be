@@ -13,16 +13,24 @@ export default class RedisTokenStore implements TokenStore {
     });
   }
 
-  async storeRefreshToken(userId: string, token: string, ttlSeconds: number): Promise<void> {
-    await this.redis.set(`refresh:${userId}`, token, 'EX', ttlSeconds);
+  private refreshKey(userId: string): string {
+    return `refresh:${userId}`;
   }
 
-  async verifyRefreshToken(userId: string, token: string): Promise<void> {
-    const stored = await this.redis.get(`refresh:${userId}`);
+  async storeRefreshToken(
+    userId: string, 
+    token: string, 
+    ttlSeconds: number=config.jwt.refreshToken.expiry
+  ): Promise<void> {
+    await this.redis.set(this.refreshKey(userId), token, 'EX', ttlSeconds);
+  }
+
+  async verifyStoredRefreshToken(userId: string, token: string): Promise<void> {
+    const stored = await this.redis.get(this.refreshKey(userId));
     if (stored !== token) throw new InvariantError('Refresh token is invalid');
   }
 
   async deleteRefreshToken(userId: string): Promise<void> {
-    await this.redis.del(`refresh:${userId}`);
+    await this.redis.del(this.refreshKey(userId));
   }
 }
