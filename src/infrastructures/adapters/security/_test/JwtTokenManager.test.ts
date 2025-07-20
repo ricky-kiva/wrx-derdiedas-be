@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import JwtPayloadDTO from '../../../../applications/dto/JwtPayloadDTO';
-import { InvariantError } from '../../../../commons/exceptions';
+import { AuthenticationError } from '../../../../commons/exceptions';
 import JwtTokenManager from '../JwtTokenManager';
 import config from '../../../../commons/config';
 
@@ -30,9 +30,9 @@ describe('JwtTokenManager', () => {
       .not.toThrow();
   });
 
-  it('verifyRefreshToken should throw InvariantError on invalid refresh token', () => {
+  it('verifyRefreshToken should throw AuthenticationError on invalid refresh token', () => {
     const fakeToken = 'fake.token.value';
-    expect(() => tokenManager.verifyRefreshToken(fakeToken)).toThrow(InvariantError);
+    expect(() => tokenManager.verifyRefreshToken(fakeToken)).toThrow(AuthenticationError);
   });
 
   it('decodePayload should decode valid payload', () => {
@@ -44,6 +44,6 @@ describe('JwtTokenManager', () => {
     const badToken = jwt.sign({ foo: 'bar' }, config.jwt.accessToken.secret);
     const decodePayload = () => tokenManager.decodePayload(badToken);
 
-    expect(decodePayload).toThrow(InvariantError);
+    expect(decodePayload).toThrow(AuthenticationError);
   });
 });

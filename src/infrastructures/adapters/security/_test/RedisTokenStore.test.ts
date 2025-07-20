@@ -1,9 +1,10 @@
-import { InvariantError } from '../../../../commons/exceptions';
+import { AuthenticationError } from '../../../../commons/exceptions';
 import RedisTokenStore from '../RedisTokenStore';
+import redisClient from '../../../database/redis/redisClient';
 
 describe('RedisTokenStore', () => {
-  const store = new RedisTokenStore();
-  const redis = store['redis'];
+  const redis = redisClient;
+  const store = new RedisTokenStore(redis);
   const userId = 'user-123';
   const token = 'sample-refresh-token';
   const ttlSeconds = 60;
@@ -41,14 +42,14 @@ describe('RedisTokenStore', () => {
       await expect(store.verifyStoredRefreshToken(userId, token)).resolves.not.toThrow();
     });
 
-    it('should throw InvariantError if token is wrong', async () => {
+    it('should throw AuthenticationError if token is wrong', async () => {
       await redis.set(`refresh:${userId}`, token);
-      await expect(store.verifyStoredRefreshToken(userId, 'wrong-token')).rejects.toThrow(InvariantError);
+      await expect(store.verifyStoredRefreshToken(userId, 'wrong-token')).rejects.toThrow(AuthenticationError);
     });
 
-    it('should throw InvariantError if token is missing', async () => {
+    it('should throw AuthenticationError if token is missing', async () => {
       await redis.del(`refresh:${userId}`);
-      await expect(store.verifyStoredRefreshToken(userId, token)).rejects.toThrow(InvariantError);
+      await expect(store.verifyStoredRefreshToken(userId, token)).rejects.toThrow(AuthenticationError);
     });
   });
 
