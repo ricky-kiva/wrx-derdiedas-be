@@ -6,7 +6,7 @@ import LoginUseCase from '../LoginUseCase';
 
 describe('LoginUseCase', () => {
   it('should generate tokens & store refresh token', async () => {
-    const fakePayload: JwtPayloadDTO = { userId: 'user-123', username: 'Rickyslash' };
+    const fakePayload: JwtPayloadDTO = { userId: 'user-123', name: 'Rickyslash' };
     const mockAccessToken = 'access.token';
     const mockRefreshToken = 'refresh.token';
 

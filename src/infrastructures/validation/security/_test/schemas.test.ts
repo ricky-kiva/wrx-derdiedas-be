@@ -4,7 +4,7 @@ describe('JwtPayloadDTOSchema', () => {
   it('should validate a valid payload', () => {
     const payload = {
       userId: 'user-123',
-      username: 'Rickyslash'
+      name: 'Rickyslash'
     };
 
     const result = JwtPayloadDTOSchema.safeParse(payload);
@@ -25,7 +25,7 @@ describe('JwtPayloadDTOSchema', () => {
   it('should reject invalid field types', () => {
     const payload = {
       userId: 123,
-      username: true
+      name: true
     };
 
     const result = JwtPayloadDTOSchema.safeParse(payload);

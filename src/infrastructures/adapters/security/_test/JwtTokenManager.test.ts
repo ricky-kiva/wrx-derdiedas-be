@@ -12,7 +12,7 @@ describe('JwtTokenManager', () => {
 
   const payload: JwtPayloadDTO = {
     userId: 'user-123',
-    username: 'Rickyslash'
+    name: 'Rickyslash'
   };
 
   it('generateAccessToken should generate access token', () => {
