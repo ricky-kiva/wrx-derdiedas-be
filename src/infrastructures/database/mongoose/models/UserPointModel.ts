@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+
 const userPointSchema = new Schema({
   userId: { 
     type: Schema.Types.ObjectId, 
