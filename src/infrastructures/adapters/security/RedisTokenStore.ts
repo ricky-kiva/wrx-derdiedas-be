@@ -4,14 +4,7 @@ import { AuthenticationError } from '../../../commons/exceptions';
 import config from '../../../commons/config';
 
 export default class RedisTokenStore implements TokenStore {
-  private readonly redis: Redis;
-
-  constructor() {
-    this.redis = new Redis({ 
-      db: config.database.redis.database,
-      password: config.database.redis.password
-    });
-  }
+  constructor(private readonly redis: Redis) {}
 
   private refreshKey(userId: string): string {
     return `refresh:${userId}`;
