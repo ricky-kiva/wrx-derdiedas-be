@@ -1,6 +1,11 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
+import { UserPointPayload } from '../../../../domains/userPoint/entities/UserPoint';
 
-const userPointSchema = new Schema({
+export interface UserPointDocument extends Document, Omit<UserPointPayload, 'userId'> {
+  userId: Types.ObjectId;
+};
+
+const userPointSchema = new Schema<UserPointDocument>({
   userId: { 
     type: Schema.Types.ObjectId, 
     ref: 'User', 
