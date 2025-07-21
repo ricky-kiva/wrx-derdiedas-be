@@ -11,5 +11,6 @@ export const DITokens = {
   SearchNounHandler: Symbol.for("SearchNounHandler"),
   SearchNounUseCase: Symbol.for("SearchNounUseCase"),
   UserModel: Symbol.for("UserModel"),
+  UserPointModel: Symbol.for("UserPointModel"),
   WordNormalizerService: Symbol.for("WordNormalizerService")
 };
