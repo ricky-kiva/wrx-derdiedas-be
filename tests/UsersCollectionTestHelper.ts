@@ -1,7 +1,8 @@
-import { UserPayload } from '../src/domains/user/entities/User';
+import User, { UserPayload } from '../src/domains/user/entities/User';
+import UserMapper from '../src/infrastructures/database/mongoose/mappers/UserMapper';
 import UserModel from '../src/infrastructures/database/mongoose/models/UserModel';
 
-const userPayload: UserPayload = {
+const payload: UserPayload = {
   name: 'Rickyslash',
   googleId: 'g-123',
   email: 'r@gmail.com',
@@ -9,11 +10,15 @@ const userPayload: UserPayload = {
 };
 
 const UsersCollectionTestHelper = {
+  async addUser(): Promise<User> {
+    const doc = await UserModel.create(payload);
+    return UserMapper.toDomain(doc);
+  },
   async cleanCollection(): Promise<void> {
     await UserModel.deleteMany({});
   },
   getPayload(): UserPayload {
-    return userPayload;
+    return payload;
   }
 };
 
