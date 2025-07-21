@@ -10,5 +10,6 @@ export const DITokens = {
   RootHandler: Symbol.for("RootHandler"),
   SearchNounHandler: Symbol.for("SearchNounHandler"),
   SearchNounUseCase: Symbol.for("SearchNounUseCase"),
+  UserModel: Symbol.for("UserModel"),
   WordNormalizerService: Symbol.for("WordNormalizerService")
 };
