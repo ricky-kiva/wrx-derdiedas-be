@@ -4,7 +4,7 @@ import NounRepositoryMongo from './repository/NounRepositoryMongo';
 import NounModel from './database/mongoose/models/NounModel';
 import WordNormalizerServiceImpl from './adapters/search/WordNormalizerServiceImpl';
 import FuseNounSearchService from './adapters/search/FuseNounSearchService';
-import SearchNounUseCase from '../applications/use_case/SearchNounUseCase';
+import SearchNounUseCase from '../applications/use-case/SearchNounUseCase';
 import SearchNounHandler from '../interfaces/http/api/searchNoun/handler';
 import RootHandler from '../interfaces/http/api/root/handler';
 import NounSetMetadataModel from './database/mongoose/models/NounSetMetadataModel';

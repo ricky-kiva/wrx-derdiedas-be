@@ -1,5 +1,5 @@
 import { inject, injectable } from 'tsyringe';
-import SearchNounUseCase from '../../../../applications/use_case/SearchNounUseCase';
+import SearchNounUseCase from '../../../../applications/use-case/SearchNounUseCase';
 import { Request, Response } from 'express';
 import { SearchNounPayload } from '../../adapters/validation/searchNoun/types';
 import { DITokens } from '../../../../commons/DITokens';

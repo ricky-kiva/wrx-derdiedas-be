@@ -5,7 +5,7 @@ import { DependencyContainer, container } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 import RootHandler from '../../../interfaces/http/api/root/handler';
 import SearchNounHandler from '../../../interfaces/http/api/searchNoun/handler';
-import SearchNounUseCase from '../../../applications/use_case/SearchNounUseCase';
+import SearchNounUseCase from '../../../applications/use-case/SearchNounUseCase';
 import createServer from '../createServer';
 import { ServiceInfoResponse } from '../../../interfaces/http/types/ServiceInfoResponse';
 import SearchResultDTO from '../../../applications/dto/SearchResultDTO';

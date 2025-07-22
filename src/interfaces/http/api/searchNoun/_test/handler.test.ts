@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 
 import { Request, Response } from 'express';
-import SearchNounUseCase from '../../../../../applications/use_case/SearchNounUseCase';
+import SearchNounUseCase from '../../../../../applications/use-case/SearchNounUseCase';
 import SearchNounHandler from '../handler';
 import SearchResultDTO from '../../../../../applications/dto/SearchResultDTO';
 import { NounDTO } from '../../../../../applications/dto/NounDTO';
