@@ -1,4 +1,4 @@
-import TokenStore from '../../ports/security/TokenStore';
+import TokenStore from '../../../../ports/security/TokenStore';
 import LogoutUseCase from '../LogoutUseCase';
 
 describe('LogoutUseCase', () => {

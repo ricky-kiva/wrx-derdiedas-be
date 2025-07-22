@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 
 import { Request, Response } from 'express';
-import SearchNounUseCase from '../../../../../applications/use-case/SearchNounUseCase';
+import SearchNounUseCase from '../../../../../applications/use-cases/noun/search/SearchNounUseCase';
 import SearchNounHandler from '../handler';
-import SearchResultDTO from '../../../../../applications/dto/SearchResultDTO';
-import { NounDTO } from '../../../../../applications/dto/NounDTO';
+import SearchResultDTO from '../../../../../applications/use-cases/noun/search/dto/SearchResultDTO';
+import { NounDTO } from '../../../../../applications/use-cases/noun/search/dto/NounDTO';
 import { SearchNounPayload } from '../../../adapters/validation/searchNoun/types';
 import ApiResponse from '../../../types/ApiResponse';
 

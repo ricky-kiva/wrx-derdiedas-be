@@ -1,6 +1,6 @@
-import JwtTokenDTO from '../ports/security/dto/JwtTokenDTO';
-import TokenManager from '../ports/security/TokenManager';
-import TokenStore from '../ports/security/TokenStore';
+import JwtTokenDTO from '../../../ports/security/dto/JwtTokenDTO';
+import TokenManager from '../../../ports/security/TokenManager';
+import TokenStore from '../../../ports/security/TokenStore';
 
 export default class RefreshAuthUseCase {
   constructor(

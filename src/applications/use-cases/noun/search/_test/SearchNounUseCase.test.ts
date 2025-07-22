@@ -1,6 +1,6 @@
-import { NounRaw } from '../../../domains/noun/entities/Noun';
-import SearchResultDTO from '../../dto/SearchResultDTO';
-import NounSearchService from '../../ports/search/NounSearchService';
+import { NounRaw } from '../../../../../domains/noun/entities/Noun';
+import SearchResultDTO from '../dto/SearchResultDTO';
+import NounSearchService from '../../../../ports/search/NounSearchService';
 import SearchNounUseCase from '../SearchNounUseCase';
 
 describe('SearchNounUseCase', () => {

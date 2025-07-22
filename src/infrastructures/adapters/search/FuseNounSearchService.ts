@@ -1,12 +1,12 @@
 import Fuse from 'fuse.js';
 import WordNormalizerService from '../../../applications/ports/search/WordNormalizerService';
 import { ServiceUnavailableError } from '../../../commons/exceptions';
-import SearchResultDTO from '../../../applications/dto/SearchResultDTO';
+import SearchResultDTO from '../../../applications/use-cases/noun/search/dto/SearchResultDTO';
 import NounSearchService from '../../../applications/ports/search/NounSearchService';
 import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 import NounRepository from '../../../domains/noun/NounRepository';
-import { NounDTO } from '../../../applications/dto/NounDTO';
+import { NounDTO } from '../../../applications/use-cases/noun/search/dto/NounDTO';
 import { NounRaw } from '../../../domains/noun/entities/Noun';
 
 @injectable()

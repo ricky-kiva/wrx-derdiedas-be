@@ -1,5 +1,5 @@
-import { NounDTO } from '../../dto/NounDTO';
-import SearchResultDTO from '../../dto/SearchResultDTO';
+import { NounDTO } from '../../use-cases/noun/search/dto/NounDTO';
+import SearchResultDTO from '../../use-cases/noun/search/dto/SearchResultDTO';
 
 export default interface NounSearchService {
   initialize(): Promise<void>;
