@@ -1,7 +1,7 @@
 import { LoginTicket } from 'google-auth-library';
 import GoogleAuthServiceImpl from '../GoogleAuthServiceImpl';
 import { AuthenticationError } from '../../../../commons/exceptions';
-import GoogleUserDTO from '../../../../applications/dto/GoogleUserDTO';
+import GoogleUserDTO from '../../../../applications/ports/auth/dto/GoogleUserDTO';
 
 const mockVerifyIdTokenMethod = jest.fn();
 

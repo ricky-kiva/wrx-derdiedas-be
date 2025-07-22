@@ -1,5 +1,5 @@
 import { OAuth2Client } from 'google-auth-library';
-import GoogleUserDTO from '../../../applications/dto/GoogleUserDTO';
+import GoogleUserDTO from '../../../applications/ports/auth/dto/GoogleUserDTO';
 import GoogleAuthService from '../../../applications/ports/auth/GoogleAuthService';
 import config from '../../../commons/config';
 import { AuthenticationError } from '../../../commons/exceptions';
