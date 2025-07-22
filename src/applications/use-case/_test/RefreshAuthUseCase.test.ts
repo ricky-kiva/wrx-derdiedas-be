@@ -1,5 +1,5 @@
-import JwtPayloadDTO from '../../dto/JwtPayloadDTO';
-import JwtTokenDTO from '../../dto/JwtTokenDTO';
+import JwtPayloadDTO from '../../ports/security/dto/JwtPayloadDTO';
+import JwtTokenDTO from '../../ports/security/dto/JwtTokenDTO';
 import TokenManager from '../../ports/security/TokenManager';
 import TokenStore from '../../ports/security/TokenStore';
 import RefreshAuthUseCase from '../RefreshAuthUseCase';

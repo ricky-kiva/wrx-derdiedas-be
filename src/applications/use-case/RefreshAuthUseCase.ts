@@ -1,4 +1,4 @@
-import JwtTokenDTO from '../dto/JwtTokenDTO';
+import JwtTokenDTO from '../ports/security/dto/JwtTokenDTO';
 import TokenManager from '../ports/security/TokenManager';
 import TokenStore from '../ports/security/TokenStore';
 

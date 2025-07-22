@@ -1,4 +1,4 @@
-import JwtPayloadDTO from '../../dto/JwtPayloadDTO';
+import JwtPayloadDTO from './dto/JwtPayloadDTO';
 
 export default interface TokenManager {
   generateAccessToken(payload: JwtPayloadDTO): string;

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import JwtPayloadDTO from '../../../../applications/dto/JwtPayloadDTO';
+import JwtPayloadDTO from '../../../../applications/ports/security/dto/JwtPayloadDTO';
 import { AuthenticationError } from '../../../../commons/exceptions';
 import JwtTokenManager from '../JwtTokenManager';
 import config from '../../../../commons/config';

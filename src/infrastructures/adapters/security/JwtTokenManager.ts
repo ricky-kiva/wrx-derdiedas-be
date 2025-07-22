@@ -1,4 +1,4 @@
-import JwtPayloadDTO from '../../../applications/dto/JwtPayloadDTO';
+import JwtPayloadDTO from '../../../applications/ports/security/dto/JwtPayloadDTO';
 import TokenManager from '../../../applications/ports/security/TokenManager';
 import jwt from 'jsonwebtoken';
 import config from '../../../commons/config';
