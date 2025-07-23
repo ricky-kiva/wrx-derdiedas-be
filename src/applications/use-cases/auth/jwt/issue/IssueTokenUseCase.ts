@@ -3,7 +3,7 @@ import JwtTokenDTO from '../../../../ports/security/dto/JwtTokenDTO';
 import TokenManager from '../../../../ports/security/TokenManager';
 import TokenStore from '../../../../ports/security/TokenStore';
 
-export default class IssueJwtUseCase {
+export default class IssueTokenUseCase {
   constructor(
     private readonly tokenManager: TokenManager, 
     private readonly tokenStore: TokenStore

@@ -2,9 +2,9 @@ import JwtPayloadDTO from '../../../../../ports/security/dto/JwtPayloadDTO';
 import JwtTokenDTO from '../../../../../ports/security/dto/JwtTokenDTO';
 import TokenManager from '../../../../../ports/security/TokenManager';
 import TokenStore from '../../../../../ports/security/TokenStore';
-import IssueJwtUseCase from '../IssueJwtUseCase';
+import IssueTokenUseCase from '../IssueTokenUseCase';
 
-describe('IssueJwtUseCase', () => {
+describe('IssueTokenUseCase', () => {
   it('should generate tokens & store refresh token', async () => {
     const fakePayload: JwtPayloadDTO = { userId: 'user-123' };
     const mockAccessToken = 'access.token';
@@ -24,9 +24,9 @@ describe('IssueJwtUseCase', () => {
       storeRefreshToken: mockSRefreshTokenMethod
     } as Partial<jest.Mocked<TokenStore>> as TokenStore;
 
-    const issueJwtUseCase = new IssueJwtUseCase(mockTokenManager, mockTokenStore);
+    const issueTokenUseCase = new IssueTokenUseCase(mockTokenManager, mockTokenStore);
 
-    const result = await issueJwtUseCase.execute(fakePayload);
+    const result = await issueTokenUseCase.execute(fakePayload);
 
     expect(mockGAccessTokenMethod).toHaveBeenCalledWith(fakePayload);
     expect(mockGRefreshTokenMethod).toHaveBeenCalledWith(fakePayload);
