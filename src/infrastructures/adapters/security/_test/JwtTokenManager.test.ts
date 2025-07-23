@@ -10,10 +10,7 @@ describe('JwtTokenManager', () => {
   
   const tokenManager = new JwtTokenManager();
 
-  const payload: JwtPayloadDTO = {
-    userId: 'user-123',
-    name: 'Rickyslash'
-  };
+  const payload: JwtPayloadDTO = { userId: 'user-123',};
 
   it('generateAccessToken should generate access token', () => {
     accessToken = tokenManager.generateAccessToken(payload);

@@ -9,7 +9,7 @@ describe('RefreshAuthUseCase', () => {
     const mockRefreshToken = 'refresh.token';
     const mockNewAccessToken = 'new.access.token';
     const mockNewRefreshToken = 'new.refresh.token';
-    const payload: JwtPayloadDTO = { userId: 'user-123', name: 'Rickyslash' };
+    const payload: JwtPayloadDTO = { userId: 'user-123' };
 
     const mockGAccessTokenMethod = jest.fn().mockReturnValue(mockNewAccessToken);
     const mockGRefreshTokenMethod = jest.fn().mockReturnValue(mockNewRefreshToken);
