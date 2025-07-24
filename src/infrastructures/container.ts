@@ -12,6 +12,28 @@ import { NounSetMetadataRepositoryMongo } from './repository/NounSetMetadataRepo
 import NounSeeder from './database/bootstrap/NounSeeder';
 import WinstonLoggerService from './adapters/logger/WinstonLoggerService';
 import LogMW from '../interfaces/http/middlewares/log/LogMW';
+import LoginUseCase from '../applications/use-cases/auth/LoginUseCase';
+import UserRepositoryMongo from './repository/UserRepositoryMongo';
+import GoogleAuthServiceImpl from './adapters/auth/GoogleAuthServiceImpl';
+import IssueTokenUseCase from '../applications/use-cases/auth/token/issue/IssueTokenUseCase';
+import redisClient from './database/redis/redisClient';
+import JwtTokenManager from './adapters/security/JwtTokenManager';
+import RedisTokenStore from './adapters/security/RedisTokenStore';
+
+container.register(DITokens.IssueTokenUseCase, {
+  useFactory: (c) => new IssueTokenUseCase(
+    c.resolve(DITokens.TokenManager),
+    c.resolve(DITokens.TokenStore)
+  )
+});
+
+container.register(DITokens.LoginUseCase, {
+  useFactory: (c) => new LoginUseCase(
+    c.resolve(DITokens.GoogleAuthService),
+    c.resolve(DITokens.IssueTokenUseCase),
+    c.resolve(DITokens.UserRepository)
+  )
+});
 
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
@@ -19,17 +41,23 @@ container.register(DITokens.SearchNounUseCase, {
   )
 });
 
-container.register(DITokens.LoggerService, { useClass: WinstonLoggerService });
-container.register(DITokens.LogMW, { useClass: LogMW });
-container.register(DITokens.NounModel, { useValue: NounModel });
+container.register(DITokens.GoogleAuthService, { useClass: GoogleAuthServiceImpl });
+container.register(DITokens.TokenManager, { useClass: JwtTokenManager });
 container.register(DITokens.NounRepository, { useClass: NounRepositoryMongo });
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
-container.register(DITokens.NounSetMetadataModel, { useValue: NounSetMetadataModel });
 container.register(DITokens.NounSetMetadataRepository, { useClass: NounSetMetadataRepositoryMongo });
 container.register(DITokens.RootHandler, { useClass: RootHandler });
 container.register(DITokens.SearchNounHandler, { useClass: SearchNounHandler });
+container.register(DITokens.UserRepository, { useClass: UserRepositoryMongo });
 container.register(DITokens.WordNormalizerService, { useClass: WordNormalizerServiceImpl });
 
+container.registerInstance(DITokens.NounModel, NounModel);
+container.registerInstance(DITokens.NounSetMetadataModel, NounSetMetadataModel);
+container.registerInstance(DITokens.RedisClient, redisClient);
+
+container.registerSingleton(DITokens.LoggerService, WinstonLoggerService);
+container.registerSingleton(DITokens.LogMW, LogMW);
 container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
+container.registerSingleton(DITokens.TokenStore, RedisTokenStore);
 
 export default container;
