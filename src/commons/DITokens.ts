@@ -1,4 +1,6 @@
 export const DITokens = {
+  GoogleAuthService: Symbol.for("GoogleAuthService"),
+  IssueTokenUseCase: Symbol.for("IssueTokenUseCase"),
   LoggerService: Symbol.for("LoggerService"),
   LoginHandler: Symbol.for("LoginHandler"),
   LoginUseCase: Symbol.for("LoginUseCase"),
@@ -9,10 +11,14 @@ export const DITokens = {
   NounSeeder: Symbol.for("NounSeeder"),
   NounSetMetadataModel: Symbol.for("NounSetMetadataModel"),
   NounSetMetadataRepository: Symbol.for("NounSetMetadataRepository"),
+  RedisClient: Symbol.for("RedisClient"),
   RootHandler: Symbol.for("RootHandler"),
   SearchNounHandler: Symbol.for("SearchNounHandler"),
   SearchNounUseCase: Symbol.for("SearchNounUseCase"),
+  TokenManager: Symbol.for("TokenManager"),
+  TokenStore: Symbol.for("TokenStore"),
   UserModel: Symbol.for("UserModel"),
   UserPointModel: Symbol.for("UserPointModel"),
+  UserRepository: Symbol.for("UserRepository"),
   WordNormalizerService: Symbol.for("WordNormalizerService")
 };
