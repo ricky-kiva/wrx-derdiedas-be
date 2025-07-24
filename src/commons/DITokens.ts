@@ -1,5 +1,6 @@
 export const DITokens = {
   LoggerService: Symbol.for("LoggerService"),
+  LoginHandler: Symbol.for("LoginHandler"),
   LoginUseCase: Symbol.for("LoginUseCase"),
   LogMW: Symbol.for("LogMW"),
   NounModel: Symbol.for("NounModel"),
