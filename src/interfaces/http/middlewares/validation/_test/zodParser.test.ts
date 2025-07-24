@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { SearchNounPayloadSchema } from '../../../adapters/validation/searchNoun/schemas';
+import { SearchNounPayloadSchema } from '../../../adapters/validation/search/schemas';
 import zodParser from '../zodParser';
 
 describe('zodParser Middleware', () => {

@@ -3,7 +3,7 @@ import { DependencyContainer } from 'tsyringe';
 import LoginHandler from './handler';
 import { DITokens } from '../../../../../commons/DITokens';
 import zodParser from '../../../middlewares/validation/zodParser';
-import { LoginPayloadSchema } from '../../../adapters/validation/searchNoun/schemas';
+import { LoginPayloadSchema } from '../../../adapters/validation/search/schemas';
 
 export default function loginRoutes(c: DependencyContainer): Router {
   const r = Router();

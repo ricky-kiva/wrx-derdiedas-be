@@ -1,7 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../../../commons/DITokens';
 import LoginUseCase from '../../../../../applications/use-cases/auth/LoginUseCase';
-import { LoginPayload } from '../../../adapters/validation/searchNoun/types';
+import { LoginPayload } from '../../../adapters/validation/search/types';
 import { Request, Response } from 'express';
 import ApiResponse from '../../../types/ApiResponse';
 

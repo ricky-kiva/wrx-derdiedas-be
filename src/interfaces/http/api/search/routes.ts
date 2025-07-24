@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { DependencyContainer } from 'tsyringe';
 import zodParser from '../../middlewares/validation/zodParser';
-import { SearchNounPayloadSchema } from '../../adapters/validation/searchNoun/schemas';
+import { SearchNounPayloadSchema } from '../../adapters/validation/search/schemas';
 import SearchNounHandler from './handler';
 import { DITokens } from '../../../../commons/DITokens';
 
