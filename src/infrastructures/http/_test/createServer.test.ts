@@ -4,7 +4,7 @@ import request from 'supertest';
 import { DependencyContainer, container } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 import RootHandler from '../../../interfaces/http/api/root/handler';
-import SearchNounHandler from '../../../interfaces/http/api/searchNoun/handler';
+import SearchNounHandler from '../../../interfaces/http/api/search/handler';
 import SearchNounUseCase from '../../../applications/use-cases/noun/search/SearchNounUseCase';
 import createServer from '../createServer';
 import { ServiceInfoResponse } from '../../../interfaces/http/types/ServiceInfoResponse';

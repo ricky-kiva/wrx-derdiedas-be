@@ -1,5 +1,5 @@
 import express from 'express';
-import searchNounRoutes from '../../interfaces/http/api/searchNoun/routes';
+import searchNounRoutes from '../../interfaces/http/api/search/routes';
 import { DependencyContainer } from 'tsyringe';
 import errorPreResponse from '../../interfaces/http/middlewares/error/errorPreResponse';
 
