@@ -13,6 +13,7 @@ export const DITokens = {
   NounSetMetadataModel: Symbol.for("NounSetMetadataModel"),
   NounSetMetadataRepository: Symbol.for("NounSetMetadataRepository"),
   RedisClient: Symbol.for("RedisClient"),
+  RefreshTokenUseCase: Symbol.for("RefreshTokenUseCase"),
   RootHandler: Symbol.for("RootHandler"),
   SearchNounHandler: Symbol.for("SearchNounHandler"),
   SearchNounUseCase: Symbol.for("SearchNounUseCase"),
