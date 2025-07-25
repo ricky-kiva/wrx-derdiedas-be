@@ -5,7 +5,6 @@ import NounModel from './database/mongoose/models/NounModel';
 import WordNormalizerServiceImpl from './adapters/search/WordNormalizerServiceImpl';
 import FuseNounSearchService from './adapters/search/FuseNounSearchService';
 import SearchNounUseCase from '../applications/use-cases/noun/search/SearchNounUseCase';
-import SearchNounHandler from '../interfaces/http/api/search/handler';
 import RootHandler from '../interfaces/http/api/root/handler';
 import NounSetMetadataModel from './database/mongoose/models/NounSetMetadataModel';
 import { NounSetMetadataRepositoryMongo } from './repository/NounSetMetadataRepositoryMongo';
@@ -22,12 +21,13 @@ import RedisTokenStore from './adapters/security/RedisTokenStore';
 import LogoutUseCase from '../applications/use-cases/auth/LogoutUseCase';
 import RefreshTokenUseCase from '../applications/use-cases/auth/token/refresh-token/RefreshTokenUseCase';
 import AuthHandler from '../interfaces/http/api/auth/handler';
+import SearchHandler from '../interfaces/http/api/search/handler';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
 container.registerSingleton(DITokens.AuthHandler, AuthHandler);
 container.registerSingleton(DITokens.RootHandler, RootHandler);
-container.registerSingleton(DITokens.SearchNounHandler, SearchNounHandler);
+container.registerSingleton(DITokens.SearchHandler, SearchHandler);
 container.registerSingleton(DITokens.TokenManager, JwtTokenManager);
 container.registerSingleton(DITokens.WordNormalizerService, WordNormalizerServiceImpl);
 

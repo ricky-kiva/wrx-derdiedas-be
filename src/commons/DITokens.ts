@@ -15,7 +15,7 @@ export const DITokens = {
   RedisClient: Symbol.for("RedisClient"),
   RefreshTokenUseCase: Symbol.for("RefreshTokenUseCase"),
   RootHandler: Symbol.for("RootHandler"),
-  SearchNounHandler: Symbol.for("SearchNounHandler"),
+  SearchHandler: Symbol.for("SearchHandler"),
   SearchNounUseCase: Symbol.for("SearchNounUseCase"),
   TokenManager: Symbol.for("TokenManager"),
   TokenStore: Symbol.for("TokenStore"),

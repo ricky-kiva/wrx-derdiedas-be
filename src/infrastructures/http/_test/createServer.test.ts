@@ -13,6 +13,7 @@ import { NounDTO } from '../../../applications/use-cases/noun/search/dto/NounDTO
 import ApiResponse from '../../../interfaces/http/types/ApiResponse';
 import LogMW from '../../../interfaces/http/middlewares/log/LogMW';
 import WinstonLoggerService from '../../adapters/logger/WinstonLoggerService';
+import SearchHandler from '../../../interfaces/http/api/search/handler';
 
 describe('createServer', () => {
   let mockSearchNounUseCase: jest.Mocked<SearchNounUseCase>;
@@ -23,7 +24,7 @@ describe('createServer', () => {
     testContainer = container.createChildContainer();
     
     testContainer.register(DITokens.RootHandler, { useClass: RootHandler });
-    testContainer.register(DITokens.SearchNounHandler, { useClass: SearchNounHandler });
+    testContainer.register(DITokens.SearchHandler, { useClass: SearchHandler });
     testContainer.register(DITokens.LoggerService, { useClass: WinstonLoggerService });
     testContainer.register(DITokens.LogMW, { useClass: LogMW });
 
@@ -106,7 +107,7 @@ describe('createServer', () => {
       }
     } as unknown as SearchNounHandler;
 
-    testContainer.registerInstance(DITokens.SearchNounHandler, BadSearchNounHandler);
+    testContainer.registerInstance(DITokens.SearchHandler, BadSearchNounHandler);
 
     app = createServer(testContainer);
 

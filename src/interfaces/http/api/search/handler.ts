@@ -6,7 +6,7 @@ import { DITokens } from '../../../../commons/DITokens';
 import ApiResponse from '../../types/ApiResponse';
 
 @injectable()
-export default class SearchNounHandler {
+export default class SearchHandler {
   constructor(
     @inject(DITokens.SearchNounUseCase) 
     private readonly searchNounUseCase: SearchNounUseCase
