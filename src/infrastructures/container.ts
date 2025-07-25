@@ -20,9 +20,12 @@ import redisClient from './database/redis/redisClient';
 import JwtTokenManager from './adapters/security/JwtTokenManager';
 import RedisTokenStore from './adapters/security/RedisTokenStore';
 import LogoutUseCase from '../applications/use-cases/auth/LogoutUseCase';
+import RefreshTokenUseCase from '../applications/use-cases/auth/token/refresh-token/RefreshTokenUseCase';
+import AuthHandler from '../interfaces/http/api/auth/handler';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
+container.registerSingleton(DITokens.AuthHandler, AuthHandler);
 container.registerSingleton(DITokens.RootHandler, RootHandler);
 container.registerSingleton(DITokens.SearchNounHandler, SearchNounHandler);
 container.registerSingleton(DITokens.TokenManager, JwtTokenManager);
@@ -58,6 +61,13 @@ container.register(DITokens.LoginUseCase, {
 
 container.register(DITokens.LogoutUseCase, {
   useFactory: (c) => new LogoutUseCase(
+    c.resolve(DITokens.TokenStore)
+  )
+});
+
+container.register(DITokens.RefreshTokenUseCase, {
+  useFactory: (c) => new RefreshTokenUseCase(
+    c.resolve(DITokens.TokenManager),
     c.resolve(DITokens.TokenStore)
   )
 });
