@@ -19,27 +19,7 @@ import IssueTokenUseCase from '../applications/use-cases/auth/token/issue/IssueT
 import redisClient from './database/redis/redisClient';
 import JwtTokenManager from './adapters/security/JwtTokenManager';
 import RedisTokenStore from './adapters/security/RedisTokenStore';
-
-container.register(DITokens.IssueTokenUseCase, {
-  useFactory: (c) => new IssueTokenUseCase(
-    c.resolve(DITokens.TokenManager),
-    c.resolve(DITokens.TokenStore)
-  )
-});
-
-container.register(DITokens.LoginUseCase, {
-  useFactory: (c) => new LoginUseCase(
-    c.resolve(DITokens.GoogleAuthService),
-    c.resolve(DITokens.IssueTokenUseCase),
-    c.resolve(DITokens.UserRepository)
-  )
-});
-
-container.register(DITokens.SearchNounUseCase, {
-  useFactory: (c) => new SearchNounUseCase(
-    c.resolve(DITokens.NounSearchService)
-  )
-});
+import LogoutUseCase from '../applications/use-cases/auth/LogoutUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -60,5 +40,32 @@ container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
 container.registerSingleton(DITokens.NounSetMetadataRepository, NounSetMetadataRepositoryMongo);
 container.registerSingleton(DITokens.TokenStore, RedisTokenStore);
 container.registerSingleton(DITokens.UserRepository, UserRepositoryMongo);
+
+container.register(DITokens.IssueTokenUseCase, {
+  useFactory: (c) => new IssueTokenUseCase(
+    c.resolve(DITokens.TokenManager),
+    c.resolve(DITokens.TokenStore)
+  )
+});
+
+container.register(DITokens.LoginUseCase, {
+  useFactory: (c) => new LoginUseCase(
+    c.resolve(DITokens.GoogleAuthService),
+    c.resolve(DITokens.IssueTokenUseCase),
+    c.resolve(DITokens.UserRepository)
+  )
+});
+
+container.register(DITokens.LogoutUseCase, {
+  useFactory: (c) => new LogoutUseCase(
+    c.resolve(DITokens.TokenStore)
+  )
+});
+
+container.register(DITokens.SearchNounUseCase, {
+  useFactory: (c) => new SearchNounUseCase(
+    c.resolve(DITokens.NounSearchService)
+  )
+});
 
 export default container;
