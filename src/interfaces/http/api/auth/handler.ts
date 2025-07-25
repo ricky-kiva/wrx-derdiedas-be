@@ -32,13 +32,6 @@ export default class LoginHandler {
   async logout(req: Request<unknown, unknown, LogoutPayload>, res: Response): Promise<void> {
     const { id: userId } = req.body;
 
-    if (!userId) {
-      res.status(401).json({
-        status: 'fail',
-        message: 'User is not authenticated'
-      } satisfies ApiResponse);
-    }
-
     await this.logoutUseCase.execute(userId);
 
     res.sendStatus(401);
