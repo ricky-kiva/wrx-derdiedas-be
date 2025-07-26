@@ -1,12 +1,16 @@
 import { Application } from 'express';
 import request from 'supertest';
-import { ServiceInfoResponse } from '../../../../interfaces/http/types/ServiceInfoResponse';
+import { ServiceInfoResponse } from '../../../../../interfaces/http/types/ServiceInfoResponse';
 
 export default function testRootRoutes(getApp: () => Application) {
   describe('Root Routes Integration', () => {
-    it('responds to GET / with service info', async () => {
-      const app = getApp();
+    let app: Application;
 
+    beforeEach(() => {
+      app = getApp();
+    });
+
+    it('responds to GET / with service info', async () => {
       const res = await request(app).get('/');
   
       expect(res.status).toBe(200);

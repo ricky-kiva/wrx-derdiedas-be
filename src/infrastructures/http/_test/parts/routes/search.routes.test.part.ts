@@ -1,34 +1,24 @@
 import { Application } from 'express';
 import request from 'supertest';
-import { DependencyContainer } from 'tsyringe';
-import SearchResultDTO from '../../../../applications/use-cases/noun/search/dto/SearchResultDTO';
-import { NounDTO } from '../../../../applications/use-cases/noun/search/dto/NounDTO';
-import ApiResponse from '../../../../interfaces/http/types/ApiResponse';
-import SearchNounUseCase from '../../../../applications/use-cases/noun/search/SearchNounUseCase';
-import { DITokens } from '../../../../commons/DITokens';
+import SearchResultDTO from '../../../../../applications/use-cases/noun/search/dto/SearchResultDTO';
+import { NounDTO } from '../../../../../applications/use-cases/noun/search/dto/NounDTO';
+import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
+import { TestPartMocks } from '../mocks/useCases.mock.test.part';
 
 export default function testSearchRoutes(
-  getApp: () => Application, 
-  getTestContainer: () => DependencyContainer
+  getApp: () => Application,
+  getMocks: () => TestPartMocks
 ) {
   describe('Search Routes Integration', () => {
-    let mockSearchNounUseCase: jest.Mocked<SearchNounUseCase>;
+    let app: Application;
+    let mocks: TestPartMocks;
 
     beforeEach(() => {
-      const testContainer = getTestContainer();
-
-      const mockExecuteMethod = jest.fn();
-
-      mockSearchNounUseCase = {
-        execute: mockExecuteMethod
-      } as unknown as jest.Mocked<SearchNounUseCase>;
-
-      testContainer.registerInstance(DITokens.SearchNounUseCase, mockSearchNounUseCase);
+      app = getApp();
+      mocks = getMocks();
     });
 
     it('responds to POST `/search` with search results', async () => {
-      const app = getApp();
-
       const mockResult: SearchResultDTO<NounDTO>[] = [
         {
           item: { id: 'noun-101', word: 'Katze', gender: 'feminine', meanings: [] } satisfies NounDTO,
@@ -36,7 +26,7 @@ export default function testSearchRoutes(
         } satisfies SearchResultDTO<NounDTO>
       ];
 
-      mockSearchNounUseCase.execute.mockReturnValue(mockResult);
+      mocks.seachNounUC.execute.mockReturnValue(mockResult);
 
       const res = await request(app)
         .post('/search')
@@ -50,8 +40,6 @@ export default function testSearchRoutes(
     });
 
     it('responds with 400 for invalid search payload', async () => {
-      const app = getApp();
-
       const res = await request(app)
         .post('/search')
         .send({});
