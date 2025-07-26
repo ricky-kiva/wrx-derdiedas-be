@@ -3,7 +3,7 @@ import request from 'supertest';
 import { ServiceInfoResponse } from '../../../../interfaces/http/types/ServiceInfoResponse';
 
 export default function testRootRoutes(getApp: () => Application) {
-  describe('Root Routes', () => {
+  describe('Root Routes Integration', () => {
     it('responds to GET / with service info', async () => {
       const app = getApp();
 
