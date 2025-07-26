@@ -11,10 +11,23 @@ export default function testSearchRoutes(
   getApp: () => Application, 
   getTestContainer: () => DependencyContainer
 ) {
-  describe('Search Routes', () => {
+  describe('Search Routes Integration', () => {
+    let mockSearchNounUseCase: jest.Mocked<SearchNounUseCase>;
+
+    beforeEach(() => {
+      const testContainer = getTestContainer();
+
+      const mockExecuteMethod = jest.fn();
+
+      mockSearchNounUseCase = {
+        execute: mockExecuteMethod
+      } as unknown as jest.Mocked<SearchNounUseCase>;
+
+      testContainer.registerInstance(DITokens.SearchNounUseCase, mockSearchNounUseCase);
+    });
+
     it('responds to POST `/search` with search results', async () => {
       const app = getApp();
-      const testContainer = getTestContainer();
 
       const mockResult: SearchResultDTO<NounDTO>[] = [
         {
@@ -23,10 +36,7 @@ export default function testSearchRoutes(
         } satisfies SearchResultDTO<NounDTO>
       ];
 
-      const searchNounUseCase: jest.Mocked<SearchNounUseCase> =  testContainer
-        .resolve(DITokens.SearchNounUseCase);
-
-      searchNounUseCase.execute.mockReturnValue(mockResult);
+      mockSearchNounUseCase.execute.mockReturnValue(mockResult);
 
       const res = await request(app)
         .post('/search')

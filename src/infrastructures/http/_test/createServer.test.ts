@@ -5,7 +5,6 @@ import { DependencyContainer, container } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 import RootHandler from '../../../interfaces/http/api/root/handler';
 import SearchNounHandler from '../../../interfaces/http/api/search/handler';
-import SearchNounUseCase from '../../../applications/use-cases/noun/search/SearchNounUseCase';
 import createServer from '../createServer';
 import ApiResponse from '../../../interfaces/http/types/ApiResponse';
 import LogMW from '../../../interfaces/http/middlewares/log/LogMW';
@@ -15,7 +14,6 @@ import testRootRoutes from './parts/root.routes.test.part';
 import testSearchRoutes from './parts/search.routes.test.part';
 
 describe('createServer', () => {
-  let mockSearchNounUseCase: jest.Mocked<SearchNounUseCase>;
   let testContainer: DependencyContainer;
   let app: ReturnType<typeof createServer>;
 
@@ -26,14 +24,6 @@ describe('createServer', () => {
     testContainer.register(DITokens.SearchHandler, { useClass: SearchHandler });
     testContainer.register(DITokens.LoggerService, { useClass: WinstonLoggerService });
     testContainer.register(DITokens.LogMW, { useClass: LogMW });
-
-    const mockExecuteMethod = jest.fn();
-
-    mockSearchNounUseCase = {
-      execute: mockExecuteMethod
-    } as unknown as jest.Mocked<SearchNounUseCase>;
-
-    testContainer.registerInstance(DITokens.SearchNounUseCase, mockSearchNounUseCase);
 
     app = createServer(testContainer);
   });
@@ -56,13 +46,13 @@ describe('createServer', () => {
   });
 
   it('responds with 500 when unhandled error is thrown by handler', async () => {
-    const BadSearchNounHandler: Pick<SearchNounHandler, 'searchNoun'> = {
+    const badSearchNounHandler: Pick<SearchNounHandler, 'searchNoun'> = {
       searchNoun: (_req: Request, _res: Response) => {
         throw new Error('Unexpected failure');
       }
     } as unknown as SearchNounHandler;
 
-    testContainer.registerInstance(DITokens.SearchHandler, BadSearchNounHandler);
+    testContainer.registerInstance(DITokens.SearchHandler, badSearchNounHandler);
 
     app = createServer(testContainer);
 
