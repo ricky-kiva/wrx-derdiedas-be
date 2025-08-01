@@ -26,7 +26,7 @@ export default function testSearchRoutes(
         } satisfies SearchResultDTO<NounDTO>
       ];
 
-      mocks.seachNounUC.execute.mockReturnValue(mockResult);
+      mocks.usecases.seachNounUC.execute.mockReturnValue(mockResult);
 
       const res = await request(app)
         .post('/search')
