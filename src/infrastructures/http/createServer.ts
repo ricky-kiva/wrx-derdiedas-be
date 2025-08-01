@@ -8,6 +8,7 @@ import helmet from '../../interfaces/http/middlewares/helmet/helmet';
 import notFound from '../../interfaces/http/middlewares/notFound/notFound';
 import { DITokens } from '../../commons/DITokens';
 import LogMW from '../../interfaces/http/middlewares/log/LogMW';
+import authRoutes from '../../interfaces/http/api/auth/routes';
 
 const createServer = (c: DependencyContainer) => {
   const app = express();
@@ -22,6 +23,7 @@ const createServer = (c: DependencyContainer) => {
 
   app.use('/', rootRoutes(c));
   app.use('/search', searchNounRoutes(c));
+  app.use('/auth', authRoutes(c));
 
   app.use(notFound);
   app.use(logger.logError);
