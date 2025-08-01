@@ -8,6 +8,7 @@ import testRootRoutes from './parts/routes/root.routes.test.part';
 import testNotFoundMW from './parts/middlewares/notFound.mw.test.part';
 import containerRegistersTestPart from './parts/container/registers.container.test.part';
 import testErrorPreResponseMW from './parts/middlewares/errorPreResponse.mw.test.part';
+import testAuthRoutes from './parts/routes/auth.routes.test.part';
 
 describe('createServer', () => {
   let testContainer: DependencyContainer;
@@ -20,7 +21,6 @@ describe('createServer', () => {
     containerRegistersTestPart(testContainer);
 
     testMocks = useCasesMockTestPart(testContainer);
-
     app = createServer(testContainer);
   });
 
@@ -30,6 +30,8 @@ describe('createServer', () => {
 
   testRootRoutes(() => app);
   testSearchRoutes(() => app, () => testMocks);
+  testAuthRoutes(() => app, () => testMocks);
+
   testNotFoundMW(() => app);
   testErrorPreResponseMW(() => testContainer);
 });
