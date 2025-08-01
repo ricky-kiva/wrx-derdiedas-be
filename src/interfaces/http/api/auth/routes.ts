@@ -5,7 +5,7 @@ import { DITokens } from '../../../../commons/DITokens';
 import zodParser from '../../middlewares/validation/zodParser';
 import { LoginPayloadSchema, LogoutPayloadSchema, RefreshTokenPayloadSchema } from '../../adapters/validation/auth/schemas';
 
-export default function loginRoutes(c: DependencyContainer): Router {
+export default function authRoutes(c: DependencyContainer): Router {
   const r = Router();
   const h = c.resolve<AuthHandler>(DITokens.AuthHandler);
 
