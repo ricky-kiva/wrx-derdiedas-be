@@ -1,18 +1,14 @@
 import 'reflect-metadata';
 
 import WordNormalizerService from '../../../../applications/ports/search/WordNormalizerService';
-import { NounRaw } from '../../../../domains/noun/entities/Noun';
-import NounRepository from '../../../../domains/noun/NounRepository';
 import FuseNounSearchService from '../FuseNounSearchService';
 import { ServiceUnavailableError } from '../../../../commons/exceptions';
+import NounQueryRepository from '../../../../applications/use-cases/noun/NounQueryRepository';
+import { NounRawDTO } from '../../../../applications/use-cases/noun/dto/NounRawDTO';
+import NounsCollectionTestHelper from '../../../../../tests/NounsCollectionTestHelper';
 
 describe('FuseNounSearchService', () => {
-  const nouns: NounRaw[] = [
-    { id: 'noun-101', word: 'Katze', gender: 'feminine', normalized: 'katze', meanings: [] },
-    { id: 'noun-102', word: 'Ei', gender: 'neuter', normalized: 'ei', meanings: [] },
-    { id: 'noun-103', word: 'Schauspieler', gender: 'masculine', normalized: 'schauspieler', meanings: [] },
-    { id: 'noun-104', word: 'Schauspielerin', gender: 'feminine', normalized: 'schauspielerin', meanings: [] }
-  ];
+  const rawNouns: NounRawDTO[] = NounsCollectionTestHelper.getPersistedNouns();
 
   const mockNormalizeMethod: jest.Mock<string, [string]> = jest
     .fn(word => word.toLowerCase());
@@ -21,16 +17,16 @@ describe('FuseNounSearchService', () => {
     normalize: mockNormalizeMethod
   };
 
-  const mockGetRawAllMethod = jest.fn().mockResolvedValue(nouns);
+  const mockGetRawAllMethod = jest.fn().mockResolvedValue(rawNouns);
 
-  const mockNounRepository: NounRepository = {
+  const mockNounQueryRepository: NounQueryRepository = {
     getRawAll: mockGetRawAllMethod
-  } as Partial<jest.Mocked<NounRepository>> as NounRepository;
+  } as Partial<jest.Mocked<NounQueryRepository>> as NounQueryRepository;
 
   let fuseNounSearchService: FuseNounSearchService;
 
   beforeEach(() => {
-    fuseNounSearchService = new FuseNounSearchService(mockNormalizer, mockNounRepository);
+    fuseNounSearchService = new FuseNounSearchService(mockNormalizer, mockNounQueryRepository);
     
     jest.spyOn(console, 'log').mockImplementation(() => {});
     jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
@@ -46,13 +42,13 @@ describe('FuseNounSearchService', () => {
 
       const similarNormalizedChar = 'e';
 
-      if (nouns.every(n => n.normalized.includes(similarNormalizedChar))) {
+      if (rawNouns.every(n => n.normalized.includes(similarNormalizedChar))) {
         const fuseServiceProperty = fuseNounSearchService['fuse'];
         const fuseIndexedItems = fuseServiceProperty?.search(similarNormalizedChar);
 
         expect(mockGetRawAllMethod).toHaveBeenCalled();
         expect(fuseServiceProperty).toBeDefined();
-        expect(fuseIndexedItems?.length).toBe(nouns.length);
+        expect(fuseIndexedItems?.length).toBe(rawNouns.length);
       } else {
         throw new Error('Not all normalized words contain "e". Aborting tests.');
       }
@@ -77,7 +73,7 @@ describe('FuseNounSearchService', () => {
     });
 
     it('should throw if it is called before init.', () => {
-      const uninitializedService = new FuseNounSearchService(mockNormalizer, mockNounRepository);
+      const uninitializedService = new FuseNounSearchService(mockNormalizer, mockNounQueryRepository);
       expect(() => uninitializedService.search('Schauspieler')).toThrow(ServiceUnavailableError);
     });
   });

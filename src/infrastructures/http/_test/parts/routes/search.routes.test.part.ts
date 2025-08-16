@@ -4,6 +4,7 @@ import SearchResultDTO from '../../../../../applications/use-cases/noun/search/d
 import { NounDTO } from '../../../../../applications/use-cases/noun/search/dto/NounDTO';
 import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
 import { TestPartMocks } from '../mocks/useCases.mock.test.part';
+import NounsCollectionTestHelper from '../../../../../../tests/NounsCollectionTestHelper';
 
 export default function testSearchRoutes(
   getApp: () => Application,
@@ -19,9 +20,11 @@ export default function testSearchRoutes(
     });
 
     it('responds to POST `/search` with search results', async () => {
+      const nouns = NounsCollectionTestHelper.getNouns();
+
       const mockResult: SearchResultDTO<NounDTO>[] = [
         {
-          item: { id: 'noun-101', word: 'Katze', gender: 'feminine', meanings: [] } satisfies NounDTO,
+          item: nouns[0] satisfies NounDTO,
           score: 0.01
         } satisfies SearchResultDTO<NounDTO>
       ];

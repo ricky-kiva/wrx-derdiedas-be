@@ -1,14 +1,14 @@
-import { NounRaw } from '../../../../../domains/noun/entities/Noun';
 import SearchResultDTO from '../dto/SearchResultDTO';
 import NounSearchService from '../../../../ports/search/NounSearchService';
 import SearchNounUseCase from '../SearchNounUseCase';
+import { NounRawDTO } from '../../dto/NounRawDTO';
 
 describe('SearchNounUseCase', () => {
   it('should orchestrate the action correctly', () => {
     const input = 'Schauspieler';
     const limit = 2;
 
-    const mockResult: SearchResultDTO<NounRaw>[] = [
+    const mockResult: SearchResultDTO<NounRawDTO>[] = [
       {
         item: {
           id: 'noun-101',

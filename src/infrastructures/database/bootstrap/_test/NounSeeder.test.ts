@@ -18,7 +18,7 @@ describe('NounSeeder', () => {
 
   const mockSeedData: SeedData = {
     metadata: NounSetMetadataCollectionTestHelper.getPayload(),
-    data: NounsCollectionTestHelper.getPayloadArray()
+    data: NounsCollectionTestHelper.getPayloads()
   };
 
   const mockInsertManyMethod = jest.fn().mockResolvedValue(undefined);

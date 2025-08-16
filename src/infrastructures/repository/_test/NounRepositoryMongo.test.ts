@@ -5,19 +5,18 @@ import NounsCollectionTestHelper from '../../../../tests/NounsCollectionTestHelp
 import connectToDatabase from '../../database/mongoose/connection';
 import NounRepositoryMongo from '../NounRepositoryMongo';
 import NounModel from '../../database/mongoose/models/NounModel';
-import { NounRaw } from '../../../domains/noun/entities/Noun';
 import NounRepository from '../../../domains/noun/NounRepository';
 import WordNormalizerServiceImpl from '../../adapters/search/WordNormalizerServiceImpl';
 
 jest.spyOn(console, 'log').mockImplementation(() => {});
 
 describe('NounRepositoryMongo', () => {
-  let repository: NounRepository;
+  let nounRepository: NounRepository;
   const wordNormalizerService = new WordNormalizerServiceImpl();
 
   beforeAll(async () => {
     await connectToDatabase();
-    repository = new NounRepositoryMongo(NounModel, wordNormalizerService);
+    nounRepository = new NounRepositoryMongo(NounModel, wordNormalizerService);
   });
 
   afterEach(async () => {
@@ -29,34 +28,37 @@ describe('NounRepositoryMongo', () => {
     jest.restoreAllMocks();
   });
 
-  describe('getRawAll', () => {
-    it('should return all nouns in raw format with correct fields', async () => {
-      const normalizedNounPayloads: Partial<NounRaw>[] = [
-        { word: 'Katze', gender: 'feminine', normalized: 'katze' },
-        { word: 'Ei', gender: 'neuter', normalized: 'ei' },
-      ];
+  describe('insertMany', () => {
+    it('should insert multiple nouns to into the database', async () => {
+      const payloads = NounsCollectionTestHelper.getPayloads();
 
-      for (const noun of normalizedNounPayloads) {
-        await NounsCollectionTestHelper.addNoun(noun);
-      }
+      await nounRepository.insertMany(payloads);
 
-      const results = await repository.getRawAll();
-      
-      for (const result of results) {
-        expect(result).toHaveProperty('id');
-        expect(result).toHaveProperty('word');
-        expect(result).toHaveProperty('gender');
-        expect(result).toHaveProperty('normalized');
-      }
+      const found = await NounModel.find({});
 
-      expect(results.map(r => r.word).sort())
-        .toEqual(['Ei', 'Katze']);
+      expect(found).toHaveLength(payloads.length);
+      expect(found.map(n => n.word).sort())
+        .toEqual(payloads.map(p => p.word).sort());
     });
+  });
 
-    it('should return empty array when no nouns exist', async () => {      
-      const rawResults = await repository.getRawAll();
+  describe('deleteAll', () => {
+    it('should delete all nouns from the database', async () => {
+      const payloads = NounsCollectionTestHelper.getPayloads().slice(0, 2);
 
-      expect(rawResults).toEqual([]);
+      await Promise.all(
+        payloads.map(p => NounsCollectionTestHelper.addNoun(p))
+      );
+
+      const foundBefore = await NounModel.find({});
+
+      expect(foundBefore).toHaveLength(payloads.length);
+
+      await nounRepository.deleteAll();
+
+      const foundAfter = await NounModel.find({});
+
+      expect(foundAfter).toHaveLength(0);
     });
   });
 });
