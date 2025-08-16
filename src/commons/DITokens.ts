@@ -7,6 +7,7 @@ export const DITokens = {
   LogMW: Symbol.for("LogMW"),
   LogoutUseCase: Symbol.for("LogoutUseCase"),
   NounModel: Symbol.for("NounModel"),
+  NounQueryRepository: Symbol.for("NounQueryRepository"),
   NounRepository: Symbol.for("NounRepository"),
   NounSearchService: Symbol.for("NounSearchService"),
   NounSeeder: Symbol.for("NounSeeder"),

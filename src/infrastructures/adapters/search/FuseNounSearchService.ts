@@ -5,17 +5,17 @@ import SearchResultDTO from '../../../applications/use-cases/noun/search/dto/Sea
 import NounSearchService from '../../../applications/ports/search/NounSearchService';
 import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
-import NounRepository from '../../../domains/noun/NounRepository';
 import { NounDTO } from '../../../applications/use-cases/noun/search/dto/NounDTO';
-import { NounRaw } from '../../../domains/noun/entities/Noun';
+import NounQueryRepository from '../../../applications/use-cases/noun/NounQueryRepository';
+import { NounRawDTO } from '../../../applications/use-cases/noun/dto/NounRawDTO';
 
 @injectable()
 export default class FuseNounSearchService implements NounSearchService {
-  private fuse?: Fuse<NounRaw>;
+  private fuse?: Fuse<NounRawDTO>;
 
   constructor(
     @inject(DITokens.WordNormalizerService) private readonly normalizer: WordNormalizerService,
-    @inject(DITokens.NounRepository) private readonly nounRepository: NounRepository
+    @inject(DITokens.NounQueryRepository) private readonly nounQueryRepository: NounQueryRepository
   ) {}
 
   async initialize(): Promise<void> {
@@ -27,7 +27,7 @@ export default class FuseNounSearchService implements NounSearchService {
       process.stdout.write(`\rSearch Service initialization: Fetching nouns.. | ${fetchElapsed}s`);
     }, 1000);
 
-    const searchable: NounRaw[] = await this.nounRepository.getRawAll();
+    const searchable: NounRawDTO[] = await this.nounQueryRepository.getRawAll();
 
     clearInterval(updateFetchInterval);
 
@@ -38,7 +38,7 @@ export default class FuseNounSearchService implements NounSearchService {
     const totalData = searchable.length;
     const indexStartTime = Date.now();
 
-    this.fuse = new Fuse<NounRaw>([], {
+    this.fuse = new Fuse<NounRawDTO>([], {
       keys: ['normalized'],
       threshold: 0.3,
       distance: 100,
