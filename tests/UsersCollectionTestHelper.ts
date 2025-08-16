@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import User, { UserPayload } from '../src/domains/user/entities/User';
 import UserMapper from '../src/infrastructures/database/mongoose/mappers/UserMapper';
 import UserModel from '../src/infrastructures/database/mongoose/models/UserModel';

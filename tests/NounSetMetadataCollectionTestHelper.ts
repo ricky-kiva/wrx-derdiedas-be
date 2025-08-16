@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { NounSetMetadataPayload } from '../src/domains/nounSetMetadata/entities/NounSetMetadata';
 import NounSetMetadataModel from '../src/infrastructures/database/mongoose/models/NounSetMetadataModel';
 

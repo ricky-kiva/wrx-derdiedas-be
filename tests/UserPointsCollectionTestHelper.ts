@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import mongoose from 'mongoose';
 import { UserPointPayload } from '../src/domains/userPoint/entities/UserPoint';
 import UserPointModel from '../src/infrastructures/database/mongoose/models/UserPointModel';
