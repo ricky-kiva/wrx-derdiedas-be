@@ -1,27 +1,35 @@
 /* istanbul ignore file */
 
-import { NounPayload, NounRaw } from '../src/domains/noun/entities/Noun';
+import { NounRawDTO } from '../src/applications/use-cases/noun/dto/NounRawDTO';
+import Noun, { NounPayload } from '../src/domains/noun/entities/Noun';
 import NounModel from '../src/infrastructures/database/mongoose/models/NounModel';
 
-const nounPayloads: NounPayload[] = [
-  { word: 'Katze', gender: 'feminine', meanings: [] },
-  { word: 'Ei', gender: 'neuter', meanings: [] },
-  { word: 'Schauspieler', gender: 'masculine', meanings: [] },
-  { word: 'Schauspielerin', gender: 'feminine', meanings: [] }
+const persistedNouns: NounRawDTO[] = [
+  { id: 'noun-101', word: 'Katze', gender: 'feminine', normalized: 'katze', meanings: [] },
+  { id: 'noun-102', word: 'Ei', gender: 'neuter', normalized: 'ei', meanings: [] },
+  { id: 'noun-103', word: 'Schauspieler', gender: 'masculine', normalized: 'schauspieler', meanings: [] },
+  { id: 'noun-104', word: 'Schauspielerin', gender: 'feminine', normalized: 'schauspielerin', meanings: [] }
 ];
 
+const nouns: Noun[] = persistedNouns.map(({ normalized: _, ...rest }) => rest);
+const nounPayloads: NounPayload[] = persistedNouns.map(({ id: _, ...rest }) => rest);
+
 const NounsCollectionTestHelper = {
-  getPayload(): NounPayload {
-    return nounPayloads[0];
+  getPayloads(): NounPayload[] {
+    return nounPayloads.map(p => ({ ...p }));
   },
-  getPayloadArray(): NounPayload[] {
-    return nounPayloads;
+  getPersistedNouns(): NounRawDTO[] {
+    return persistedNouns.map(n => ({ ...n }));
+  },
+  getNouns(): Noun[] {
+    return { ...nouns };
   },
   async addNoun(
-    payload: Partial<NounRaw> = { 
+    payload: Partial<NounRawDTO> = { 
       word: 'Katze', 
       gender: 'feminine',
-      normalized: 'katze' 
+      normalized: 'katze', 
+      meanings: []
     }
   ): Promise<void> {
     await NounModel.create(payload);
