@@ -12,7 +12,7 @@ jest.spyOn(console, 'log').mockImplementation(() => {});
 describe('UserRepositoryMongo', () => {
   let userRepositoryMongo: UserRepositoryMongo;
 
-  const payload = UsersCollectionTestHelper.getPayload();
+  const payload = UsersCollectionTestHelper.getPayloads()[0];
 
   beforeAll(async() => {
     await connectToDatabase();

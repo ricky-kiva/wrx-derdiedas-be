@@ -12,16 +12,11 @@ jest.spyOn(console, 'log').mockImplementation(() => {});
 
 describe('UserPointRepositoryMongo', () => {
   let userPointRepositoryMongo: UserPointRepositoryMongo;
-  let userId: string;
 
   beforeAll(async () => {
     await connectToDatabase();
 
     userPointRepositoryMongo = new UserPointRepositoryMongo(UserPointModel);
-
-    const testUser = await UsersCollectionTestHelper.addUser();
-
-    userId = testUser.id;
   });
 
   afterEach(async () => {
@@ -37,28 +32,30 @@ describe('UserPointRepositoryMongo', () => {
 
   describe('save', () => {
     it('should create new UserPoint if not exists', async () => {
-      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayload({ userId });
+      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
 
       await userPointRepositoryMongo.save(payload);
 
-      const doc = await UserPointModel.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+      const doc = await UserPointModel.findOne({ userId: new mongoose.Types.ObjectId(payload.userId) });
 
       expect(doc).not.toBeNull();
       expect(doc?.point).toBe(payload.point);
     });
 
     it('should update existing UserPoint document', async () => {
-      const initialPayload: UserPointPayload = UserPointsCollectionTestHelper
-        .getPayload({ userId, point: 50, updatedAt: new Date(Date.now() - 3600)});
+      const initialPayload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
 
       await userPointRepositoryMongo.save(initialPayload);
 
-      const updatedPayload: UserPointPayload = UserPointsCollectionTestHelper
-        .getPayload({ userId, point: 150, updatedAt: new Date() });
+      const updatedPayload: UserPointPayload = {
+        userId: initialPayload.userId,
+        point: 150,
+        updatedAt: new Date()
+      };
 
       await userPointRepositoryMongo.save(updatedPayload);
 
-      const doc = await UserPointModel.findOne({ userId: new mongoose.Types.ObjectId(userId) });
+      const doc = await UserPointModel.findOne({ userId: updatedPayload.userId });
 
       expect(doc).not.toBeNull();
       expect(doc?.point).toBe(updatedPayload.point);
@@ -76,7 +73,7 @@ describe('UserPointRepositoryMongo', () => {
     });
 
     it('should return a UserPoint if found', async () => {
-      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayload({ userId });
+      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
 
       await UserPointModel.create(payload);
 
