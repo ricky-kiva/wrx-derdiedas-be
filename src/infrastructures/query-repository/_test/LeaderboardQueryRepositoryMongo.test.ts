@@ -6,7 +6,7 @@ import UserPointsCollectionTestHelper from '../../../../tests/UserPointsCollecti
 import UsersCollectionTestHelper from '../../../../tests/UsersCollectionTestHelper';
 import mongoose from 'mongoose';
 import UserModel from '../../database/mongoose/models/UserModel';
-import { LeaderboardEntryDTO } from '../../../applications/use-cases/leaderboard/dto/LeaderboardEntryDTO';
+import { LeaderboardEntryDTO } from '../../../applications/query-repositories/leaderboard/dto/LeaderboardEntryDTO';
 
 jest.spyOn(console, 'log').mockImplementation(() => {});
 
