@@ -3,8 +3,8 @@ import 'reflect-metadata';
 import WordNormalizerService from '../../../../applications/ports/search/WordNormalizerService';
 import FuseNounSearchService from '../FuseNounSearchService';
 import { ServiceUnavailableError } from '../../../../commons/exceptions';
-import NounQueryRepository from '../../../../applications/use-cases/noun/NounQueryRepository';
-import { NounRawDTO } from '../../../../applications/use-cases/noun/dto/NounRawDTO';
+import NounQueryRepository from '../../../../applications/query-repositories/noun/NounQueryRepository';
+import { NounRawDTO } from '../../../../applications/query-repositories/noun/dto/NounRawDTO';
 import NounsCollectionTestHelper from '../../../../../tests/NounsCollectionTestHelper';
 
 describe('FuseNounSearchService', () => {

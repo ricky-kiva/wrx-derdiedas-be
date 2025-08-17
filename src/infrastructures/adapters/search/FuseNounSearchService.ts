@@ -6,8 +6,8 @@ import NounSearchService from '../../../applications/ports/search/NounSearchServ
 import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 import { NounDTO } from '../../../applications/use-cases/noun/search/dto/NounDTO';
-import NounQueryRepository from '../../../applications/use-cases/noun/NounQueryRepository';
-import { NounRawDTO } from '../../../applications/use-cases/noun/dto/NounRawDTO';
+import NounQueryRepository from '../../../applications/query-repositories/noun/NounQueryRepository';
+import { NounRawDTO } from '../../../applications/query-repositories/noun/dto/NounRawDTO';
 
 @injectable()
 export default class FuseNounSearchService implements NounSearchService {

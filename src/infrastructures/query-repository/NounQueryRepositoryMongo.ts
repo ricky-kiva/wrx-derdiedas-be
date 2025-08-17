@@ -1,9 +1,9 @@
 import { inject, injectable } from 'tsyringe';
-import NounQueryRepository from '../../applications/use-cases/noun/NounQueryRepository';
+import NounQueryRepository from '../../applications/query-repositories/noun/NounQueryRepository';
 import { DITokens } from '../../commons/DITokens';
 import { Model } from 'mongoose';
 import { NounDocument } from '../database/mongoose/models/NounModel';
-import { NounRawDTO } from '../../applications/use-cases/noun/dto/NounRawDTO';
+import { NounRawDTO } from '../../applications/query-repositories/noun/dto/NounRawDTO';
 
 @injectable()
 export default class NounQueryRepositoryMongo implements NounQueryRepository {

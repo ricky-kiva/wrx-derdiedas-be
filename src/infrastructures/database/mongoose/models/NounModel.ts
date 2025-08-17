@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 import { GENDER_VALUES } from '../../../../domains/noun/entities/Noun';
-import { NounRawDTO } from '../../../../applications/use-cases/noun/dto/NounRawDTO';
+import { NounRawDTO } from '../../../../applications/query-repositories/noun/dto/NounRawDTO';
 
 export interface NounDocument extends Document, Omit<NounRawDTO, 'id'> {
   _id: Types.ObjectId,

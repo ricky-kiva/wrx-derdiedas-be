@@ -2,11 +2,11 @@ import 'reflect-metadata';
 
 import connectToDatabase from '../../database/mongoose/connection';
 import NounQueryRepositoryMongo from '../NounQueryRepositoryMongo';
-import NounQueryRepository from '../../../applications/use-cases/noun/NounQueryRepository';
+import NounQueryRepository from '../../../applications/query-repositories/noun/NounQueryRepository';
 import NounModel from '../../database/mongoose/models/NounModel';
 import NounsCollectionTestHelper from '../../../../tests/NounsCollectionTestHelper';
 import mongoose from 'mongoose';
-import { NounRawDTO } from '../../../applications/use-cases/noun/dto/NounRawDTO';
+import { NounRawDTO } from '../../../applications/query-repositories/noun/dto/NounRawDTO';
 
 jest.spyOn(console, 'log').mockImplementation(() => {});
 

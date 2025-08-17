@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { NounRawDTO } from '../src/applications/use-cases/noun/dto/NounRawDTO';
+import { NounRawDTO } from '../src/applications/query-repositories/noun/dto/NounRawDTO';
 import Noun, { NounPayload } from '../src/domains/noun/entities/Noun';
 import NounModel from '../src/infrastructures/database/mongoose/models/NounModel';
 

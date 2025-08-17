@@ -1,7 +1,7 @@
 import SearchResultDTO from '../dto/SearchResultDTO';
 import NounSearchService from '../../../../ports/search/NounSearchService';
 import SearchNounUseCase from '../SearchNounUseCase';
-import { NounRawDTO } from '../../dto/NounRawDTO';
+import { NounRawDTO } from '../../../../query-repositories/noun/dto/NounRawDTO';
 
 describe('SearchNounUseCase', () => {
   it('should orchestrate the action correctly', () => {
