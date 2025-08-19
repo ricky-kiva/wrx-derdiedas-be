@@ -23,6 +23,7 @@ import RefreshTokenUseCase from '../applications/use-cases/auth/token/refresh-to
 import AuthHandler from '../interfaces/http/api/auth/handler';
 import SearchHandler from '../interfaces/http/api/search/handler';
 import NounQueryRepositoryMongo from './query-repository/NounQueryRepositoryMongo';
+import { LeaderboardQueryRepositoryMongo } from './query-repository/LeaderboardQueryRepositoryMongo';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -37,6 +38,7 @@ container.registerInstance(DITokens.NounSetMetadataModel, NounSetMetadataModel);
 container.registerInstance(DITokens.RedisClient, redisClient);
 
 container.registerSingleton(DITokens.GoogleAuthService, GoogleAuthServiceImpl);
+container.registerSingleton(DITokens.LeaderboardQueryRepository, LeaderboardQueryRepositoryMongo);
 container.registerSingleton(DITokens.LoggerService, WinstonLoggerService);
 container.registerSingleton(DITokens.LogMW, LogMW);
 container.registerSingleton(DITokens.NounQueryRepository, NounQueryRepositoryMongo);
