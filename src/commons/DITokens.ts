@@ -2,6 +2,7 @@ export const DITokens = {
   AuthHandler: Symbol.for("AuthHandler"),
   GoogleAuthService: Symbol.for("GoogleAuthService"),
   IssueTokenUseCase: Symbol.for("IssueTokenUseCase"),
+  LeaderboardQueryRepository: Symbol.for("LeaderboardQueryRepository"),
   LoggerService: Symbol.for("LoggerService"),
   LoginUseCase: Symbol.for("LoginUseCase"),
   LogMW: Symbol.for("LogMW"),
