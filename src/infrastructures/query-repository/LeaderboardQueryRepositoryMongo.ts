@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 import { PagedDTO } from '../../applications/shared/dto/PagedDTO';
-import { LeaderboardEntryDTO } from '../../applications/query-repositories/leaderboard/dto/LeaderboardEntryDTO';
+import { LeaderboardEntryDTO } from '../../applications/use-cases/leaderboard/get/dto/LeaderboardEntryDTO';
 import LeaderboardQueryRepository from '../../applications/query-repositories/leaderboard/LeaderboardQueryRepository';
 import { DITokens } from '../../commons/DITokens';
 import { inject, injectable } from 'tsyringe';
