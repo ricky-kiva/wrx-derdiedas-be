@@ -4,21 +4,29 @@ import SearchNounUseCase from '../../../../../applications/use-cases/noun/search
 import LoginUseCase from '../../../../../applications/use-cases/auth/LoginUseCase';
 import LogoutUseCase from '../../../../../applications/use-cases/auth/LogoutUseCase';
 import RefreshTokenUseCase from '../../../../../applications/use-cases/auth/token/refresh-token/RefreshTokenUseCase';
+import GetLeaderboardUseCase from '../../../../../applications/use-cases/leaderboard/get/GetLeaderboardUseCase';
 
 export interface TestPartMocks {
   usecases: {
+    getLeaderboardUC: jest.Mocked<GetLeaderboardUseCase>,
     loginUC: jest.Mocked<LoginUseCase>,
     logoutUC: jest.Mocked<LogoutUseCase>,
     refreshTokenUC: jest.Mocked<RefreshTokenUseCase>,
     seachNounUC: jest.Mocked<SearchNounUseCase>
   },
   methods: {
-    logoutUC: { execute: jest.Mock }
+    logoutUC: { execute: jest.Mock },
+    getLeaderboardUC: { execute: jest.Mock }
   }
 }
 
 export default function useCasesMockTestPart(testContainer: DependencyContainer): TestPartMocks { 
   const logoutUCExecute = jest.fn();
+  const getLeaderboardUCExecute = jest.fn();
+
+  const getLeaderboardUC = {
+    execute: getLeaderboardUCExecute
+  } as unknown as jest.Mocked<GetLeaderboardUseCase>;
   
   const loginUC = {
     execute: jest.fn()
@@ -36,15 +44,17 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
     execute: jest.fn()
   } as unknown as jest.Mocked<SearchNounUseCase>;
 
+  testContainer.registerInstance(DITokens.GetLeaderboardUseCase, getLeaderboardUC);
   testContainer.registerInstance(DITokens.SearchNounUseCase, seachNounUC);
   testContainer.registerInstance(DITokens.LoginUseCase, loginUC);
   testContainer.registerInstance(DITokens.LogoutUseCase, logoutUC);
   testContainer.registerInstance(DITokens.RefreshTokenUseCase, refreshTokenUC);
 
   return { 
-    usecases: { loginUC, logoutUC, refreshTokenUC, seachNounUC },
+    usecases: { getLeaderboardUC, loginUC, logoutUC, refreshTokenUC, seachNounUC },
     methods: {
-      logoutUC: { execute: logoutUCExecute }
+      logoutUC: { execute: logoutUCExecute },
+      getLeaderboardUC: { execute: getLeaderboardUCExecute }
     }
   };
 }

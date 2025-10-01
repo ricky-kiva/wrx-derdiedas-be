@@ -24,10 +24,15 @@ import AuthHandler from '../interfaces/http/api/auth/handler';
 import SearchHandler from '../interfaces/http/api/search/handler';
 import NounQueryRepositoryMongo from './query-repository/NounQueryRepositoryMongo';
 import { LeaderboardQueryRepositoryMongo } from './query-repository/LeaderboardQueryRepositoryMongo';
+import GetLeaderboardUseCase from '../applications/use-cases/leaderboard/get/GetLeaderboardUseCase';
+import UserModel from './database/mongoose/models/UserModel';
+import LeaderboardHandler from '../interfaces/http/api/leaderboard/handler';
+import UserPointModel from './database/mongoose/models/UserPointModel';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
 container.registerSingleton(DITokens.AuthHandler, AuthHandler);
+container.registerSingleton(DITokens.LeaderboardHandler, LeaderboardHandler);
 container.registerSingleton(DITokens.RootHandler, RootHandler);
 container.registerSingleton(DITokens.SearchHandler, SearchHandler);
 container.registerSingleton(DITokens.TokenManager, JwtTokenManager);
@@ -35,6 +40,8 @@ container.registerSingleton(DITokens.WordNormalizerService, WordNormalizerServic
 
 container.registerInstance(DITokens.NounModel, NounModel);
 container.registerInstance(DITokens.NounSetMetadataModel, NounSetMetadataModel);
+container.registerInstance(DITokens.UserModel, UserModel);
+container.registerInstance(DITokens.UserPointModel, UserPointModel);
 container.registerInstance(DITokens.RedisClient, redisClient);
 
 container.registerSingleton(DITokens.GoogleAuthService, GoogleAuthServiceImpl);
@@ -47,6 +54,12 @@ container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
 container.registerSingleton(DITokens.NounSetMetadataRepository, NounSetMetadataRepositoryMongo);
 container.registerSingleton(DITokens.TokenStore, RedisTokenStore);
 container.registerSingleton(DITokens.UserRepository, UserRepositoryMongo);
+
+container.register(DITokens.GetLeaderboardUseCase, {
+  useFactory: (c) => new GetLeaderboardUseCase(
+    c.resolve(DITokens.LeaderboardQueryRepository)
+  )
+});
 
 container.register(DITokens.IssueTokenUseCase, {
   useFactory: (c) => new IssueTokenUseCase(
@@ -79,6 +92,12 @@ container.register(DITokens.RefreshTokenUseCase, {
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
     c.resolve(DITokens.NounSearchService)
+  )
+});
+
+container.register(DITokens.TokenStore, {
+  useFactory: (c) => new RedisTokenStore(
+    c.resolve(DITokens.RedisClient)
   )
 });
 
