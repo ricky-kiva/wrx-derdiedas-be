@@ -13,13 +13,13 @@ describe('LoginUseCase', () => {
 
   const mockGoogleUser: GoogleUserDTO = {
     googleId: 'g-123',
+    name: mockUserName,
     email: 'r@gmail.com',
     picture: 'http://some-url/p.jpg'
   };
 
   const mockCreatedUser: User = { 
-    id: 'user-123', 
-    name: mockUserName, 
+    id: 'user-123',
     ...mockGoogleUser 
   };
 
@@ -64,11 +64,11 @@ describe('LoginUseCase', () => {
     mockUserRepository.create.mockResolvedValue(mockCreatedUser);
     mockIssueTokenUseCase.execute.mockResolvedValue(mockIssuedToken);
 
-    const result = await loginUseCase.execute(fakeGoogleIdToken, mockUserName);
+    const result = await loginUseCase.execute(fakeGoogleIdToken);
 
     expect(mockGASverifyIdToken).toHaveBeenCalledWith(fakeGoogleIdToken);
     expect(mockURfindByGoogleId).toHaveBeenCalledWith(mockGoogleUser.googleId);
-    expect(mockURCreate).toHaveBeenCalledWith({ name: mockUserName, ...mockGoogleUser });
+    expect(mockURCreate).toHaveBeenCalledWith(mockGoogleUser);
     expect(mockITUCExecute).toHaveBeenCalledWith({ userId: mockCreatedUser.id } satisfies JwtPayloadDTO);
     expect(result).toEqual(mockIssuedToken);
   });
@@ -78,7 +78,7 @@ describe('LoginUseCase', () => {
     mockUserRepository.findByGoogleId.mockResolvedValue(mockCreatedUser);
     mockIssueTokenUseCase.execute.mockResolvedValue(mockIssuedToken);
 
-    const result = await loginUseCase.execute(fakeGoogleIdToken, mockUserName);
+    const result = await loginUseCase.execute(fakeGoogleIdToken);
 
     expect(mockURCreate).not.toHaveBeenCalled();
     expect(mockITUCExecute).toHaveBeenCalledWith({ userId: mockCreatedUser.id } satisfies JwtPayloadDTO);

@@ -31,8 +31,7 @@ export default function testAuthRoutes(
       const res = await request(app)
         .post(`${baseRoute}/login`)
         .send({ 
-          googleIdToken: 'mock.google.token', 
-          name: 'Rickyslash' 
+          googleIdToken: 'mock.google.token'
         } satisfies LoginPayload);
 
       expect(res.status).toBe(200);

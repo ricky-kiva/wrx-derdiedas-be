@@ -10,9 +10,9 @@ export default class LoginUseCase {
     private readonly userRepository: UserRepository
   ) {}
 
-  async execute(googleIdToken: string, name: string): Promise<JwtTokenDTO> {
+  async execute(googleIdToken: string): Promise<JwtTokenDTO> {
     const googleUser = await this.googleAuthService.verifyIdToken(googleIdToken);
-    const { googleId, email, picture } = googleUser;
+    const { googleId, email, name, picture } = googleUser;
 
     let user = await this.userRepository.findByGoogleId(googleId);
 

@@ -6,7 +6,7 @@ export interface UserDocument extends Document, UserPayload {
 }
 
 const userSchema = new Schema<UserDocument>({
-  name: { type: String, required: true, unique: true, maxlength: 30 },
+  name: { type: String, required: true, minlength: 1, maxlength: 30 },
   googleId: { type: String, required: false, unique: true },
   email: { type: String, required: false },
   picture: { type: String, required: false }

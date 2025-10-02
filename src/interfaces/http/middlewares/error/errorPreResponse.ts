@@ -2,6 +2,7 @@ import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { ClientError, ServerError } from '../../../../commons/exceptions';
 import ApiResponse from '../../types/ApiResponse';
 import { ZodError } from 'zod';
+import config from '../../../../commons/config';
 
 const errorPreResponse: ErrorRequestHandler = (
   err: Error, 
@@ -9,7 +10,7 @@ const errorPreResponse: ErrorRequestHandler = (
   res: Response, 
   _next: NextFunction
 ) => {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === config.env.development) {
     console.error(err.stack);
   }
 

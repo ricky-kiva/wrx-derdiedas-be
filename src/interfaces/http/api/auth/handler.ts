@@ -23,9 +23,9 @@ export default class AuthHandler {
   }
 
   async login(req: Request<unknown, unknown, LoginPayload>, res: Response) {
-    const { googleIdToken, name } = req.body;
+    const { googleIdToken } = req.body;
 
-    const token = await this.loginUseCase.execute(googleIdToken, name);
+    const token = await this.loginUseCase.execute(googleIdToken);
 
     res.json({
       status: 'success',

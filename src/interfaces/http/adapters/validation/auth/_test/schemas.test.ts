@@ -31,25 +31,6 @@ describe('Auth Schemas', () => {
 
       expect(result.success).toBe(false);
     });
-
-    it('should fail if name is empty', () => {
-      const payload = {
-        googleIdToken: 'google.id.token',
-        name: ''
-      };
-
-      const result = LoginPayloadSchema.safeParse(payload);
-
-      expect(result.success).toBe(false);
-    });
-
-    it('should fail if name is missing', () => {
-      const payload = { googleIdToken: 'google.id.token' };
-
-      const result = LoginPayloadSchema.safeParse(payload);
-      
-      expect(result.success).toBe(false);
-    });
   });
 
   describe('LogoutPayloadSchema', () => {
