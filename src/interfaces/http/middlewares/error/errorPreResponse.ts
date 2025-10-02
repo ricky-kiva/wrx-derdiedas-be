@@ -9,6 +9,10 @@ const errorPreResponse: ErrorRequestHandler = (
   res: Response, 
   _next: NextFunction
 ) => {
+  if (process.env.NODE_ENV !== 'production') {
+    console.error(err.stack);
+  }
+
   if (err instanceof ZodError) {
     res.status(400).json({
       status: 'fail',
