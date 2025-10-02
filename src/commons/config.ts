@@ -2,7 +2,11 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { Config } from './types';
 
-const envFile = (process.env.NODE_ENV === 'test')
+const ENV_PRODUCTION = 'production';
+const ENV_DEVELOPMENT = 'development';
+const ENV_TEST = 'test';
+
+const envFile = (process.env.NODE_ENV === ENV_TEST)
   ? '.test.env'
   : '.env';
 
@@ -18,7 +22,7 @@ function getEnvVar(key: string, fallback?: string): string {
 const config: Config = {
   app: {
     port: Number(process.env.PORT),
-    host: process.env.NODE_ENV !== 'production'
+    host: process.env.NODE_ENV !== ENV_PRODUCTION
       ? 'localhost'
       : '0.0.0.0'
   },
@@ -37,6 +41,11 @@ const config: Config = {
       database: Number(getEnvVar('REDIS_DATABASE')),
       password: getEnvVar('REDIS_PASSWORD')
     }
+  },
+  env: {
+    production: ENV_PRODUCTION,
+    development: ENV_DEVELOPMENT,
+    test: ENV_TEST
   },
   jwt: {
     accessToken: {

@@ -35,9 +35,16 @@ interface JwtConfig {
   refreshToken: JwtTokenConfig
 }
 
+interface EnvConfig {
+  production: string,
+  development: string,
+  test: string
+}
+
 export interface Config {
   app: AppConfig,
   clientId: ClientIdConfig,
   database: DatabaseConfig,
-  jwt: JwtConfig
+  env: EnvConfig,
+  jwt: JwtConfig,
 }
