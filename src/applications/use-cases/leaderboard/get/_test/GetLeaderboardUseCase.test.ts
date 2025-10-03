@@ -2,19 +2,19 @@ import LeaderboardQueryRepository from '../../../../query-repositories/leaderboa
 import { PagedDTO } from '../../../../shared/dto/PagedDTO';
 import { LeaderboardEntryDTO } from '../dto/LeaderboardEntryDTO';
 import GetLeaderboardUseCase from '../GetLeaderboardUseCase';
+import GetLeaderboardQ from '../query/GetLeaderboardQ';
 
 describe('GetLeaderboardUseCase', () => {
   it('should return leaderboard with given limit', async () => {
-    const page = 2;
-    const limit = 10;
-
+    const q: GetLeaderboardQ = { page: 2, limit: 10 };
+    
     const mockResult: PagedDTO<LeaderboardEntryDTO> = {
       items: [
         { name: 'Rickyslash', point: 100, updatedAt: new Date() },
         { name: 'Rezy', point: 150, updatedAt: new Date() }
       ],
-      page,
-      totalPages: 5
+      page: q.page,
+      totalPages: Math.ceil(q.limit/q.page)
     };
 
     const mockGLeaderboardMethod = jest.fn().mockResolvedValue(mockResult);
@@ -25,9 +25,9 @@ describe('GetLeaderboardUseCase', () => {
 
     const getLeaderboardUC = new GetLeaderboardUseCase(mockLeaderboardQRepo);
 
-    const result = await getLeaderboardUC.execute(page, limit);
+    const result = await getLeaderboardUC.execute(q);
 
     expect(result).toStrictEqual(mockResult);
-    expect(mockGLeaderboardMethod).toHaveBeenCalledWith(page, limit);
+    expect(mockGLeaderboardMethod).toHaveBeenCalledWith(q.page, q.limit);
   });
 });

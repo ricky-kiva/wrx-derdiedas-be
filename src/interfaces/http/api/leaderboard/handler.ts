@@ -15,9 +15,9 @@ export default class LeaderboardHandler {
   }
 
   async getLeaderboard(req: Request, res: Response) {
-    const { page, limit } = GetLeaderboardQuerySchema.parse(req.query);
+    const q = GetLeaderboardQuerySchema.parse(req.query);
 
-    const leaderboard = await this.getLeaderboardUseCase.execute(page, limit);
+    const leaderboard = await this.getLeaderboardUseCase.execute(q);
 
     res.json({
       status: 'success',

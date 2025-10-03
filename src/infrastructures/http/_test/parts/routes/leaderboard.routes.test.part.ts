@@ -3,6 +3,7 @@ import request from 'supertest';
 import { LeaderboardEntryDTO } from '../../../../../applications/use-cases/leaderboard/get/dto/LeaderboardEntryDTO';
 import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
 import { TestPartMocks } from '../mocks/useCases.mock.test.part';
+import GetLeaderboardQ from '../../../../../applications/use-cases/leaderboard/get/query/GetLeaderboardQ';
 
 export default function testLeaderboardRoutes(
   getApp: () => Application,
@@ -73,7 +74,8 @@ export default function testLeaderboardRoutes(
       const res = await request(app).get('/leaderboard');
 
       expect(res.status).toBe(200);
-      expect(mocks.methods.getLeaderboardUC.execute).toHaveBeenCalledWith(1, 25);
+      expect(mocks.methods.getLeaderboardUC.execute)
+        .toHaveBeenCalledWith({ page: 1, limit: 25 } satisfies GetLeaderboardQ);
       expect(res.body).toEqual({
         status: 'success',
         data: {
