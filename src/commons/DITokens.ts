@@ -21,10 +21,12 @@ export const DITokens = {
   RootHandler: Symbol.for("RootHandler"),
   SearchHandler: Symbol.for("SearchHandler"),
   SearchNounUseCase: Symbol.for("SearchNounUseCase"),
+  SubmitPointUseCase: Symbol.for("SubmitPointUseCase"),
   TokenManager: Symbol.for("TokenManager"),
   TokenStore: Symbol.for("TokenStore"),
   UserModel: Symbol.for("UserModel"),
   UserPointModel: Symbol.for("UserPointModel"),
+  UserPointRepository: Symbol.for("UserPointRepository"),
   UserRepository: Symbol.for("UserRepository"),
   WordNormalizerService: Symbol.for("WordNormalizerService")
 };

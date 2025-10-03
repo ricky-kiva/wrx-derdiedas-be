@@ -28,6 +28,8 @@ import GetLeaderboardUseCase from '../applications/use-cases/leaderboard/get/Get
 import UserModel from './database/mongoose/models/UserModel';
 import LeaderboardHandler from '../interfaces/http/api/leaderboard/handler';
 import UserPointModel from './database/mongoose/models/UserPointModel';
+import SubmitPointUseCase from '../applications/use-cases/leaderboard/submit-point/SubmitPointUseCase';
+import UserPointRepositoryMongo from './repository/UserPointRepositoryMongo';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -53,6 +55,7 @@ container.registerSingleton(DITokens.NounRepository, NounRepositoryMongo);
 container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
 container.registerSingleton(DITokens.NounSetMetadataRepository, NounSetMetadataRepositoryMongo);
 container.registerSingleton(DITokens.TokenStore, RedisTokenStore);
+container.registerSingleton(DITokens.UserPointRepository, UserPointRepositoryMongo);
 container.registerSingleton(DITokens.UserRepository, UserRepositoryMongo);
 
 container.register(DITokens.GetLeaderboardUseCase, {
@@ -92,6 +95,13 @@ container.register(DITokens.RefreshTokenUseCase, {
 container.register(DITokens.SearchNounUseCase, {
   useFactory: (c) => new SearchNounUseCase(
     c.resolve(DITokens.NounSearchService)
+  )
+});
+
+container.register(DITokens.SubmitPointUseCase, {
+  useFactory: (c) => new SubmitPointUseCase(
+    c.resolve(DITokens.UserRepository),
+    c.resolve(DITokens.UserPointRepository)
   )
 });
 

@@ -8,6 +8,7 @@ export default function leaderboardRoutes(c: DependencyContainer): Router {
   const h = c.resolve<LeaderboardHandler>(DITokens.LeaderboardHandler);
 
   r.get('/', async (req, res) => h.getLeaderboard(req, res));
+  r.post('/', async (req, res) => h.submitPoint(req, res));
 
   return r;
 }

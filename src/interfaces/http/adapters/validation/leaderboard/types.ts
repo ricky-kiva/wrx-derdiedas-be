@@ -1,4 +1,5 @@
 import z from 'zod';
-import { GetLeaderboardQuerySchema } from './schemas';
+import { GetLeaderboardQPSchema, SubmitPointPayloadSchema } from './schemas';
 
-export type GetLeaderboardQuery = z.infer<typeof GetLeaderboardQuerySchema>;
+export type GetLeaderboardQuery = z.infer<typeof GetLeaderboardQPSchema>;
+export type SubmitPointPayload = z.infer<typeof SubmitPointPayloadSchema>;

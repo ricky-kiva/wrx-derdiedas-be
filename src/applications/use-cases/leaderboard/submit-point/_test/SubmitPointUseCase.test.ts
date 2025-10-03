@@ -1,7 +1,7 @@
 import UserRepository from '../../../../../domains/user/UserRepository';
 import { UserPointPayload } from '../../../../../domains/userPoint/entities/UserPoint';
 import UserPointRepository from '../../../../../domains/userPoint/UserPointRepository';
-import SubmitPointRequestDTO from '../dto/SubmitPointRequestDTO';
+import SubmitPointCmd from '../command/SubmitPointCmd';
 import SubmitPointUseCase from '../SubmitPointUseCase';
 
 describe('SubmitPointUseCase', () => {
@@ -34,7 +34,7 @@ describe('SubmitPointUseCase', () => {
 
     mockUserRepository.findById.mockResolvedValue(fakeRegisteredUser);
 
-    const useCaseReq: SubmitPointRequestDTO = {
+    const useCaseReq: SubmitPointCmd = {
       point,
       updatedAt: fixedDate,
       userId: fakeRegisteredUser.id
@@ -57,7 +57,7 @@ describe('SubmitPointUseCase', () => {
 
     mockUserRepository.create.mockResolvedValue(fakeAnonymUser);
 
-    const useCaseReq: SubmitPointRequestDTO = {
+    const useCaseReq: SubmitPointCmd = {
       point,
       updatedAt: fixedDate,
       name: fakeAnonymUser.name
