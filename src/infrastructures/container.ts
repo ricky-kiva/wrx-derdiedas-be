@@ -30,6 +30,7 @@ import LeaderboardHandler from '../interfaces/http/api/leaderboard/handler';
 import UserPointModel from './database/mongoose/models/UserPointModel';
 import SubmitPointUseCase from '../applications/use-cases/leaderboard/submit-point/SubmitPointUseCase';
 import UserPointRepositoryMongo from './repository/UserPointRepositoryMongo';
+import GameRepositoryRedis from './repository/GameRepositoryRedis';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -46,6 +47,7 @@ container.registerInstance(DITokens.UserModel, UserModel);
 container.registerInstance(DITokens.UserPointModel, UserPointModel);
 container.registerInstance(DITokens.RedisClient, redisClient);
 
+container.registerSingleton(DITokens.GameRepository, GameRepositoryRedis);
 container.registerSingleton(DITokens.GoogleAuthService, GoogleAuthServiceImpl);
 container.registerSingleton(DITokens.LeaderboardQueryRepository, LeaderboardQueryRepositoryMongo);
 container.registerSingleton(DITokens.LoggerService, WinstonLoggerService);

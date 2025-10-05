@@ -1,5 +1,6 @@
 export const DITokens = {
   AuthHandler: Symbol.for("AuthHandler"),
+  GameRepository: Symbol.for("GameRepository"),
   GetLeaderboardUseCase: Symbol.for("GetLeaderboardUseCase"),
   GoogleAuthService: Symbol.for("GoogleAuthService"),
   IssueTokenUseCase: Symbol.for("IssueTokenUseCase"),
