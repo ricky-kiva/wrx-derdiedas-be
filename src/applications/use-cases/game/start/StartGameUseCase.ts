@@ -9,16 +9,18 @@ export default class StartGameUseCase {
     private readonly nounQueryRepository: NounQueryRepository
   ) {}
 
-  async execute(userId: string): Promise<StartGameDTO> {
+  async execute(userId?: string): Promise<StartGameDTO> {
     const gameId = `game-${crypto.randomUUID()}`;
 
     const randomNouns = await this.nounQueryRepository.getRandom();
 
-    await this.gameRepository.save({
+    const game = new Game({
       userId,
       id: gameId,
       nouns: randomNouns,
-    } satisfies Game);
+    });
+
+    await this.gameRepository.save(game);
 
     return {
       gameId,
