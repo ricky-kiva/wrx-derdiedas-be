@@ -1,7 +1,7 @@
 import { Application } from 'express';
 import request from 'supertest';
 import SearchResultDTO from '../../../../../applications/use-cases/noun/search/dto/SearchResultDTO';
-import { NounDTO } from '../../../../../applications/use-cases/noun/search/dto/NounDTO';
+import { NounDTO } from '../../../../../applications/shared/dto/noun/NounDTO';
 import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
 import { TestPartMocks } from '../mocks/useCases.mock.test.part';
 import NounsCollectionTestHelper from '../../../../../../tests/NounsCollectionTestHelper';

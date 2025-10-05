@@ -1,4 +1,4 @@
-import { NounDTO } from './dto/NounDTO';
+import { NounDTO } from '../../../shared/dto/noun/NounDTO';
 import SearchResultDTO from './dto/SearchResultDTO';
 import NounSearchService from '../../../ports/search/NounSearchService';
 

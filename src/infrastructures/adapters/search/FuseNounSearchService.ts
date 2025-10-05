@@ -5,7 +5,7 @@ import SearchResultDTO from '../../../applications/use-cases/noun/search/dto/Sea
 import NounSearchService from '../../../applications/ports/search/NounSearchService';
 import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
-import { NounDTO } from '../../../applications/use-cases/noun/search/dto/NounDTO';
+import { NounDTO } from '../../../applications/shared/dto/noun/NounDTO';
 import NounQueryRepository from '../../../applications/query-repositories/noun/NounQueryRepository';
 import { NounRawDTO } from '../../../applications/query-repositories/noun/dto/NounRawDTO';
 

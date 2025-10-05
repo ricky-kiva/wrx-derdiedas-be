@@ -1,4 +1,4 @@
-import { NounDTO } from '../../use-cases/noun/search/dto/NounDTO';
+import { NounDTO } from '../../shared/dto/noun/NounDTO';
 import SearchResultDTO from '../../use-cases/noun/search/dto/SearchResultDTO';
 
 export default interface NounSearchService {
