@@ -10,17 +10,16 @@ describe('Game', () => {
     const game = new Game({
       id: 'game-123',
       userId: 'user-456',
-      words: words.map(({ id, word, gender }) => ({ id, word, gender })),
+      nouns: words.map(({ id, gender }) => ({ id, gender })),
     } satisfies GamePayload);
 
     expect(game.id).toBe('game-123');
     expect(game.userId).toBe('user-456');
-    expect(game.words).toHaveLength(words.length);
-    expect(game.words[0]).toEqual({
-      word: words[0].word,
+    expect(game.nouns).toHaveLength(words.length);
+    expect(game.nouns[0]).toEqual({
       gender: words[0].gender,
       id: words[0].id
-    } satisfies Omit<Noun, 'meanings'>);
+    } satisfies Omit<Noun, 'meanings' | 'word'>);
   });
 
   it('should allow creating a game without userId (anonymous)', () => {
@@ -29,10 +28,9 @@ describe('Game', () => {
 
     const game = new Game({
       id: 'user-123',
-      words: words.map(({ id, word, gender }) => ({ id, word, gender })),
+      nouns: words.map(({ id, gender }) => ({ id, gender })),
     } satisfies GamePayload);
 
     expect(game.userId).toBeUndefined();
-    expect(game.words[0].word).toBe(game.words[0].word);
   });
 });
