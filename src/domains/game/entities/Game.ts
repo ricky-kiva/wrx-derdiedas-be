@@ -3,7 +3,7 @@ import Noun from '../../noun/entities/Noun';
 export interface GamePayload {
   id: string;
   userId?: string;
-  words: Omit<Noun, 'meanings'>[],
+  nouns: Omit<Noun, ('meanings' | 'word')>[],
 }
 
 export type GameParams = GamePayload;
@@ -11,11 +11,11 @@ export type GameParams = GamePayload;
 export default class Game {
   public readonly id: string;
   public readonly userId?: string;
-  public readonly words: Omit<Noun, 'meanings'>[];
+  public readonly nouns: Omit<Noun, ('meanings' | 'word')>[];
   
   constructor(params: GamePayload) {
     this.id = params.id;
     this.userId = params.userId;
-    this.words = params.words;
+    this.nouns = params.nouns;
   }
 }
