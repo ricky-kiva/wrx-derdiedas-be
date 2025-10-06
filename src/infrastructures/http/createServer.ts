@@ -10,6 +10,7 @@ import { DITokens } from '../../commons/DITokens';
 import LogMW from '../../interfaces/http/middlewares/log/LogMW';
 import authRoutes from '../../interfaces/http/api/auth/routes';
 import leaderboardRoutes from '../../interfaces/http/api/leaderboard/routes';
+import gameRoutes from '../../interfaces/http/api/game/route';
 
 const createServer = (c: DependencyContainer) => {
   const app = express();
@@ -24,6 +25,7 @@ const createServer = (c: DependencyContainer) => {
 
   app.use('/', rootRoutes(c));
   app.use('/auth', authRoutes(c));
+  app.use('/game', gameRoutes(c));
   app.use('/leaderboard', leaderboardRoutes(c));
   app.use('/search', searchNounRoutes(c));
 
