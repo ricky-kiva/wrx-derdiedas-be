@@ -10,6 +10,7 @@ import containerRegistersTestPart from './parts/container/registers.container.te
 import testErrorPreResponseMW from './parts/middlewares/errorPreResponse.mw.test.part';
 import testAuthRoutes from './parts/routes/auth.routes.test.part';
 import testLeaderboardRoutes from './parts/routes/leaderboard.routes.test.part';
+import testGameRoutes from './parts/routes/game.routes.test.part';
 
 describe('createServer', () => {
   let testContainer: DependencyContainer;
@@ -29,9 +30,10 @@ describe('createServer', () => {
     testContainer.clearInstances();
   });
 
-  testRootRoutes(() => app);
   testAuthRoutes(() => app, () => testMocks);
+  testGameRoutes(() => app, () => testMocks);
   testLeaderboardRoutes(() => app, () => testMocks);
+  testRootRoutes(() => app);
   testSearchRoutes(() => app, () => testMocks);
 
   testNotFoundMW(() => app);
