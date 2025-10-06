@@ -6,6 +6,7 @@ import ApiResponse from '../../types/ApiResponse';
 import { LoginPayload, LogoutPayload, RefreshTokenPayload } from '../../adapters/validation/auth/types';
 import LogoutUseCase from '../../../../applications/use-cases/auth/LogoutUseCase';
 import RefreshTokenUseCase from '../../../../applications/use-cases/auth/token/refresh-token/RefreshTokenUseCase';
+import { LoginPayloadSchema, LogoutPayloadSchema, RefreshTokenPayloadSchema } from '../../adapters/validation/auth/schemas';
 
 @injectable()
 export default class AuthHandler {
@@ -23,7 +24,7 @@ export default class AuthHandler {
   }
 
   async login(req: Request<unknown, unknown, LoginPayload>, res: Response) {
-    const { googleIdToken } = req.body;
+    const { googleIdToken } = LoginPayloadSchema.parse(req.body);
 
     const token = await this.loginUseCase.execute(googleIdToken);
 
@@ -34,7 +35,7 @@ export default class AuthHandler {
   }
 
   async logout(req: Request<unknown, unknown, LogoutPayload>, res: Response) {
-    const { id: userId } = req.body;
+    const { id: userId } = LogoutPayloadSchema.parse(req.body);
 
     await this.logoutUseCase.execute(userId);
 
@@ -42,7 +43,7 @@ export default class AuthHandler {
   }
 
   async refreshToken(req: Request<unknown, unknown, RefreshTokenPayload>, res: Response) {
-    const { refreshToken } = req.body;
+    const { refreshToken } = RefreshTokenPayloadSchema.parse(req.body);
 
     const newTokens = await this.refreshTokenUseCase.execute(refreshToken);
 

@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { SearchNounPayload } from '../../adapters/validation/search/types';
 import { DITokens } from '../../../../commons/DITokens';
 import ApiResponse from '../../types/ApiResponse';
+import { SearchNounPayloadSchema } from '../../adapters/validation/search/schemas';
 
 @injectable()
 export default class SearchHandler {
@@ -15,7 +16,7 @@ export default class SearchHandler {
   }
 
   searchNoun(req: Request<unknown, unknown, SearchNounPayload>, res: Response) {
-    const { word } = req.body;
+    const { word } = SearchNounPayloadSchema.parse(req.body);
     
     const results = this.searchNounUseCase.execute(word);
 
