@@ -31,10 +31,12 @@ import UserPointModel from './database/mongoose/models/UserPointModel';
 import SubmitPointUseCase from '../applications/use-cases/leaderboard/submit-point/SubmitPointUseCase';
 import UserPointRepositoryMongo from './repository/UserPointRepositoryMongo';
 import GameRepositoryRedis from './repository/GameRepositoryRedis';
+import HeaderUtils from '../interfaces/http/shared/HeaderUtils';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
 container.registerSingleton(DITokens.AuthHandler, AuthHandler);
+container.registerSingleton(DITokens.HeaderUtils, HeaderUtils);
 container.registerSingleton(DITokens.LeaderboardHandler, LeaderboardHandler);
 container.registerSingleton(DITokens.RootHandler, RootHandler);
 container.registerSingleton(DITokens.SearchHandler, SearchHandler);
