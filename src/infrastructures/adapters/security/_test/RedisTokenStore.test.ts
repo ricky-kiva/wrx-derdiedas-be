@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { AuthenticationError } from '../../../../commons/exceptions';
 import RedisTokenStore from '../RedisTokenStore';
 import redisClient from '../../../database/redis/redisClient';

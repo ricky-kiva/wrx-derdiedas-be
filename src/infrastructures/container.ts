@@ -53,6 +53,7 @@ container.registerInstance(DITokens.UserModel, UserModel);
 container.registerInstance(DITokens.UserPointModel, UserPointModel);
 container.registerInstance(DITokens.RedisClient, redisClient);
 
+container.registerSingleton(DITokens.GameRepository, GameRepositoryRedis);
 container.registerSingleton(DITokens.GoogleAuthService, GoogleAuthServiceImpl);
 container.registerSingleton(DITokens.LeaderboardQueryRepository, LeaderboardQueryRepositoryMongo);
 container.registerSingleton(DITokens.LoggerService, WinstonLoggerService);
@@ -61,14 +62,9 @@ container.registerSingleton(DITokens.NounQueryRepository, NounQueryRepositoryMon
 container.registerSingleton(DITokens.NounRepository, NounRepositoryMongo);
 container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
 container.registerSingleton(DITokens.NounSetMetadataRepository, NounSetMetadataRepositoryMongo);
+container.registerSingleton(DITokens.TokenStore, RedisTokenStore);
 container.registerSingleton(DITokens.UserPointRepository, UserPointRepositoryMongo);
 container.registerSingleton(DITokens.UserRepository, UserRepositoryMongo);
-
-container.register(DITokens.GameRepository, {
-  useFactory: (c) => new GameRepositoryRedis(
-    c.resolve(DITokens.RedisClient)
-  )
-});
 
 container.register(DITokens.GetLeaderboardUseCase, {
   useFactory: (c) => new GetLeaderboardUseCase(
@@ -127,12 +123,6 @@ container.register(DITokens.SubmitPointUseCase, {
   useFactory: (c) => new SubmitPointUseCase(
     c.resolve(DITokens.UserRepository),
     c.resolve(DITokens.UserPointRepository)
-  )
-});
-
-container.register(DITokens.TokenStore, {
-  useFactory: (c) => new RedisTokenStore(
-    c.resolve(DITokens.RedisClient)
   )
 });
 
