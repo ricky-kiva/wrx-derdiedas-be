@@ -11,16 +11,18 @@ export default class SubmitAnswerUseCase {
 
     if (!game) throw new NotFoundError("Game expired or not found");
 
-    const questionNoun = game.nouns.find((n) => n.id === cmd.nounId);
+    const questionIndex = game.nouns.findIndex((n) => n.id === cmd.nounId);
 
-    if (!questionNoun) throw new InvariantError("Noun is not found in the game set");
+    if (questionIndex === -1) throw new InvariantError("Noun is not found in the game set");
 
+    const questionNoun = game.nouns[questionIndex];
     const isCorrect = (questionNoun.gender === cmd.answer);
 
-    if (isCorrect) {
-      game.incrementPoints();
-      await this.gameRepository.save(game);
-    }
+    game.nouns.splice(questionIndex, 1);
+
+    if (isCorrect) game.incrementPoints();
+
+    await this.gameRepository.save(game);
 
     return {
       correct: isCorrect,
