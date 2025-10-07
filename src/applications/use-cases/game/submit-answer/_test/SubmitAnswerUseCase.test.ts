@@ -9,7 +9,7 @@ import SubmitAnswerUseCase from '../SubmitAnswerUseCase';
 
 describe('SubmitAnswerUseCase', () => {
   const INCREMENT_POINTS = 10;
-  
+
   let mockGameRepository: GameRepository;
   let submitAnswerUseCase: SubmitAnswerUseCase;
   let mockGame: Game;
@@ -36,24 +36,29 @@ describe('SubmitAnswerUseCase', () => {
     submitAnswerUseCase = new SubmitAnswerUseCase(mockGameRepository);
   });
 
-  it('should mark answer correct and increment points', async () => {
+  it('should mark answer correct, increment points, remove noun, and save game', async () => {
+    const targetNoun = mockGame.nouns[0];
+
     const cmd: SubmitAnswerCmd = {
       gameId: mockGame.id,
-      nounId: mockGame.nouns[0].id,
-      answer: mockGame.nouns[0].gender,
+      nounId: targetNoun.id,
+      answer: targetNoun.gender,
     };
 
     const result = await submitAnswerUseCase.execute(cmd);
 
     expect(result.correct).toBe(true);
     expect(result.currentScore).toBe(INCREMENT_POINTS);
+    expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
     expect(mockGRSaveMethod).toHaveBeenCalledWith(mockGame);
   });
 
-  it('should mark answer incorrect and not increment points', async () => {
+  it('should mark answer incorrect, not increment points, remove noun, and save game', async () => {
+    const targetNoun = mockGame.nouns[0];
+
     const cmd: SubmitAnswerCmd = {
       gameId: mockGame.id,
-      nounId: mockGame.nouns[0].id,
+      nounId: targetNoun.id,
       answer: 'neuter' as Gender,
     };
 
@@ -61,7 +66,8 @@ describe('SubmitAnswerUseCase', () => {
 
     expect(result.correct).toBe(false);
     expect(result.currentScore).toBe(0);
-    expect(mockGRSaveMethod).not.toHaveBeenCalled();
+    expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
+    expect(mockGRSaveMethod).toHaveBeenCalledWith(mockGame);
   });
 
   it('should throw NotFoundError if game does not exist', async () => {
