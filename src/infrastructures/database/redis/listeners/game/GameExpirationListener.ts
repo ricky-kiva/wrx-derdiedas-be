@@ -3,6 +3,7 @@ import { DITokens } from '../../../../../commons/DITokens';
 import Redis from 'ioredis';
 import UserPointRepository from '../../../../../domains/userPoint/UserPointRepository';
 import GameRepository from '../../../../../domains/game/GameRepository';
+import config from '../../../../../commons/config';
 
 @injectable()
 export default class GameExpirationListener {
@@ -15,7 +16,11 @@ export default class GameExpirationListener {
   async start () {
     await this.redis.config('SET', 'notify-keyspace-events', 'Ex');
 
-    const sub = new Redis();
+    const sub = new Redis({
+      db: config.database.redis.database,
+      password: config.database.redis.password
+    });
+
     const channel = '__keyevent@0__:expired';
 
     await sub.subscribe(channel);
