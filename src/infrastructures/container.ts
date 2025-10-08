@@ -35,10 +35,12 @@ import HeaderUtils from '../interfaces/http/shared/HeaderUtils';
 import GameHandler from '../interfaces/http/api/game/handler';
 import StartGameUseCase from '../applications/use-cases/game/start/StartGameUseCase';
 import SubmitAnswerUseCase from '../applications/use-cases/game/submit-answer/SubmitAnswerUseCase';
+import GameExpirationListener from './database/redis/listeners/game/GameExpirationListener';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
 container.registerSingleton(DITokens.AuthHandler, AuthHandler);
+container.registerSingleton(DITokens.GameExpirationListener, GameExpirationListener);
 container.registerSingleton(DITokens.GameHandler, GameHandler);
 container.registerSingleton(DITokens.HeaderUtils, HeaderUtils);
 container.registerSingleton(DITokens.LeaderboardHandler, LeaderboardHandler);
