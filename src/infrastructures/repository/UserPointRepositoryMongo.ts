@@ -28,4 +28,34 @@ export default class UserPointRepositoryMongo implements UserPointRepository {
       { upsert: true }
     );
   }
+
+  async increment(userId: string, amount: number=10): Promise<void> {
+    await this.model.updateOne(
+      { userId: new Types.ObjectId(userId) },
+      {
+        $inc: { point: amount },
+        $set: { updatedAt: new Date() }
+      },
+      { upsert: true }
+    );
+  }
+
+  async decrement(userId: string, amount: number=5): Promise<void> {
+    await this.model.updateOne(
+      { userId: new Types.ObjectId(userId) },
+      [
+        {
+          $set: {
+            point: {
+              $max: [
+                { $subtract: ["$point", Math.abs(amount)] }, 0
+              ]
+            },
+            updatedAt: new Date()
+          }
+        }
+      ],
+      { upsert: true }
+    );
+  }
 };
