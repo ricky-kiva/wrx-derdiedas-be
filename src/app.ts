@@ -7,18 +7,21 @@ import NounSearchService from './applications/ports/search/NounSearchService';
 import { DITokens } from './commons/DITokens';
 import connectToDatabase from './infrastructures/database/mongoose/connection';
 import NounSeeder from './infrastructures/database/bootstrap/NounSeeder';
+import GameExpirationListener from './infrastructures/database/redis/listeners/game/GameExpirationListener';
 
 const start = async () => {
   const app = createServer(container);
   const nounSearchService = container.resolve<NounSearchService>(DITokens.NounSearchService);
   const nounSeeder = container.resolve<NounSeeder>(DITokens.NounSeeder);
+  const gameExpirationListener = container.resolve<GameExpirationListener>(DITokens.GameExpirationListener);
 
   const { host, port } = config.app;
 
   await connectToDatabase();
   await nounSeeder.seed();
   await nounSearchService.initialize();
-  
+  await gameExpirationListener.start();
+    
   app.listen(port, host, () => {
     console.log(`Server is starting at http://${host}:${port}`);
   });
