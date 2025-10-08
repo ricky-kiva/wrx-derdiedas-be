@@ -2,9 +2,10 @@ import Redis from 'ioredis';
 import TokenStore from '../../../applications/ports/security/TokenStore';
 import { AuthenticationError } from '../../../commons/exceptions';
 import config from '../../../commons/config';
-import { inject } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 
+@injectable()
 export default class RedisTokenStore implements TokenStore {
   constructor(
     @inject(DITokens.RedisClient) private readonly redis: Redis
