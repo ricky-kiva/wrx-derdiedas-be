@@ -48,6 +48,26 @@ describe('UserRepositoryMongo', () => {
     });
   });
 
+  describe('delete', () => {
+    it('should delete user by id', async () => {
+      const created = await UserModel.create(payload);
+      const existing = await UserModel.findById(created._id);
+
+      expect(existing).not.toBeNull();
+
+      await userRepositoryMongo.delete(created._id.toString());
+
+      const deleted = await UserModel.findById(created._id);
+
+      expect(deleted).toBeNull();
+    });
+
+    it('should not throw if user does not exist', async () => {
+      const nonexistentId = new mongoose.Types.ObjectId().toString();
+      await expect(userRepositoryMongo.delete(nonexistentId)).resolves.not.toThrow();
+    });
+  });
+
   describe('findById', () => {
     it('should find user by Id', async () => {
       const createdDoc = await UserModel.create(payload);
