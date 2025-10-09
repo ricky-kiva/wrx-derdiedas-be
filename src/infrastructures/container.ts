@@ -36,6 +36,8 @@ import GameHandler from '../interfaces/http/api/game/handler';
 import StartGameUseCase from '../applications/use-cases/game/start/StartGameUseCase';
 import SubmitAnswerUseCase from '../applications/use-cases/game/submit-answer/SubmitAnswerUseCase';
 import GameExpirationListener from './database/redis/listeners/game/GameExpirationListener';
+import UserPointQueryRepositoryMongo from './query-repository/UserPointQueryRepositoryMongo';
+import DecayPointsUseCase from '../applications/use-cases/game/decay-points/DecayPointsUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -65,8 +67,17 @@ container.registerSingleton(DITokens.NounRepository, NounRepositoryMongo);
 container.registerSingleton(DITokens.NounSearchService, FuseNounSearchService);
 container.registerSingleton(DITokens.NounSetMetadataRepository, NounSetMetadataRepositoryMongo);
 container.registerSingleton(DITokens.TokenStore, RedisTokenStore);
+container.registerSingleton(DITokens.UserPointQueryRepository, UserPointQueryRepositoryMongo);
 container.registerSingleton(DITokens.UserPointRepository, UserPointRepositoryMongo);
 container.registerSingleton(DITokens.UserRepository, UserRepositoryMongo);
+
+container.register(DITokens.DecayPointsUseCase, {
+  useFactory: (c) => new DecayPointsUseCase(
+    c.resolve(DITokens.UserPointQueryRepository),
+    c.resolve(DITokens.UserPointRepository),
+    c.resolve(DITokens.UserRepository)
+  )
+});
 
 container.register(DITokens.GetLeaderboardUseCase, {
   useFactory: (c) => new GetLeaderboardUseCase(

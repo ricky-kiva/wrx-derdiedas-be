@@ -1,5 +1,6 @@
 export const DITokens = {
   AuthHandler: Symbol.for("AuthHandler"),
+  DecayPointsUseCase: Symbol.for("DecayPointsUseCase"),
   GameExpirationListener: Symbol.for("GameExpirationListener"),
   GameHandler: Symbol.for("GameHandler"),
   GameRepository: Symbol.for("GameRepository"),
@@ -32,6 +33,7 @@ export const DITokens = {
   TokenStore: Symbol.for("TokenStore"),
   UserModel: Symbol.for("UserModel"),
   UserPointModel: Symbol.for("UserPointModel"),
+  UserPointQueryRepository: Symbol.for("UserPointQueryRepository"),
   UserPointRepository: Symbol.for("UserPointRepository"),
   UserRepository: Symbol.for("UserRepository"),
   WordNormalizerService: Symbol.for("WordNormalizerService")
