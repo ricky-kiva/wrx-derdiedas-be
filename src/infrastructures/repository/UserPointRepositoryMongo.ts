@@ -1,10 +1,9 @@
 import { inject, injectable } from 'tsyringe';
 import UserPointRepository from '../../domains/userPoint/UserPointRepository';
-import UserPoint, { UserPointPayload } from '../../domains/userPoint/entities/UserPoint';
+import { UserPointPayload } from '../../domains/userPoint/entities/UserPoint';
 import { DITokens } from '../../commons/DITokens';
 import { Model, Types } from 'mongoose';
 import { UserPointDocument } from '../database/mongoose/models/UserPointModel';
-import UserPointMapper from '../database/mongoose/mappers/UserPointMapper';
 
 @injectable()
 export default class UserPointRepositoryMongo implements UserPointRepository {
@@ -13,12 +12,8 @@ export default class UserPointRepositoryMongo implements UserPointRepository {
     private readonly model: Model<UserPointDocument>
   ) {}
   
-  async findByUserId(userId: string): Promise<UserPoint | null> {
-    const doc = await this.model.findOne({ userId });
-
-    if (!doc) return null;
-
-    return UserPointMapper.toDomain(doc);
+  async deleteByUserId(userId: string): Promise<void> {
+    await this.model.deleteOne({ userId: new Types.ObjectId(userId) });
   }
   
   async save(payload: UserPointPayload): Promise<void> {

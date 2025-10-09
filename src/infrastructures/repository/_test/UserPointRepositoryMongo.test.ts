@@ -63,25 +63,29 @@ describe('UserPointRepositoryMongo', () => {
     });
   });
 
-  describe('findByUserId', () => {
-    it('should return null if user point is not found', async () => {
-      const nonexistentUserId = new mongoose.Types.ObjectId().toString();
-
-      const result = await userPointRepositoryMongo.findByUserId(nonexistentUserId);
-
-      expect(result).toBeNull();
-    });
-
-    it('should return a UserPoint if found', async () => {
+  describe('deleteByUserId', () => {
+    it('should delete the UserPoint document by userId', async () => {
       const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
 
       await UserPointModel.create(payload);
 
-      const result = await userPointRepositoryMongo.findByUserId(payload.userId);
+      const existing = await UserPointModel.findOne({ userId: payload.userId });
 
-      expect(result).not.toBeNull();
-      expect(result?.userId).toBe(payload.userId);
-      expect(result?.point).toBe(payload.point);
+      expect(existing).not.toBeNull();
+
+      await userPointRepositoryMongo.deleteByUserId(payload.userId);
+
+      const deleted = await UserPointModel.findOne({ userId: payload.userId });
+      
+      expect(deleted).toBeNull();
+    });
+
+    it('should not throw if userId does not exist', async () => {
+      const nonexistentUserId = new mongoose.Types.ObjectId().toString();
+
+      await expect(
+        userPointRepositoryMongo.deleteByUserId(nonexistentUserId)
+      ).resolves.not.toThrow();
     });
   });
 });
