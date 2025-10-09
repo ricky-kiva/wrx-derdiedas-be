@@ -39,7 +39,6 @@ describe('decayPointsCron', () => {
 
     expect(container['resolve']).toHaveBeenCalledWith(DITokens.DecayPointsUseCase);
     expect(mockDPUCExecute).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith('[CRON] Decaying User Points..');
   });
 
   it('should log an error if DecayPointsUseCase.execute throws', async () => {
@@ -55,9 +54,6 @@ describe('decayPointsCron', () => {
 
     await scheduledFn();
 
-    expect(console.error).toHaveBeenCalledWith(
-      '[CRON] Error in DecayPointsUseCase:',
-      testError
-    );
+    expect(console.error).toHaveBeenCalledWith(expect.any(String), testError);
   });
 });

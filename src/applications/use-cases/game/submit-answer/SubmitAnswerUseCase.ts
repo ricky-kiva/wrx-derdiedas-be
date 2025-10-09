@@ -1,5 +1,6 @@
 import { InvariantError, NotFoundError } from '../../../../commons/exceptions';
 import GameRepository from '../../../../domains/game/GameRepository';
+import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstancts';
 import { SubmitAnswerCmd } from './command/SubmitAnswerCmd';
 import { SubmitAnswerDTO } from './dto/SubmitAnswerDTO';
 
@@ -20,7 +21,7 @@ export default class SubmitAnswerUseCase {
 
     game.nouns.splice(questionIndex, 1);
 
-    if (isCorrect) game.incrementPoints();
+    if (isCorrect) game.incrementPoints(USER_POINT_CONSTANTS.INCREMENT_POINT);
 
     await this.gameRepository.save(game);
 

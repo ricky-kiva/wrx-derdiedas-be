@@ -4,6 +4,7 @@ import { UserPointPayload } from '../../domains/userPoint/entities/UserPoint';
 import { DITokens } from '../../commons/DITokens';
 import { Model, Types } from 'mongoose';
 import { UserPointDocument } from '../database/mongoose/models/UserPointModel';
+import { USER_POINT_CONSTANTS } from '../../domains/userPoint/constants/userPointConstancts';
 
 @injectable()
 export default class UserPointRepositoryMongo implements UserPointRepository {
@@ -24,7 +25,7 @@ export default class UserPointRepositoryMongo implements UserPointRepository {
     );
   }
 
-  async increment(userId: string, amount: number=10): Promise<void> {
+  async increment(userId: string, amount: number=USER_POINT_CONSTANTS.INCREMENT_POINT): Promise<void> {
     await this.model.updateOne(
       { userId: new Types.ObjectId(userId) },
       {
@@ -35,7 +36,7 @@ export default class UserPointRepositoryMongo implements UserPointRepository {
     );
   }
 
-  async decrement(userId: string, amount: number=5): Promise<void> {
+  async decrement(userId: string, amount: number=USER_POINT_CONSTANTS.DECREMENT_POINT): Promise<void> {
     await this.model.updateOne(
       { userId: new Types.ObjectId(userId) },
       [

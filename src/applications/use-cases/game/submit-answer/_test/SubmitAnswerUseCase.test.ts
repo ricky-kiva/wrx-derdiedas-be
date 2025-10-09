@@ -4,12 +4,11 @@ import { NotFoundError } from '../../../../../commons/exceptions/client/NotFound
 import Game from '../../../../../domains/game/entities/Game';
 import GameRepository from '../../../../../domains/game/GameRepository';
 import { Gender } from '../../../../../domains/noun/entities/Noun';
+import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstancts';
 import { SubmitAnswerCmd } from '../command/SubmitAnswerCmd';
 import SubmitAnswerUseCase from '../SubmitAnswerUseCase';
 
 describe('SubmitAnswerUseCase', () => {
-  const INCREMENT_POINTS = 10;
-
   let mockGameRepository: GameRepository;
   let submitAnswerUseCase: SubmitAnswerUseCase;
   let mockGame: Game;
@@ -48,7 +47,7 @@ describe('SubmitAnswerUseCase', () => {
     const result = await submitAnswerUseCase.execute(cmd);
 
     expect(result.correct).toBe(true);
-    expect(result.currentScore).toBe(INCREMENT_POINTS);
+    expect(result.currentScore).toBe(USER_POINT_CONSTANTS.INCREMENT_POINT);
     expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
     expect(mockGRSaveMethod).toHaveBeenCalledWith(mockGame);
   });

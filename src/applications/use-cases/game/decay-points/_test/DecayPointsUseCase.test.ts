@@ -131,7 +131,7 @@ describe('DecayPointsUseCase', () => {
 
     const userPoint = {
       userId: 'user-890',
-      point: 10,
+      point: USER_POINT_CONSTANTS.INCREMENT_POINT,
       updatedAt: thresholdDate,
     };
 

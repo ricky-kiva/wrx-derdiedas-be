@@ -5,6 +5,7 @@ import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
 import { TestPartMocks } from '../mocks/useCases.mock.test.part';
 import GetLeaderboardQ from '../../../../../applications/use-cases/leaderboard/get/query/GetLeaderboardQ';
 import SubmitPointCmd from '../../../../../applications/use-cases/leaderboard/submit-point/command/SubmitPointCmd';
+import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstancts';
 
 export default function testLeaderboardRoutes(
   getApp: () => Application,
@@ -99,7 +100,7 @@ export default function testLeaderboardRoutes(
       it('responds with 200 and userId for anonymous submission', async () => {
         const payload: SubmitPointCmd = {
           name: 'A Ricky',
-          point: 10,
+          point: USER_POINT_CONSTANTS.INCREMENT_POINT,
           updatedAt: new Date()
         };
 
@@ -122,7 +123,7 @@ export default function testLeaderboardRoutes(
       it('responds with 200 and userId for authenticated user', async () => {
         const payload: SubmitPointCmd = {
           userId: 'user-123',
-          point: 10,
+          point: USER_POINT_CONSTANTS.INCREMENT_POINT,
           updatedAt: new Date()
         };
 
@@ -143,7 +144,7 @@ export default function testLeaderboardRoutes(
       });
 
       it('responds with 400 for invalid payload', async () => {
-        const invalidPayload = { point: 10 };
+        const invalidPayload = { point: USER_POINT_CONSTANTS.INCREMENT_POINT };
 
         const res = await request(app)
           .post(BASE_URL)

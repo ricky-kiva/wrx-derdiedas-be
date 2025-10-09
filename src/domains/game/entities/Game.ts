@@ -22,7 +22,7 @@ export default class Game {
     this.points = params.points ?? 0;
   }
 
-  incrementPoints(amount: number=10) {
+  incrementPoints(amount: number) {
     this.points += amount;
   }
 }
