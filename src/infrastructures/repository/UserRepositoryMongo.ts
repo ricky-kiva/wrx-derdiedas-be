@@ -17,6 +17,10 @@ export default class UserRepositoryMongo implements UserRepository {
     return UserMapper.toDomain(doc);
   }
 
+  async delete(id: string): Promise<void> {
+    await this.model.findByIdAndDelete(id);
+  }
+
   async findById(id: string): Promise<User | null> {
     const doc = await this.model.findById(id);
     
