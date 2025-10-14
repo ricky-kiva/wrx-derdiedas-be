@@ -15,8 +15,6 @@ export default class EndGameUseCase {
     const game = await this.gameRepository.findById(cmd.gameId);
 
     if (!game) throw new NotFoundError('Game not found');
-    
-    await this.gameRepository.delete(cmd.gameId);
 
     if (game.userId) {
       const user = await this.userRepository.findById(game.userId);
@@ -37,6 +35,8 @@ export default class EndGameUseCase {
       point: game.points,
       updatedAt: new Date()
     });
+
+    await this.gameRepository.delete(cmd.gameId);
 
     return newAnonymousUser.id;
   }
