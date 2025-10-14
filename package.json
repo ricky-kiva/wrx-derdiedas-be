@@ -8,6 +8,7 @@
     "lint": "eslint .",
     "start": "node build/app.js",
     "test": "jest -i",
+    "test-coverage": "jest -i --coverage",
     "tsc": "tsc"
   },
   "repository": {
