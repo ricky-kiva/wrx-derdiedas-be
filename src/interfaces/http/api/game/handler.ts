@@ -48,10 +48,9 @@ export default class GameHandler {
   }
 
   async submitAnswer(req: Request, res: Response) {
-    const userId = this.headerUtils.extractUserId(req);
     const p = SubmitAnswerPayloadSchema.parse(req.body);
 
-    const result = await this.submitAnswerUseCase.execute({ ...p, userId });
+    const result = await this.submitAnswerUseCase.execute(p);
 
     res.json({
       status: 'success',
