@@ -1,4 +1,5 @@
 import { InvariantError, NotFoundError } from '../../../../commons/exceptions';
+import Game from '../../../../domains/game/entities/Game';
 import GameRepository from '../../../../domains/game/GameRepository';
 import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstancts';
 import { SubmitAnswerCmd } from './command/SubmitAnswerCmd';
@@ -8,9 +9,11 @@ export default class SubmitAnswerUseCase {
   constructor(private readonly gameRepository: GameRepository) {}
 
   async execute(cmd: SubmitAnswerCmd): Promise<SubmitAnswerDTO> {
-    const game = await this.gameRepository.findById(cmd.gameId);
+    const gameData = await this.gameRepository.findById(cmd.gameId);
 
-    if (!game) throw new NotFoundError("Game expired or not found");
+    if (!gameData) throw new NotFoundError("Game expired or not found");
+
+    const game = new Game(gameData);
 
     const questionIndex = game.nouns.findIndex((n) => n.id === cmd.nounId);
 
