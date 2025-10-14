@@ -7,8 +7,9 @@ export default function gameRoutes(c: DependencyContainer): Router {
   const r = Router();
   const h = c.resolve<GameHandler>(DITokens.GameHandler);
 
-  r.post('/start', async (req, res) => h.startGame(req, res));
   r.post('/answer', async (req, res) => h.submitAnswer(req, res));
+  r.post('/end', async (req, res) => h.endGame(req, res));
+  r.post('/start', async (req, res) => h.startGame(req, res));
 
   return r;
 }

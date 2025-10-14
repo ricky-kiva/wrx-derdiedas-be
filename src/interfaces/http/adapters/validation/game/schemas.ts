@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { GENDER_VALUES } from '../../../../../domains/noun/entities/Noun';
 import { SubmitAnswerCmd } from '../../../../../applications/use-cases/game/submit-answer/command/SubmitAnswerCmd';
+import { EndGameCmd } from '../../../../../applications/use-cases/game/end/commands/EndGameCmd';
 
 export const SubmitAnswerPayloadSchema = z.object({
   gameId: z.string().min(1),
@@ -8,3 +9,8 @@ export const SubmitAnswerPayloadSchema = z.object({
   answer: z.enum(GENDER_VALUES),
   userId: z.string().optional()
 }) satisfies z.ZodType<SubmitAnswerCmd, z.ZodTypeDef, unknown> ;
+
+export const EndGamePayloadSchema = z.object({
+  gameId: z.string().min(1),
+  name: z.string().optional()
+}) satisfies z.ZodType<EndGameCmd, z.ZodTypeDef, unknown>;

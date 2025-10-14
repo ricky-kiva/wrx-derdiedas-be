@@ -1,6 +1,7 @@
 export const DITokens = {
   AuthHandler: Symbol.for("AuthHandler"),
   DecayPointsUseCase: Symbol.for("DecayPointsUseCase"),
+  EndGameUseCase: Symbol.for("EndGameUseCase"),
   GameExpirationListener: Symbol.for("GameExpirationListener"),
   GameHandler: Symbol.for("GameHandler"),
   GameRepository: Symbol.for("GameRepository"),
