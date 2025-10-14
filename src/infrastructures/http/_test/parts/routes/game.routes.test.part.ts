@@ -31,6 +31,101 @@ export default function testGameRoutes(
       jest.restoreAllMocks();
     });
 
+    describe('POST `/game/end`', () => {
+      it('responds with 200 and userId when game ends successfully (logged-in user)', async () => {
+        const mockUserId = 'user-123';
+        const mockGameId = 'game-123';
+
+        (HeaderUtils.prototype.extractUserId as jest.Mock).mockImplementation(
+          (): string | undefined => mockUserId
+        );
+
+        mocks.usecases.endGameUC.execute.mockResolvedValue(mockUserId);
+
+        const res = await request(app)
+          .post(`${BASE_URL}/end`)
+          .send({ gameId: mockGameId });
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({
+          status: 'success',
+          data: { userId: mockUserId }
+        } satisfies ApiResponse);
+
+        expect(mocks.methods.endGameUC.execute).toHaveBeenCalledWith({
+          gameId: mockGameId
+        });
+      });
+
+      it('responds with 200 and new userId when anonymous user ends game with name', async () => {
+        const mockGameId = 'game-456';
+        const mockNonRegUserId = 'user-123';
+        const name = 'Player123';
+
+        mocks.usecases.endGameUC.execute.mockResolvedValue(mockNonRegUserId);
+
+        const res = await request(app)
+          .post(`${BASE_URL}/end`)
+          .send({ gameId: mockGameId, name });
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({
+          status: 'success',
+          data: { userId: mockNonRegUserId }
+        } satisfies ApiResponse);
+
+        expect(mocks.methods.endGameUC.execute).toHaveBeenCalledWith({
+          gameId: mockGameId,
+          userId: undefined,
+          name
+        });
+      });
+
+      it('responds with 404 if game not found', async () => {
+        mocks.usecases.endGameUC.execute.mockRejectedValue(
+          new NotFoundError('Game not found')
+        );
+
+        const res = await request(app)
+          .post(`${BASE_URL}/end`)
+          .send({ gameId: 'missing-game' });
+
+        expect(res.status).toBe(404);
+        expect(res.body).toMatchObject({
+          status: 'fail',
+          message: 'Game not found'
+        });
+      });
+
+      it('responds with 400 if anonymous user does not provide name', async () => {
+        mocks.usecases.endGameUC.execute.mockRejectedValue(
+          new InvariantError('Name is required for guest users')
+        );
+
+        const res = await request(app)
+          .post(`${BASE_URL}/end`)
+          .send({ gameId: 'game-789' });
+
+        expect(res.status).toBe(400);
+        expect(res.body).toMatchObject({
+          status: 'fail',
+          message: expect.any(String) as unknown as string
+        });
+      });
+
+      it('responds with 500 if an unexpected error occurs', async () => {
+        mocks.usecases.endGameUC.execute.mockRejectedValue(new Error('Unexpected'));
+
+        const res = await request(app)
+          .post(`${BASE_URL}/end`)
+          .send({ gameId: 'game-500' });
+
+        expect(res.status).toBe(500);
+        expect((res.body as ApiResponse).status).toBe('error');
+      });
+    });
+
+
     describe('POST `/game/start`', () => {
       it('responds with 200 and StartGameDTO (anonymous)', async () => {
         const testNouns = Object.values(NounsCollectionTestHelper.getNouns())

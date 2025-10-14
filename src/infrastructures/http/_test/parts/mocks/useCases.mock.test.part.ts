@@ -8,9 +8,11 @@ import GetLeaderboardUseCase from '../../../../../applications/use-cases/leaderb
 import SubmitPointUseCase from '../../../../../applications/use-cases/leaderboard/submit-point/SubmitPointUseCase';
 import StartGameUseCase from '../../../../../applications/use-cases/game/start/StartGameUseCase';
 import SubmitAnswerUseCase from '../../../../../applications/use-cases/game/submit-answer/SubmitAnswerUseCase';
+import EndGameUseCase from '../../../../../applications/use-cases/game/end/EndGameUseCase';
 
 export interface TestPartMocks {
   usecases: {
+    endGameUC: jest.Mocked<EndGameUseCase>,
     getLeaderboardUC: jest.Mocked<GetLeaderboardUseCase>,
     loginUC: jest.Mocked<LoginUseCase>,
     logoutUC: jest.Mocked<LogoutUseCase>,
@@ -21,6 +23,7 @@ export interface TestPartMocks {
     submitPointUC: jest.Mocked<SubmitPointUseCase>
   },
   methods: {
+    endGameUC: { execute: jest.Mock },
     logoutUC: { execute: jest.Mock },
     getLeaderboardUC: { execute: jest.Mock },
     startGameUC: { execute: jest.Mock },
@@ -30,11 +33,16 @@ export interface TestPartMocks {
 }
 
 export default function useCasesMockTestPart(testContainer: DependencyContainer): TestPartMocks { 
+  const endGameUCExecute = jest.fn();
   const getLeaderboardUCExecute = jest.fn();
   const logoutUCExecute = jest.fn();
   const startGameUCExecute = jest.fn();
   const submitAnswerUCExecute = jest.fn();
   const submitPointUCExecute = jest.fn();
+
+  const endGameUC = {
+    execute: endGameUCExecute
+  } as unknown as jest.Mocked<EndGameUseCase>;
 
   const getLeaderboardUC = {
     execute: getLeaderboardUCExecute
@@ -68,6 +76,7 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
     execute: submitPointUCExecute
   } as unknown as jest.Mocked<SubmitPointUseCase>;
 
+  testContainer.registerInstance(DITokens.EndGameUseCase, endGameUC);
   testContainer.registerInstance(DITokens.GetLeaderboardUseCase, getLeaderboardUC);
   testContainer.registerInstance(DITokens.LoginUseCase, loginUC);
   testContainer.registerInstance(DITokens.LogoutUseCase, logoutUC);
@@ -79,10 +88,11 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
 
   return { 
     usecases: { 
-      getLeaderboardUC, loginUC, logoutUC, refreshTokenUC, seachNounUC, startGameUC, 
-      submitAnswerUC, submitPointUC
+      endGameUC, getLeaderboardUC, loginUC, logoutUC, refreshTokenUC, seachNounUC, 
+      startGameUC, submitAnswerUC, submitPointUC
     },
     methods: {
+      endGameUC: { execute: endGameUCExecute },
       logoutUC: { execute: logoutUCExecute },
       getLeaderboardUC: { execute: getLeaderboardUCExecute },
       startGameUC: { execute: startGameUCExecute },
