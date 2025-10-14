@@ -38,6 +38,7 @@ import SubmitAnswerUseCase from '../applications/use-cases/game/submit-answer/Su
 import GameExpirationListener from './database/redis/listeners/game/GameExpirationListener';
 import UserPointQueryRepositoryMongo from './query-repository/UserPointQueryRepositoryMongo';
 import DecayPointsUseCase from '../applications/use-cases/game/decay-points/DecayPointsUseCase';
+import EndGameUseCase from '../applications/use-cases/game/end/EndGameUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -74,6 +75,14 @@ container.registerSingleton(DITokens.UserRepository, UserRepositoryMongo);
 container.register(DITokens.DecayPointsUseCase, {
   useFactory: (c) => new DecayPointsUseCase(
     c.resolve(DITokens.UserPointQueryRepository),
+    c.resolve(DITokens.UserPointRepository),
+    c.resolve(DITokens.UserRepository)
+  )
+});
+
+container.register(DITokens.EndGameUseCase, {
+  useFactory: (c) => new EndGameUseCase(
+    c.resolve(DITokens.GameRepository),
     c.resolve(DITokens.UserPointRepository),
     c.resolve(DITokens.UserRepository)
   )
