@@ -28,7 +28,7 @@ export default class EndGameUseCase {
       return user.id;
     }
 
-    if (!cmd.name) throw new InvariantError('Name is required for anonymous user');
+    if (!cmd.name) throw new InvariantError('Name is required for guest users');
 
     const newAnonymousUser = await this.userRepository.create({ name: cmd.name });
 
