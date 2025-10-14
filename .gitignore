@@ -1,6 +1,7 @@
 .env
 .test.env
 build
+coverage
 data
 node_modules
 notes
