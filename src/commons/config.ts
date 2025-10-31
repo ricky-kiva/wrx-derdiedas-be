@@ -27,7 +27,7 @@ const config: Config = {
       : '0.0.0.0'
   },
   clientId: {
-    google: String(process.env.GOOGLE_CLIENT_ID)
+    google: getEnvVar('GOOGLE_CLIENT_ID')
   },
   database: {
     mongodb: {
@@ -49,12 +49,12 @@ const config: Config = {
   },
   jwt: {
     accessToken: {
-      secret: String(process.env.JWT_ACCESS_TOKEN_SECRET),
-      expiry: Number(process.env.JWT_ACCESS_TOKEN_EXPIRY)
+      secret: getEnvVar('JWT_ACCESS_TOKEN_SECRET'),
+      expiry: Number(getEnvVar('JWT_ACCESS_TOKEN_EXPIRY'))
     },
     refreshToken: {
-      secret: String(process.env.JWT_REFRESH_TOKEN_SECRET),
-      expiry: Number(process.env.JWT_REFRESH_TOKEN_EXPIRY)
+      secret: getEnvVar('JWT_REFRESH_TOKEN_SECRET'),
+      expiry: Number(getEnvVar('JWT_REFRESH_TOKEN_EXPIRY'))
     }
   }
 };
