@@ -3,10 +3,11 @@ import { DITokens } from '../../../../commons/DITokens';
 import LoginUseCase from '../../../../applications/use-cases/auth/LoginUseCase';
 import { Request, Response } from 'express';
 import ApiResponse from '../../types/ApiResponse';
-import { LoginPayload, LogoutPayload, RefreshTokenPayload } from '../../adapters/validation/auth/types';
+import { CookieRequest, LoginPayload, LogoutPayload } from '../../adapters/validation/auth/types';
 import LogoutUseCase from '../../../../applications/use-cases/auth/LogoutUseCase';
 import RefreshTokenUseCase from '../../../../applications/use-cases/auth/token/refresh-token/RefreshTokenUseCase';
 import { LoginPayloadSchema, LogoutPayloadSchema, RefreshTokenPayloadSchema } from '../../adapters/validation/auth/schemas';
+import config from '../../../../commons/config';
 
 @injectable()
 export default class AuthHandler {
@@ -28,10 +29,17 @@ export default class AuthHandler {
 
     const token = await this.loginUseCase.execute(googleIdToken);
 
-    res.json({
-      status: 'success',
-      data: token
-    } satisfies ApiResponse);
+    res
+      .cookie('refreshToken', token.refreshToken, {
+        httpOnly: true,
+        secure: config.env.production ? true : false,
+        sameSite: 'strict',
+        path: '/auth/refresh-token'
+      })
+      .json({
+        status: 'success',
+        data: { accessToken: token.accessToken }
+      } satisfies ApiResponse);
   }
 
   async logout(req: Request<unknown, unknown, LogoutPayload>, res: Response) {
@@ -39,17 +47,34 @@ export default class AuthHandler {
 
     await this.logoutUseCase.execute(userId);
 
-    res.sendStatus(401);
+    res
+      .clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: config.env.production ? true : false,
+        sameSite: 'strict',
+        path: '/auth/refresh-token'
+      })
+      .status(204)
+      .send();
   }
 
-  async refreshToken(req: Request<unknown, unknown, RefreshTokenPayload>, res: Response) {
-    const { refreshToken } = RefreshTokenPayloadSchema.parse(req.body);
+  async refreshToken(req: CookieRequest, res: Response) {
+    const { refreshToken } = RefreshTokenPayloadSchema.parse({
+      refreshToken: req.cookies.refreshToken
+    });
 
     const newTokens = await this.refreshTokenUseCase.execute(refreshToken);
 
-    res.json({
-      status: 'success',
-      data: newTokens
-    } satisfies ApiResponse);
+    res
+      .cookie('refreshToken', newTokens.refreshToken, {
+        httpOnly: true,
+        secure: config.env.production ? true : false,
+        sameSite: 'strict',
+        path: '/auth/refresh-token'
+      })
+      .json({
+        status: 'success',
+        data: { accessToken: newTokens.accessToken }
+      } satisfies ApiResponse);
   }
 }
