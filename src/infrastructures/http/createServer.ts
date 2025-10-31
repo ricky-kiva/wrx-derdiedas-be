@@ -11,6 +11,7 @@ import LogMW from '../../interfaces/http/middlewares/log/LogMW';
 import authRoutes from '../../interfaces/http/api/auth/routes';
 import leaderboardRoutes from '../../interfaces/http/api/leaderboard/routes';
 import gameRoutes from '../../interfaces/http/api/game/route';
+import cookieParser from 'cookie-parser';
 
 const createServer = (c: DependencyContainer) => {
   const app = express();
@@ -18,6 +19,7 @@ const createServer = (c: DependencyContainer) => {
 
   app.set('trust proxy', true);
 
+  app.use(cookieParser());
   app.use(cors);
   app.use(express.json());
   app.use(helmet);
