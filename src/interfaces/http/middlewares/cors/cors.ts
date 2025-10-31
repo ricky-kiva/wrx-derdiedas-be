@@ -14,4 +14,7 @@ export function originCallback(
   }
 }
 
-export default cors({ origin: originCallback });
+export default cors({ 
+  origin: originCallback,
+  credentials: true 
+});
