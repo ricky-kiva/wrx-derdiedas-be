@@ -3,7 +3,6 @@ import TokenManager from '../../../applications/ports/security/TokenManager';
 import jwt from 'jsonwebtoken';
 import config from '../../../commons/config';
 import { AuthenticationError } from '../../../commons/exceptions';
-import { isJwtPayloadDTO } from '../../validation/security/typeguards';
 
 export default class JwtTokenManager implements TokenManager {
   generateAccessToken(payload: JwtPayloadDTO): string {
@@ -25,10 +24,16 @@ export default class JwtTokenManager implements TokenManager {
   decodePayload(token: string): JwtPayloadDTO {
     const decoded = jwt.decode(token);
 
-    if (isJwtPayloadDTO(decoded)) {
-      return decoded;
+    if (!decoded || typeof decoded !== 'object') {
+      throw new AuthenticationError('Invalid JWT payload');
     }
 
-    throw new AuthenticationError('Invalid JWT payload');
+    if (!('userId' in decoded) || typeof decoded.userId !== 'string') {
+      throw new AuthenticationError('Invalid JWT payload');
+    }
+
+    return { 
+      userId: decoded.userId 
+    } satisfies JwtPayloadDTO;
   }
 }
