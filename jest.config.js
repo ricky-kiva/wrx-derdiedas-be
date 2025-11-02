@@ -2,7 +2,7 @@ import { createDefaultPreset } from "ts-jest";
 
 const tsJestTransformCfg = createDefaultPreset().transform;
 
-const ignoredPaths = ["/node_modules/", "/build/"];
+const ignoredPaths = ["/node_modules/", "/build/", "/coverage/"];
 
 /** @type {import("jest").Config} **/
 export const testEnvironment = "node";
