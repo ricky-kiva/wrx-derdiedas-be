@@ -189,12 +189,7 @@ export default function testGameRoutes(
           gameId: 'game-123',
           nounId: 'noun-101',
           answer: 'feminine',
-          userId: 'user-123'
         };
-
-        (HeaderUtils.prototype.extractUserId as jest.Mock).mockImplementation(
-          (): (string | undefined) => payload.userId
-        );
 
         const mockResult: SubmitAnswerDTO = {
           correct: true,

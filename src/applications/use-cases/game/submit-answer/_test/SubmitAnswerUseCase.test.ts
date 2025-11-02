@@ -49,7 +49,17 @@ describe('SubmitAnswerUseCase', () => {
     expect(result.correct).toBe(true);
     expect(result.currentScore).toBe(USER_POINT_CONSTANTS.INCREMENT_POINT);
     expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
-    expect(mockGRSaveMethod).toHaveBeenCalledWith(mockGame);
+
+    expect(mockGRSaveMethod).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: mockGame.id,
+        userId: mockGame.userId,
+        points: USER_POINT_CONSTANTS.INCREMENT_POINT,
+        nouns: expect.not.arrayContaining([
+          expect.objectContaining({ id: targetNoun.id })
+        ]) as unknown as typeof mockGame.nouns
+      })
+    );
   });
 
   it('should mark answer incorrect, not increment points, remove noun, and save game', async () => {
@@ -66,7 +76,16 @@ describe('SubmitAnswerUseCase', () => {
     expect(result.correct).toBe(false);
     expect(result.currentScore).toBe(0);
     expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
-    expect(mockGRSaveMethod).toHaveBeenCalledWith(mockGame);
+    expect(mockGRSaveMethod).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: mockGame.id,
+        userId: mockGame.userId,
+        points: 0,
+        nouns: expect.not.arrayContaining([
+          expect.objectContaining({ id: targetNoun.id })
+        ]) as unknown as typeof mockGame.nouns
+      })
+    );
   });
 
   it('should throw NotFoundError if game does not exist', async () => {
