@@ -27,10 +27,10 @@ export default class AuthHandler {
   async login(req: Request<unknown, unknown, LoginPayload>, res: Response) {
     const { googleIdToken } = LoginPayloadSchema.parse(req.body);
 
-    const token = await this.loginUseCase.execute(googleIdToken);
+    const { jwt, user } = await this.loginUseCase.execute(googleIdToken);
 
     res
-      .cookie('refreshToken', token.refreshToken, {
+      .cookie('refreshToken', jwt.refreshToken, {
         httpOnly: true,
         secure: config.env.production ? true : false,
         sameSite: 'strict',
@@ -38,7 +38,7 @@ export default class AuthHandler {
       })
       .json({
         status: 'success',
-        data: { accessToken: token.accessToken }
+        data: { accessToken: jwt.accessToken, user }
       } satisfies ApiResponse);
   }
 

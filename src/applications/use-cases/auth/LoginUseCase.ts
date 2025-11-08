@@ -1,6 +1,6 @@
 import UserRepository from '../../../domains/user/UserRepository';
 import GoogleAuthService from '../../ports/auth/GoogleAuthService';
-import JwtTokenDTO from '../../ports/security/dto/JwtTokenDTO';
+import { LoginDTO } from './dto/LoginDTO';
 import IssueTokenUseCase from './token/issue/IssueTokenUseCase';
 
 export default class LoginUseCase {
@@ -10,7 +10,7 @@ export default class LoginUseCase {
     private readonly userRepository: UserRepository
   ) {}
 
-  async execute(googleIdToken: string): Promise<JwtTokenDTO> {
+  async execute(googleIdToken: string): Promise<LoginDTO> {
     const googleUser = await this.googleAuthService.verifyIdToken(googleIdToken);
     const { googleId, email, name, picture } = googleUser;
 
@@ -20,6 +20,9 @@ export default class LoginUseCase {
       user = await this.userRepository.create({ name, googleId, email, picture });
     }
 
-    return this.issueTokenUseCase.execute({ userId: user.id });
+    return {
+      jwt: await this.issueTokenUseCase.execute({ userId: user.id }),
+      user: { id: user.id, email, name }
+    } satisfies LoginDTO;
   }
 }

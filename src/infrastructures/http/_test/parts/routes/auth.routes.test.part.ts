@@ -3,7 +3,8 @@ import { TestPartMocks } from '../mocks/useCases.mock.test.part';
 import JwtTokenDTO from '../../../../../applications/ports/security/dto/JwtTokenDTO';
 import request from 'supertest';
 import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
-import { LoginPayload, LogoutPayload, RefreshTokenPayload } from '../../../../../interfaces/http/adapters/validation/auth/types';
+import { LoginPayload, LogoutPayload } from '../../../../../interfaces/http/adapters/validation/auth/types';
+import { LoginDTO } from '../../../../../applications/use-cases/auth/dto/LoginDTO';
 
 export default function testAuthRoutes(
   getApp: () => Application,
@@ -20,13 +21,20 @@ export default function testAuthRoutes(
       mocks = getMocks();
     });
 
-    it('responds to POST `/login` with token data', async () => {
-      const mockToken: JwtTokenDTO = {
-        accessToken: 'mock.access.token',
-        refreshToken: 'mock.refresh.token'
+    it('responds to POST `/login` with token & user data', async () => {
+      const mockLoginDTO: LoginDTO = {
+        jwt: {
+          accessToken: 'mock.access.token',
+          refreshToken: 'mock.refresh.token'
+        },
+        user: {
+          id: 'user-123',
+          email: 'r@g.com',
+          name: 'Rickyslash'
+        }
       };
 
-      mocks.usecases.loginUC.execute.mockResolvedValue(mockToken);
+      mocks.usecases.loginUC.execute.mockResolvedValue(mockLoginDTO);
 
       const res = await request(app)
         .post(`${baseRoute}/login`)
@@ -37,18 +45,21 @@ export default function testAuthRoutes(
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
         status: 'success',
-        data: mockToken
+        data: {
+          accessToken: mockLoginDTO.jwt.accessToken,
+          user: mockLoginDTO.user
+        }
       } satisfies ApiResponse);
     });
 
-    it('responds to POST `/logout` with 401', async () => {
+    it('responds to POST `/logout` with 204', async () => {
       const payload = { id: 'user-123' } satisfies LogoutPayload;
 
       const res = await request(app)
         .post(`${baseRoute}/logout`)
         .send(payload);
 
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(204);
       expect(mocks.methods.logoutUC.execute).toHaveBeenCalledWith(payload.id);
     });
 
@@ -62,12 +73,12 @@ export default function testAuthRoutes(
 
       const res = await request(app)
         .post(`${baseRoute}/refresh-token`)
-        .send({ refreshToken: 'old.refresh.token' } satisfies RefreshTokenPayload);
+        .set('Cookie', 'refreshToken=old.refresh.token');
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
         status: 'success',
-        data: refreshedTokens
+        data: { accessToken: refreshedTokens.accessToken }
       } satisfies ApiResponse);
     });
 

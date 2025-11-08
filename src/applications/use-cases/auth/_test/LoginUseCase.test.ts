@@ -4,6 +4,7 @@ import GoogleUserDTO from '../../../ports/auth/dto/GoogleUserDTO';
 import GoogleAuthService from '../../../ports/auth/GoogleAuthService';
 import JwtPayloadDTO from '../../../ports/security/dto/JwtPayloadDTO';
 import JwtTokenDTO from '../../../ports/security/dto/JwtTokenDTO';
+import { LoginDTO } from '../dto/LoginDTO';
 import LoginUseCase from '../LoginUseCase';
 import IssueTokenUseCase from '../token/issue/IssueTokenUseCase';
 
@@ -58,7 +59,7 @@ describe('LoginUseCase', () => {
     jest.clearAllMocks();
   });
 
-  it('registers new user & returns JWT tokens', async () => {
+  it('registers new user, returns JWT tokens & user data', async () => {
     mockGoogleAuthService.verifyIdToken.mockResolvedValue(mockGoogleUser);
     mockUserRepository.findByGoogleId.mockResolvedValue(null);
     mockUserRepository.create.mockResolvedValue(mockCreatedUser);
@@ -70,10 +71,17 @@ describe('LoginUseCase', () => {
     expect(mockURfindByGoogleId).toHaveBeenCalledWith(mockGoogleUser.googleId);
     expect(mockURCreate).toHaveBeenCalledWith(mockGoogleUser);
     expect(mockITUCExecute).toHaveBeenCalledWith({ userId: mockCreatedUser.id } satisfies JwtPayloadDTO);
-    expect(result).toEqual(mockIssuedToken);
+    expect(result).toEqual({
+      jwt: mockIssuedToken,
+      user: {
+        id: mockCreatedUser.id,
+        email: mockCreatedUser.email!,
+        name: mockCreatedUser.name
+      }
+    } satisfies LoginDTO);
   });
 
-  it('logs-in existing user & returns JWT token', async () => {
+  it('logs-in existing user, returns JWT token & user data', async () => {
     mockGoogleAuthService.verifyIdToken.mockResolvedValue(mockGoogleUser);
     mockUserRepository.findByGoogleId.mockResolvedValue(mockCreatedUser);
     mockIssueTokenUseCase.execute.mockResolvedValue(mockIssuedToken);
@@ -82,6 +90,13 @@ describe('LoginUseCase', () => {
 
     expect(mockURCreate).not.toHaveBeenCalled();
     expect(mockITUCExecute).toHaveBeenCalledWith({ userId: mockCreatedUser.id } satisfies JwtPayloadDTO);
-    expect(result).toEqual(mockIssuedToken);
+    expect(result).toEqual({
+      jwt: mockIssuedToken,
+      user: {
+        id: mockCreatedUser.id,
+        email: mockCreatedUser.email!,
+        name: mockCreatedUser.name
+      }
+    } satisfies LoginDTO);
   });
 });
