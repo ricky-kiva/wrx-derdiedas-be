@@ -12,6 +12,7 @@ import authRoutes from '../../interfaces/http/api/auth/routes';
 import leaderboardRoutes from '../../interfaces/http/api/leaderboard/routes';
 import gameRoutes from '../../interfaces/http/api/game/route';
 import cookieParser from 'cookie-parser';
+import userRoutes from '../../interfaces/http/api/user/routes';
 
 const createServer = (c: DependencyContainer) => {
   const app = express();
@@ -30,6 +31,7 @@ const createServer = (c: DependencyContainer) => {
   app.use('/game', gameRoutes(c));
   app.use('/leaderboard', leaderboardRoutes(c));
   app.use('/search', searchNounRoutes(c));
+  app.use('/users', userRoutes(c));
 
   app.use(notFound);
   app.use(logger.logError);
