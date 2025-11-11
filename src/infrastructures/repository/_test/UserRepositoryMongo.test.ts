@@ -102,4 +102,25 @@ describe('UserRepositoryMongo', () => {
       expect(found?.id).toEqual(createdDoc.id);
     });
   });
+
+  describe('updateName', () => {
+    it('should update user name by id', async () => {
+      const createdDoc = await UserModel.create(payload);
+      const newName = 'UpdatedName';
+
+      await userRepositoryMongo.updateName(createdDoc._id.toString(), newName);
+
+      const updatedDoc = await UserModel.findById(createdDoc._id);
+
+      expect(updatedDoc).not.toBeNull();
+      expect(updatedDoc?.name).toBe(newName);
+    });
+
+    it('should not throw if user id does not exist', async () => {
+      const nonexistentId = new mongoose.Types.ObjectId().toString();
+
+      await expect(userRepositoryMongo.updateName(nonexistentId, 'SomeName'))
+        .resolves.not.toThrow();
+    });
+  });
 });
