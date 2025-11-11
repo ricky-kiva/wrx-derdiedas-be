@@ -108,7 +108,7 @@ describe('UserRepositoryMongo', () => {
       const createdDoc = await UserModel.create(payload);
       const newName = 'UpdatedName';
 
-      await userRepositoryMongo.updateName(createdDoc._id.toString(), newName);
+      await userRepositoryMongo.update(createdDoc._id.toString(), { name: newName });
 
       const updatedDoc = await UserModel.findById(createdDoc._id);
 
@@ -119,7 +119,7 @@ describe('UserRepositoryMongo', () => {
     it('should not throw if user id does not exist', async () => {
       const nonexistentId = new mongoose.Types.ObjectId().toString();
 
-      await expect(userRepositoryMongo.updateName(nonexistentId, 'SomeName'))
+      await expect(userRepositoryMongo.update(nonexistentId, { name: 'SomeName' }))
         .resolves.not.toThrow();
     });
   });
