@@ -44,4 +44,8 @@ export default class UserRepositoryMongo implements UserRepository {
 
     return UserMapper.toDomain(doc);
   }
+
+  async updateName(id: string, name: string): Promise<void> {
+    await this.model.findByIdAndUpdate(id, { name });
+  }
 };

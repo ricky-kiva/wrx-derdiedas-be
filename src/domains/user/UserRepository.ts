@@ -6,4 +6,5 @@ export default interface UserRepository {
   findById(id: string): Promise<User | null>;
   findByGoogleId(googleId: string): Promise<User | null>;
   findByName(name: string): Promise<User | null>;
+  updateName(id: string, name: string): Promise<void>;
 }
