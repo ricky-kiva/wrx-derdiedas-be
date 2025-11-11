@@ -11,6 +11,7 @@ import testErrorPreResponseMW from './parts/middlewares/errorPreResponse.mw.test
 import testAuthRoutes from './parts/routes/auth.routes.test.part';
 import testLeaderboardRoutes from './parts/routes/leaderboard.routes.test.part';
 import testGameRoutes from './parts/routes/game.routes.test.part';
+import testUserRoutes from './parts/routes/user.routes.test.part';
 
 describe('createServer', () => {
   let testContainer: DependencyContainer;
@@ -35,6 +36,7 @@ describe('createServer', () => {
   testLeaderboardRoutes(() => app, () => testMocks);
   testRootRoutes(() => app);
   testSearchRoutes(() => app, () => testMocks);
+  testUserRoutes(() => app, () => testMocks);
 
   testNotFoundMW(() => app);
   testErrorPreResponseMW(() => testContainer);

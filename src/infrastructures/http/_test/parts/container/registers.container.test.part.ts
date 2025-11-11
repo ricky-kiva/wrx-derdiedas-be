@@ -9,6 +9,7 @@ import LeaderboardHandler from '../../../../../interfaces/http/api/leaderboard/h
 import GameHandler from '../../../../../interfaces/http/api/game/handler';
 import HeaderUtils from '../../../../../interfaces/http/shared/HeaderUtils';
 import JwtTokenManager from '../../../../adapters/security/JwtTokenManager';
+import UserHandler from '../../../../../interfaces/http/api/user/handler';
 
 export default function containerRegistersTestPart(testContainer: DependencyContainer) {
   testContainer.registerSingleton(DITokens.AuthHandler, AuthHandler);
@@ -20,4 +21,5 @@ export default function containerRegistersTestPart(testContainer: DependencyCont
   testContainer.registerSingleton(DITokens.RootHandler, RootHandler);
   testContainer.registerSingleton(DITokens.SearchHandler, SearchHandler);
   testContainer.registerSingleton(DITokens.TokenManager, JwtTokenManager);
+  testContainer.registerSingleton(DITokens.UserHandler, UserHandler);
 }
