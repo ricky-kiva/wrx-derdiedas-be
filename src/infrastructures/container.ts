@@ -39,6 +39,9 @@ import GameExpirationListener from './database/redis/listeners/game/GameExpirati
 import UserPointQueryRepositoryMongo from './query-repository/UserPointQueryRepositoryMongo';
 import DecayPointsUseCase from '../applications/use-cases/game/decay-points/DecayPointsUseCase';
 import EndGameUseCase from '../applications/use-cases/game/end/EndGameUseCase';
+import DeleteUserUseCase from '../applications/use-cases/user/delete/DeleteUserUseCase';
+import GetUserPointUseCase from '../applications/use-cases/user/get-point/GetUserPointUseCase';
+import UpdateUserNameUseCase from '../applications/use-cases/user/update-name/UpdateUserNameUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -80,6 +83,12 @@ container.register(DITokens.DecayPointsUseCase, {
   )
 });
 
+container.register(DITokens.DeleteUserUseCase, {
+  useFactory: (c) => new DeleteUserUseCase(
+    c.resolve(DITokens.UserRepository)
+  )
+});
+
 container.register(DITokens.EndGameUseCase, {
   useFactory: (c) => new EndGameUseCase(
     c.resolve(DITokens.GameRepository),
@@ -91,6 +100,13 @@ container.register(DITokens.EndGameUseCase, {
 container.register(DITokens.GetLeaderboardUseCase, {
   useFactory: (c) => new GetLeaderboardUseCase(
     c.resolve(DITokens.LeaderboardQueryRepository)
+  )
+});
+
+container.register(DITokens.GetUserPointUseCase, {
+  useFactory: (c) => new GetUserPointUseCase(
+    c.resolve(DITokens.UserPointQueryRepository),
+    c.resolve(DITokens.UserRepository)
   )
 });
 
@@ -145,6 +161,12 @@ container.register(DITokens.SubmitPointUseCase, {
   useFactory: (c) => new SubmitPointUseCase(
     c.resolve(DITokens.UserRepository),
     c.resolve(DITokens.UserPointRepository)
+  )
+});
+
+container.register(DITokens.UpdateUserNameUseCase, {
+  useFactory: (c) => new UpdateUserNameUseCase(
+    c.resolve(DITokens.UserRepository)
   )
 });
 
