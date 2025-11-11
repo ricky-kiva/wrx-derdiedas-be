@@ -20,7 +20,7 @@ describe('UpdateUserUseCase', () => {
     mockURUpdate = jest.fn();
 
     mockUserRepository = {
-      update: jest.fn(),
+      update: mockURUpdate,
     } as unknown as jest.Mocked<UserRepository>;
 
     updateUserUseCase = new UpdateUserUseCase(mockUserRepository);
