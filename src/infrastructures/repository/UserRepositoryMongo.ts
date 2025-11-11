@@ -11,7 +11,7 @@ export default class UserRepositoryMongo implements UserRepository {
   constructor(
     @inject(DITokens.UserModel) private readonly model: Model<UserDocument>
   ) {}
-
+  
   async create(payload: UserPayload): Promise<User> {
     const doc = await this.model.create(payload);
     return UserMapper.toDomain(doc);
@@ -45,7 +45,8 @@ export default class UserRepositoryMongo implements UserRepository {
     return UserMapper.toDomain(doc);
   }
 
-  async updateName(id: string, name: string): Promise<void> {
-    await this.model.findByIdAndUpdate(id, { name });
+  async update(id: string, payload: Partial<UserPayload>): Promise<User | null> {
+    const updated = await this.model.findByIdAndUpdate(id, payload, { new: true });
+    return updated ? UserMapper.toDomain(updated) : null;
   }
 };

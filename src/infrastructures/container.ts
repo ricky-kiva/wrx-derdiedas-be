@@ -41,7 +41,8 @@ import DecayPointsUseCase from '../applications/use-cases/game/decay-points/Deca
 import EndGameUseCase from '../applications/use-cases/game/end/EndGameUseCase';
 import DeleteUserUseCase from '../applications/use-cases/user/delete/DeleteUserUseCase';
 import GetUserPointUseCase from '../applications/use-cases/user/get-point/GetUserPointUseCase';
-import UpdateUserNameUseCase from '../applications/use-cases/user/update-name/UpdateUserNameUseCase';
+import UserHandler from '../interfaces/http/api/user/handler';
+import UpdateUserUseCase from '../applications/use-cases/user/update/UpdateUserUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -53,6 +54,7 @@ container.registerSingleton(DITokens.LeaderboardHandler, LeaderboardHandler);
 container.registerSingleton(DITokens.RootHandler, RootHandler);
 container.registerSingleton(DITokens.SearchHandler, SearchHandler);
 container.registerSingleton(DITokens.TokenManager, JwtTokenManager);
+container.registerSingleton(DITokens.UserHandler, UserHandler);
 container.registerSingleton(DITokens.WordNormalizerService, WordNormalizerServiceImpl);
 
 container.registerInstance(DITokens.NounModel, NounModel);
@@ -164,8 +166,8 @@ container.register(DITokens.SubmitPointUseCase, {
   )
 });
 
-container.register(DITokens.UpdateUserNameUseCase, {
-  useFactory: (c) => new UpdateUserNameUseCase(
+container.register(DITokens.UpdateUserUseCase, {
+  useFactory: (c) => new UpdateUserUseCase(
     c.resolve(DITokens.UserRepository)
   )
 });
