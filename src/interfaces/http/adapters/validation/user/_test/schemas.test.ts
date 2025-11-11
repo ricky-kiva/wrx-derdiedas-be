@@ -1,4 +1,10 @@
-import { UserIdParamSchema, GetUserPointParamSchema, DeleteUserParamSchema, UpdateUserNameParamsSchema, UpdateUserNamePayloadSchema } from '../schemas';
+import { 
+  UserIdParamSchema, 
+  GetUserPointParamSchema, 
+  DeleteUserParamSchema, 
+  UpdateUserParamsSchema, 
+  UpdateUserPayloadSchema 
+} from '../schemas';
 
 describe('User Schemas', () => {
   const validIdPayload = { id: 'user-123' };
@@ -29,26 +35,27 @@ describe('User Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('UpdateUserNameParamsSchema behaves same as UserIdParamSchema', () => {
-      const result = UpdateUserNameParamsSchema.safeParse(validIdPayload);
+    it('UpdateUserParamsSchema behaves same as UserIdParamSchema', () => {
+      const result = UpdateUserParamsSchema.safeParse(validIdPayload);
       expect(result.success).toBe(true);
     });
   });
 
-  describe('UpdateUserNamePayloadSchema', () => {
-    it('passes with valid name', () => {
+  describe('UpdateUserPayloadSchema', () => {
+    it('passes with valid payload', () => {
       const payload = { name: 'Rickyslash' };
-      const result = UpdateUserNamePayloadSchema.safeParse(payload);
+      const result = UpdateUserPayloadSchema.safeParse(payload);
       expect(result.success).toBe(true);
     });
 
     it('fails when name is missing', () => {
-      const result = UpdateUserNamePayloadSchema.safeParse({});
+      const result = UpdateUserPayloadSchema.safeParse({});
       expect(result.success).toBe(false);
     });
 
     it('fails when name is empty', () => {
-      const result = UpdateUserNamePayloadSchema.safeParse({ name: '' });
+      const payload = { name: '' };
+      const result = UpdateUserPayloadSchema.safeParse(payload);
       expect(result.success).toBe(false);
     });
   });
