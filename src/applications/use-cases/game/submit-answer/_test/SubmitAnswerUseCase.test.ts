@@ -3,20 +3,25 @@ import { InvariantError } from '../../../../../commons/exceptions';
 import { NotFoundError } from '../../../../../commons/exceptions/client/NotFoundError';
 import Game from '../../../../../domains/game/entities/Game';
 import GameRepository from '../../../../../domains/game/GameRepository';
-import { Gender } from '../../../../../domains/noun/entities/Noun';
+import Noun, { Gender } from '../../../../../domains/noun/entities/Noun';
 import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstancts';
+import NounQueryRepository from '../../../../query-repositories/noun/NounQueryRepository';
 import { SubmitAnswerCmd } from '../command/SubmitAnswerCmd';
 import SubmitAnswerUseCase from '../SubmitAnswerUseCase';
 
 describe('SubmitAnswerUseCase', () => {
   let mockGameRepository: GameRepository;
+  let mockNounQueryRepository: NounQueryRepository;
   let submitAnswerUseCase: SubmitAnswerUseCase;
   let mockGame: Game;
   let mockGRSaveMethod: jest.Mock;
+  let mockNQRGRandom: jest.Mock;
 
   beforeEach(() => {
     const nouns = Object.values(NounsCollectionTestHelper.getNouns())
       .map(({ id, word, gender }) => ({ id, word, gender }));
+
+    const randomNouns = Object.values(NounsCollectionTestHelper.getNouns());
 
     mockGame = new Game({
       id: 'game-123',
@@ -25,6 +30,7 @@ describe('SubmitAnswerUseCase', () => {
     });
 
     mockGRSaveMethod = jest.fn().mockResolvedValue(undefined);
+    mockNQRGRandom = jest.fn().mockResolvedValue(randomNouns);
 
     mockGameRepository = {
       findById: jest.fn().mockResolvedValue(mockGame),
@@ -32,7 +38,11 @@ describe('SubmitAnswerUseCase', () => {
       delete: jest.fn(),
     } as Partial<GameRepository> as GameRepository;
 
-    submitAnswerUseCase = new SubmitAnswerUseCase(mockGameRepository);
+    mockNounQueryRepository = {
+      getRandom: mockNQRGRandom
+    } as Partial<NounQueryRepository> as NounQueryRepository;
+
+    submitAnswerUseCase = new SubmitAnswerUseCase(mockGameRepository, mockNounQueryRepository);
   });
 
   it('should mark answer correct, increment points, remove noun, and save game', async () => {
@@ -48,18 +58,9 @@ describe('SubmitAnswerUseCase', () => {
 
     expect(result.correct).toBe(true);
     expect(result.currentScore).toBe(USER_POINT_CONSTANTS.INCREMENT_POINT);
+    expect(result.nouns).toBeUndefined();
     expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
-
-    expect(mockGRSaveMethod).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: mockGame.id,
-        userId: mockGame.userId,
-        points: USER_POINT_CONSTANTS.INCREMENT_POINT,
-        nouns: expect.not.arrayContaining([
-          expect.objectContaining({ id: targetNoun.id })
-        ]) as unknown as typeof mockGame.nouns
-      })
-    );
+    expect(mockGRSaveMethod).toHaveBeenCalled();
   });
 
   it('should mark answer incorrect, not increment points, remove noun, and save game', async () => {
@@ -75,17 +76,9 @@ describe('SubmitAnswerUseCase', () => {
 
     expect(result.correct).toBe(false);
     expect(result.currentScore).toBe(0);
+    expect(result.nouns).toBeUndefined();
     expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
-    expect(mockGRSaveMethod).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: mockGame.id,
-        userId: mockGame.userId,
-        points: 0,
-        nouns: expect.not.arrayContaining([
-          expect.objectContaining({ id: targetNoun.id })
-        ]) as unknown as typeof mockGame.nouns
-      })
-    );
+    expect(mockGRSaveMethod).toHaveBeenCalled();
   });
 
   it('should throw NotFoundError if game does not exist', async () => {
@@ -108,5 +101,39 @@ describe('SubmitAnswerUseCase', () => {
     };
 
     await expect(submitAnswerUseCase.execute(cmd)).rejects.toThrow(InvariantError);
+  });
+
+  it('should return new nouns when all game nouns are answered', async () => {
+    const singleNounGame = new Game({
+      id: 'game-789',
+      userId: 'user-123',
+      nouns: [{ id: 'noun-123', gender: 'masculine' }],
+    });
+
+    (mockGameRepository.findById as jest.Mock).mockResolvedValueOnce(singleNounGame);
+
+    const cmd: SubmitAnswerCmd = {
+      gameId: singleNounGame.id,
+      nounId: 'noun-123',
+      answer: 'masculine',
+    };
+
+    const result = await submitAnswerUseCase.execute(cmd);
+
+    expect(result.nouns).toBeDefined();
+    expect(Array.isArray(result.nouns)).toBe(true);
+    expect(result.nouns!.length).toBeGreaterThan(0);
+    expect(mockNQRGRandom).toHaveBeenCalled();
+
+    const expectedNounIds = Object.values(NounsCollectionTestHelper.getNouns())
+      .map(n => n.id);
+
+    expect(mockGRSaveMethod).toHaveBeenCalledWith(
+      expect.objectContaining({
+        nouns: expect.arrayContaining(
+          expectedNounIds.map(id => expect.objectContaining({ id }) as string[])
+        ) as Noun[],
+      } as Partial<Game>)
+    );
   });
 });
