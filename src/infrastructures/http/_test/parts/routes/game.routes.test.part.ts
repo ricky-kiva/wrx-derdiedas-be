@@ -184,7 +184,7 @@ export default function testGameRoutes(
     });
 
     describe('POST `/game/answer`', () => {
-      it('responds with 200 and SubmitAnswerDTO (valid payload)', async () => {
+      it('responds with 200 and SubmitAnswerDTO without nouns (normal case)', async () => {
         const payload: SubmitAnswerCmd = {
           gameId: 'game-123',
           nounId: 'noun-101',
@@ -193,7 +193,8 @@ export default function testGameRoutes(
 
         const mockResult: SubmitAnswerDTO = {
           correct: true,
-          currentScore: 10
+          currentScore: 10,
+          nouns: undefined
         };
 
         mocks.usecases.submitAnswerUC.execute.mockResolvedValue(mockResult);
@@ -205,7 +206,47 @@ export default function testGameRoutes(
         expect(res.status).toBe(200);
         expect(res.body).toEqual({
           status: 'success',
-          data: mockResult
+          data: {
+            correct: true,
+            currentScore: 10,
+          },
+        } satisfies ApiResponse);
+
+        expect(mocks.methods.submitAnswerUC.execute).toHaveBeenCalledWith(payload);
+      });
+
+      it('responds with 200 and SubmitAnswerDTO with nouns (when new nouns fetched)', async () => {
+        const payload: SubmitAnswerCmd = {
+          gameId: 'game-123',
+          nounId: 'noun-124',
+          answer: 'masculine',
+        };
+
+        const mockNouns = [
+          { id: 'noun-125', word: 'der Tisch', meanings: ['table'] },
+          { id: 'noun-126', word: 'die Lampe', meanings: ['lamp'] },
+        ];
+
+        const mockResult: SubmitAnswerDTO = {
+          correct: true,
+          currentScore: 15,
+          nouns: mockNouns,
+        };
+
+        mocks.usecases.submitAnswerUC.execute.mockResolvedValue(mockResult);
+
+        const res = await request(app)
+          .post(`${BASE_URL}/answer`)
+          .send(payload);
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({
+          status: 'success',
+          data: {
+            correct: true,
+            currentScore: 15,
+            nouns: mockNouns,
+          },
         } satisfies ApiResponse);
 
         expect(mocks.methods.submitAnswerUC.execute).toHaveBeenCalledWith(payload);
