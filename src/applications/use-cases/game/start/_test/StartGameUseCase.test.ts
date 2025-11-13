@@ -1,13 +1,11 @@
 import NounsCollectionTestHelper from '../../../../../../tests/NounsCollectionTestHelper';
 import GameRepository from '../../../../../domains/game/GameRepository';
-import Noun from '../../../../../domains/noun/entities/Noun';
 import NounQueryRepository from '../../../../query-repositories/noun/NounQueryRepository';
 import StartGameUseCase from '../StartGameUseCase';
 
 describe('StartGameUseCase', () => {
   it('should create a game and return StartGameDTO', async () => {
-    const mockNouns = Object.values(NounsCollectionTestHelper.getNouns())
-      .map(({ id, word, meanings }) => ({ id, word, meanings } satisfies Omit<Noun, "gender"> ));
+    const mockNouns = Object.values(NounsCollectionTestHelper.getNouns());
 
     const nounRepoMock: NounQueryRepository = {
       getRandom: jest.fn().mockResolvedValue(mockNouns),
@@ -27,11 +25,11 @@ describe('StartGameUseCase', () => {
     const result = await useCase.execute(userId);
 
     expect(result.gameId).toMatch(/^game-/);
-    expect(result.nouns).toEqual(mockNouns);
+    expect(result.nouns).toEqual(mockNouns.map(({ id, word, meanings }) => ({ id, word, meanings })));
 
     expect(saveMethodMock).toHaveBeenCalledTimes(1);
     expect(saveMethodMock).toHaveBeenCalledWith(
-      expect.objectContaining({ userId, nouns: mockNouns })
+      expect.objectContaining({ userId, nouns: mockNouns.map(({ id, gender }) => ({ id, gender })) })
     );
   });
 });
