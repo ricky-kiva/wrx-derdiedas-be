@@ -1,12 +1,17 @@
 import { InvariantError, NotFoundError } from '../../../../commons/exceptions';
 import Game from '../../../../domains/game/entities/Game';
 import GameRepository from '../../../../domains/game/GameRepository';
+import Noun from '../../../../domains/noun/entities/Noun';
 import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstancts';
+import NounQueryRepository from '../../../query-repositories/noun/NounQueryRepository';
 import { SubmitAnswerCmd } from './command/SubmitAnswerCmd';
 import { SubmitAnswerDTO } from './dto/SubmitAnswerDTO';
 
 export default class SubmitAnswerUseCase {
-  constructor(private readonly gameRepository: GameRepository) {}
+  constructor(
+    private readonly gameRepository: GameRepository,
+    private readonly nounQueryRepository: NounQueryRepository
+  ) {}
 
   async execute(cmd: SubmitAnswerCmd): Promise<SubmitAnswerDTO> {
     const gameData = await this.gameRepository.findById(cmd.gameId);
@@ -26,11 +31,31 @@ export default class SubmitAnswerUseCase {
 
     if (isCorrect) game.incrementPoints(USER_POINT_CONSTANTS.INCREMENT_POINT);
 
+    let nouns: Omit<Noun, 'gender'>[] | undefined;
+
+    if (game.nouns.length === 0) {
+      const randomNouns = await this.nounQueryRepository.getRandom();
+      
+      const gameNouns = randomNouns.map((n) => ({
+        id: n.id,
+        gender: n.gender
+      } satisfies Omit<Noun, ('meanings' | 'word')>));
+
+      game.nouns.push(...gameNouns);
+
+      nouns = randomNouns.map((n) => ({
+        id: n.id,
+        word: n.word,
+        meanings: n.meanings
+      }));
+    }
+
     await this.gameRepository.save(game);
 
     return {
+      nouns,
       correct: isCorrect,
-      currentScore: game.points
+      currentScore: game.points,
     } satisfies SubmitAnswerDTO;
   }
 }
