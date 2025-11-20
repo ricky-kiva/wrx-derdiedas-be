@@ -1,70 +1,85 @@
+import {
+  EndGamePayloadSchema,
+  GameIdParamSchema,
+  SubmitAnswerPayloadSchema,
+  UpdateGamePayloadSchema
+} from '../schemas';
 import { GENDER_VALUES } from '../../../../../../domains/noun/entities/Noun';
-import { SubmitAnswerPayloadSchema } from '../schemas';
+
+describe('GameIdParamSchema', () => {
+  it('passes with valid id', () => {
+    const result = GameIdParamSchema.safeParse({ id: 'game-123' });
+    expect(result.success).toBe(true);
+  });
+
+  it('fails when id is empty', () => {
+    const result = GameIdParamSchema.safeParse({ id: '' });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('EndGamePayloadSchema', () => {
+  it('passes with name provided', () => {
+    const result = EndGamePayloadSchema.safeParse({ name: 'Rickyslash' });
+    expect(result.success).toBe(true);
+  });
+
+  it('passes when name is omitted', () => {
+    const result = EndGamePayloadSchema.safeParse({});
+    expect(result.success).toBe(true);
+  });
+
+  it('fails when name is wrong type', () => {
+    const result = EndGamePayloadSchema.safeParse({ name: 123 });
+    expect(result.success).toBe(false);
+  });
+});
 
 describe('SubmitAnswerPayloadSchema', () => {
-  it('should pass with valid payload', () => {
+  it('passes with valid payload', () => {
     const payload = {
-      gameId: 'game-123',
       nounId: 'noun-456',
-      answer: 'masculine',
-      userId: 'user-789',
+      answer: GENDER_VALUES[0]
     };
 
     const result = SubmitAnswerPayloadSchema.safeParse(payload);
-
     expect(result.success).toBe(true);
-
-    if (result.success) {
-      expect(result.data.gameId).toBe('game-123');
-      expect(result.data.answer).toBe('masculine');
-    }
   });
 
-  it('should fail if answer is not in GENDER_VALUES', () => {
+  it('fails when answer is invalid', () => {
     const payload = {
-      gameId: 'game-123',
       nounId: 'noun-456',
-      answer: 'invalid-gender',
+      answer: 'invalid-gender'
     };
 
     const result = SubmitAnswerPayloadSchema.safeParse(payload);
     expect(result.success).toBe(false);
   });
 
-  it('should fail if gameId is missing', () => {
+  it('fails when nounId is empty', () => {
     const payload = {
-      nounId: 'noun-456',
-      answer: 'feminine',
-    };
-
-    const result = SubmitAnswerPayloadSchema.safeParse(payload);
-    expect(result.success).toBe(false);
-  });
-
-  it('should fail if nounId is an empty string', () => {
-    const payload = {
-      gameId: 'game-123',
       nounId: '',
-      answer: 'neuter',
+      answer: GENDER_VALUES[0]
     };
 
     const result = SubmitAnswerPayloadSchema.safeParse(payload);
     expect(result.success).toBe(false);
   });
+});
 
-  it('should accept payload without userId', () => {
-    const payload = {
-      gameId: 'game-123',
-      nounId: 'noun-456',
-      answer: 'feminine',
-    };
-
-    const result = SubmitAnswerPayloadSchema.safeParse(payload);
+describe('UpdateGamePayloadSchema', () => {
+  it('passes with userId provided', () => {
+    const result = UpdateGamePayloadSchema.safeParse({ userId: 'user-123' });
     expect(result.success).toBe(true);
+  });
 
-    if (result.success) {
-      expect(result.data.userId).toBeUndefined();
-      expect(GENDER_VALUES).toContain(result.data.answer);
-    }
+  it('passes with empty payload', () => {
+    const result = UpdateGamePayloadSchema.safeParse({});
+    expect(result.success).toBe(true);
+  });
+
+  it('fails when userId is wrong type', () => {
+    const result = UpdateGamePayloadSchema.safeParse({ userId: 123 });
+    expect(result.success).toBe(false);
   });
 });
