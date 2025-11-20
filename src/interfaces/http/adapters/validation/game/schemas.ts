@@ -2,15 +2,21 @@ import { z } from 'zod';
 import { GENDER_VALUES } from '../../../../../domains/noun/entities/Noun';
 import { SubmitAnswerCmd } from '../../../../../applications/use-cases/game/submit-answer/command/SubmitAnswerCmd';
 import { EndGameCmd } from '../../../../../applications/use-cases/game/end/commands/EndGameCmd';
-
-export const SubmitAnswerPayloadSchema = z.object({
-  gameId: z.string().min(1),
-  nounId: z.string().min(1),
-  answer: z.enum(GENDER_VALUES),
-  userId: z.string().optional()
-}) satisfies z.ZodType<SubmitAnswerCmd, z.ZodTypeDef, unknown> ;
+import { UpdateGameCmd } from '../../../../../applications/use-cases/game/update/commands/UpdateGameCmd';
 
 export const EndGamePayloadSchema = z.object({
-  gameId: z.string().min(1),
   name: z.string().optional()
-}) satisfies z.ZodType<EndGameCmd, z.ZodTypeDef, unknown>;
+}) satisfies z.ZodType<Omit<EndGameCmd, 'gameId'>, z.ZodTypeDef, unknown>;
+
+export const GameIdParamSchema = z.object({
+  id: z.string().min(1, 'Game ID is required'),
+});
+
+export const SubmitAnswerPayloadSchema = z.object({
+  nounId: z.string().min(1),
+  answer: z.enum(GENDER_VALUES)
+}) satisfies z.ZodType<Omit<SubmitAnswerCmd, 'gameId'>, z.ZodTypeDef, unknown>;
+
+export const UpdateGamePayloadSchema = z.object({
+  userId: z.string().optional()
+}) satisfies z.ZodType<Omit<UpdateGameCmd, 'id'>['payload'], z.ZodTypeDef, unknown>;

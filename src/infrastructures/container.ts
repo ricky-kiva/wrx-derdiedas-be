@@ -43,6 +43,8 @@ import DeleteUserUseCase from '../applications/use-cases/user/delete/DeleteUserU
 import GetUserPointUseCase from '../applications/use-cases/user/get-point/GetUserPointUseCase';
 import UserHandler from '../interfaces/http/api/user/handler';
 import UpdateUserUseCase from '../applications/use-cases/user/update/UpdateUserUseCase';
+import GetGameByIdUseCase from '../applications/use-cases/game/get/GetGameByIdUseCase';
+import UpdateGameUseCase from '../applications/use-cases/game/update/UpdateGameUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
@@ -96,6 +98,12 @@ container.register(DITokens.EndGameUseCase, {
     c.resolve(DITokens.GameRepository),
     c.resolve(DITokens.UserPointRepository),
     c.resolve(DITokens.UserRepository)
+  )
+});
+
+container.register(DITokens.GetGameByIdUseCase, {
+  useFactory: (c) => new GetGameByIdUseCase(
+    c.resolve(DITokens.GameRepository)
   )
 });
 
@@ -164,6 +172,12 @@ container.register(DITokens.SubmitPointUseCase, {
   useFactory: (c) => new SubmitPointUseCase(
     c.resolve(DITokens.UserRepository),
     c.resolve(DITokens.UserPointRepository)
+  )
+});
+
+container.register(DITokens.UpdateGameUseCase, {
+  useFactory: (c) => new UpdateGameUseCase(
+    c.resolve(DITokens.GameRepository)
   )
 });
 
