@@ -3,7 +3,7 @@ import { DITokens } from '../../../../commons/DITokens';
 import DeleteUserUseCase from '../../../../applications/use-cases/user/delete/DeleteUserUseCase';
 import GetUserPointUseCase from '../../../../applications/use-cases/user/get-point/GetUserPointUseCase';
 import { Request, Response } from 'express';
-import { DeleteUserParamSchema, GetUserPointParamSchema, UpdateUserParamsSchema, UpdateUserPayloadSchema } from '../../adapters/validation/user/schemas';
+import { UpdateUserPayloadSchema, UserIdParamSchema } from '../../adapters/validation/user/schemas';
 import ApiResponse from '../../types/ApiResponse';
 import UpdateUserUseCase from '../../../../applications/use-cases/user/update/UpdateUserUseCase';
 
@@ -23,7 +23,7 @@ export default class UserHandler {
   }
 
   async getPoint(req: Request, res: Response) {
-    const { id } = GetUserPointParamSchema.parse(req.params);
+    const { id } = UserIdParamSchema.parse(req.params);
 
     const point = await this.getUserPointUseCase.execute(id);
 
@@ -34,10 +34,10 @@ export default class UserHandler {
   }
 
   async update(req: Request, res: Response) {
-    const { id } = UpdateUserParamsSchema.parse(req.params);
-    const { name } = UpdateUserPayloadSchema.parse(req.body);
+    const { id } = UserIdParamSchema.parse(req.params);
+    const p = UpdateUserPayloadSchema.parse(req.body);
 
-    const updatedUser = await this.updateUserUseCase.execute({ id, payload: { name } });
+    const updatedUser = await this.updateUserUseCase.execute({ id, payload: p });
 
     res.json({
       status: 'success',
@@ -46,7 +46,7 @@ export default class UserHandler {
   }
 
   async delete(req: Request, res: Response) {
-    const { id } = DeleteUserParamSchema.parse(req.params);
+    const { id } = UserIdParamSchema.parse(req.params);
 
     await this.deleteUserUseCase.execute(id);
 

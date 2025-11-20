@@ -1,7 +1,5 @@
 import z from 'zod';
-import { DeleteUserParamSchema, GetUserPointParamSchema, UpdateUserNameParamsSchema, UpdateUserNamePayloadSchema } from './schemas';
+import { UpdateUserPayloadSchema, UserIdParamSchema } from './schemas';
 
-export type GetUserPointParams = z.infer<typeof GetUserPointParamSchema>;
-export type DeleteUserParams = z.infer<typeof DeleteUserParamSchema>;
-export type UpdateUserNameParams = z.infer<typeof UpdateUserNameParamsSchema>;
-export type UpdateUserNamePayload = z.infer<typeof UpdateUserNamePayloadSchema>;
+export type UserIdParam = z.infer<typeof UserIdParamSchema>;
+export type UpdateUserNamePayload = z.infer<typeof UpdateUserPayloadSchema>;
