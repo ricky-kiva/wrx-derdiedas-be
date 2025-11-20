@@ -1,14 +1,18 @@
 import { NotFoundError } from '../../../../../commons/exceptions';
 import GameRepository from '../../../../../domains/game/GameRepository';
+import UserRepository from '../../../../../domains/user/UserRepository';
 import UpdateGameUseCase from '../UpdateGameUseCase';
 import { UpdateGameCmd } from '../commands/UpdateGameCmd';
 import Game from '../../../../../domains/game/entities/Game';
 
 describe('UpdateGameUseCase', () => {
   let mockGameRepository: jest.Mocked<GameRepository>;
+  let mockUserRepository: jest.Mocked<UserRepository>;
   let updateGameUseCase: UpdateGameUseCase;
-  let mockFindById: jest.Mock;
-  let mockSave: jest.Mock;
+
+  let mockGRFindById: jest.Mock;
+  let mockGRSave: jest.Mock;
+  let mockURFindById: jest.Mock;
 
   const mockGameId = 'game-123';
   const mockUserId = 'user-123';
@@ -26,19 +30,25 @@ describe('UpdateGameUseCase', () => {
   };
 
   beforeEach(() => {
-    mockFindById = jest.fn();
-    mockSave = jest.fn();
+    mockGRFindById = jest.fn();
+    mockGRSave = jest.fn();
+    mockURFindById = jest.fn();
 
     mockGameRepository = {
-      findById: mockFindById,
-      save: mockSave
+      findById: mockGRFindById,
+      save: mockGRSave
     } as unknown as jest.Mocked<GameRepository>;
 
-    updateGameUseCase = new UpdateGameUseCase(mockGameRepository);
+    mockUserRepository = {
+      findById: mockURFindById,
+    } as unknown as jest.Mocked<UserRepository>;
+
+    updateGameUseCase = new UpdateGameUseCase(mockGameRepository,mockUserRepository);
   });
 
-  it('should update game and return updated game DTO', async () => {
-    mockFindById.mockResolvedValue(baseGameData);
+  it('should update game and return updated DTO when new user exists', async () => {
+    mockGRFindById.mockResolvedValue(baseGameData);
+    mockURFindById.mockResolvedValue({ id: mockCmd.payload.userId });
 
     const expectedUpdated = new Game({
       ...baseGameData,
@@ -47,17 +57,30 @@ describe('UpdateGameUseCase', () => {
 
     const result = await updateGameUseCase.execute(mockCmd);
 
-    expect(mockFindById).toHaveBeenCalledWith(mockGameId);
-    expect(mockSave).toHaveBeenCalledTimes(1);
+    expect(mockGRFindById).toHaveBeenCalledWith(mockGameId);
+    expect(mockURFindById).toHaveBeenCalledWith(mockCmd.payload.userId);
+    expect(mockGRSave).toHaveBeenCalledTimes(1);
     expect(result).toEqual(expectedUpdated);
   });
 
   it('should throw NotFoundError when game not found', async () => {
-    mockFindById.mockResolvedValue(null);
+    mockGRFindById.mockResolvedValue(null);
 
     await expect(updateGameUseCase.execute(mockCmd)).rejects.toThrow(NotFoundError);
 
-    expect(mockFindById).toHaveBeenCalledWith(mockGameId);
-    expect(mockSave).not.toHaveBeenCalled();
+    expect(mockGRFindById).toHaveBeenCalledWith(mockGameId);
+    expect(mockGRSave).not.toHaveBeenCalled();
+    expect(mockURFindById).not.toHaveBeenCalled();
+  });
+
+  it('should throw NotFoundError when new userId does not exist', async () => {
+    mockGRFindById.mockResolvedValue(baseGameData);
+    mockURFindById.mockResolvedValue(null);
+
+    await expect(updateGameUseCase.execute(mockCmd)).rejects.toThrow(NotFoundError);
+
+    expect(mockGRFindById).toHaveBeenCalledWith(mockGameId);
+    expect(mockURFindById).toHaveBeenCalledWith(mockCmd.payload.userId);
+    expect(mockGRSave).not.toHaveBeenCalled();
   });
 });
