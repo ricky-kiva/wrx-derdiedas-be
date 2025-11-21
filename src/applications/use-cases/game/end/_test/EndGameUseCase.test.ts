@@ -52,7 +52,7 @@ describe('EndGameUseCase', () => {
     const result = await endGameUseCase.execute({ gameId: mockGameId });
 
     expect(result).toBe(mockUserId);
-    expect(mockGRDelete).not.toHaveBeenCalled();
+    expect(mockGRDelete).toHaveBeenCalled();
     expect(mockUPRIncrement).toHaveBeenCalledWith(mockUserId, mockPoints);
   });
 
