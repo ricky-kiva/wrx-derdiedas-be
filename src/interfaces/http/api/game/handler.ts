@@ -36,9 +36,12 @@ export default class GameHandler {
   async end(req: Request, res: Response) {
     const { id: gameId } = GameIdParamSchema.parse(req.params);
     
-    const { name } = EndGamePayloadSchema.parse(req.body);
+    const p = EndGamePayloadSchema.parse(req.body);
 
-    const result = await this.endGameUseCase.execute({ gameId, name });
+    const result = await this.endGameUseCase.execute({ 
+      gameId, 
+      name: p?.name 
+    });
 
     res.json({
       status: 'success',

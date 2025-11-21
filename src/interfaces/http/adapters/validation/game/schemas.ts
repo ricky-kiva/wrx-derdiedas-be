@@ -6,7 +6,7 @@ import { UpdateGameCmd } from '../../../../../applications/use-cases/game/update
 
 export const EndGamePayloadSchema = z.object({
   name: z.string().optional()
-}) satisfies z.ZodType<Omit<EndGameCmd, 'gameId'>, z.ZodTypeDef, unknown>;
+}).optional() satisfies z.ZodType<(Omit<EndGameCmd, 'gameId'> | undefined), z.ZodTypeDef, unknown>;
 
 export const GameIdParamSchema = z.object({
   id: z.string().min(1, 'Game ID is required'),
