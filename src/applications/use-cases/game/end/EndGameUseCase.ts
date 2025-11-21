@@ -22,6 +22,7 @@ export default class EndGameUseCase {
       if (!user) throw new NotFoundError('User not found');
 
       await this.userPointRepository.increment(user.id, game.points);
+      await this.gameRepository.delete(cmd.gameId);
       
       return user.id;
     }
