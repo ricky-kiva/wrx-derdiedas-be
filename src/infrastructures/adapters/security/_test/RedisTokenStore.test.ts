@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 
-import { AuthenticationError } from '../../../../commons/exceptions';
 import RedisTokenStore from '../RedisTokenStore';
 import redisClient from '../../../database/redis/redisClient';
 
@@ -41,17 +40,20 @@ describe('RedisTokenStore', () => {
   describe('verifyStoredRefreshToken', () => {
     it('should succeed if token matches', async () => {
       await redis.set(`refresh:${userId}`, token);      
-      await expect(store.verifyStoredRefreshToken(userId, token)).resolves.not.toThrow();
+      const result = await store.verifyStoredRefreshToken(userId, token);
+      expect(result).toBe(true);
     });
 
-    it('should throw AuthenticationError if token is wrong', async () => {
+    it('should fail if token is wrong', async () => {
       await redis.set(`refresh:${userId}`, token);
-      await expect(store.verifyStoredRefreshToken(userId, 'wrong-token')).rejects.toThrow(AuthenticationError);
+      const result = await store.verifyStoredRefreshToken(userId, 'wrong-token');
+      expect(result).toBe(false);
     });
 
-    it('should throw AuthenticationError if token is missing', async () => {
+    it('should fail if token is missing', async () => {
       await redis.del(`refresh:${userId}`);
-      await expect(store.verifyStoredRefreshToken(userId, token)).rejects.toThrow(AuthenticationError);
+      const result = await store.verifyStoredRefreshToken(userId, token);
+      expect(result).toBe(false);
     });
   });
 
