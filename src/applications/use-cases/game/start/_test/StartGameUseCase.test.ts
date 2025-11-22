@@ -24,12 +24,16 @@ describe('StartGameUseCase', () => {
     const userId = 'user-123';
     const result = await useCase.execute(userId);
 
-    expect(result.gameId).toMatch(/^game-/);
+    expect(result.id).toMatch(/^game-/);
     expect(result.nouns).toEqual(mockNouns.map(({ id, word, meanings }) => ({ id, word, meanings })));
 
     expect(saveMethodMock).toHaveBeenCalledTimes(1);
     expect(saveMethodMock).toHaveBeenCalledWith(
-      expect.objectContaining({ userId, nouns: mockNouns.map(({ id, gender }) => ({ id, gender })) })
+      expect.objectContaining({
+        userId,
+        nouns: mockNouns
+          .map(n => ({ id: n.id, gender: n.gender, word: n.word, meanings: n.meanings }))
+      })
     );
   });
 });
