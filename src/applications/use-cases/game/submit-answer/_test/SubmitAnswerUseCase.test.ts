@@ -19,7 +19,7 @@ describe('SubmitAnswerUseCase', () => {
 
   beforeEach(() => {
     const nouns = Object.values(NounsCollectionTestHelper.getNouns())
-      .map(({ id, word, gender }) => ({ id, word, gender }));
+      .map(({ id, word, gender, meanings }) => ({ id, word, gender, meanings }));
 
     const randomNouns = Object.values(NounsCollectionTestHelper.getNouns());
 
@@ -107,7 +107,7 @@ describe('SubmitAnswerUseCase', () => {
     const singleNounGame = new Game({
       id: 'game-789',
       userId: 'user-123',
-      nouns: [{ id: 'noun-123', gender: 'masculine' }],
+      nouns: [{ id: 'noun-123', word: 'Hund', gender: 'masculine', meanings: ['dog'] }],
     });
 
     (mockGameRepository.findById as jest.Mock).mockResolvedValueOnce(singleNounGame);

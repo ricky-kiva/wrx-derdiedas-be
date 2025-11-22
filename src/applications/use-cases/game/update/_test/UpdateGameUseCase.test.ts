@@ -3,7 +3,7 @@ import GameRepository from '../../../../../domains/game/GameRepository';
 import UserRepository from '../../../../../domains/user/UserRepository';
 import UpdateGameUseCase from '../UpdateGameUseCase';
 import { UpdateGameCmd } from '../commands/UpdateGameCmd';
-import Game from '../../../../../domains/game/entities/Game';
+import { UpdateGameDTO } from '../dto/UpdateGameDTO';
 
 describe('UpdateGameUseCase', () => {
   let mockGameRepository: jest.Mocked<GameRepository>;
@@ -50,10 +50,12 @@ describe('UpdateGameUseCase', () => {
     mockGRFindById.mockResolvedValue(baseGameData);
     mockURFindById.mockResolvedValue({ id: mockCmd.payload.userId });
 
-    const expectedUpdated = new Game({
-      ...baseGameData,
-      ...mockCmd.payload
-    });
+    const expectedUpdated: UpdateGameDTO = {
+      id: baseGameData.id,
+      userId: mockCmd.payload.userId,
+      points: baseGameData.points,
+      nouns: baseGameData.nouns.map(({ id, word, meanings }) => ({ id, word, meanings }))
+    };
 
     const result = await updateGameUseCase.execute(mockCmd);
 
