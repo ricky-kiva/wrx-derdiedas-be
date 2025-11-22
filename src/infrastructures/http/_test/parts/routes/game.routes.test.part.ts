@@ -8,6 +8,8 @@ import HeaderUtils from '../../../../../interfaces/http/shared/HeaderUtils';
 import { UpdateGameDTO } from '../../../../../applications/use-cases/game/update/dto/UpdateGameDTO';
 import { UpdateGamePayload } from '../../../../../interfaces/http/adapters/validation/game/types';
 import { UpdateGameCmd } from '../../../../../applications/use-cases/game/update/commands/UpdateGameCmd';
+import { GetGameByIdDTO } from '../../../../../applications/use-cases/game/get/dto/GetGameByIdDTO';
+import { StartGameDTO } from '../../../../../applications/use-cases/game/start/dto/StartGameDTO';
 
 export default function testGameRoutes(
   getApp: () => Application,
@@ -122,10 +124,11 @@ export default function testGameRoutes(
       it('responds with 200 and game data', async () => {
         const gameId = 'game-123';
 
-        const mockGame = {
+        const mockGame: GetGameByIdDTO = {
           id: gameId,
-          score: 10,
-          nouns: [{ id: 'noun-123', gender: 'masculine' as const }]
+          userId: 'user-123',
+          points: 10,
+          nouns: [{ id: 'noun-123', word: 'Hund', meanings: ['dog'] }]
         };
 
         mocks.usecases.getGameByIdUC.execute.mockResolvedValue(mockGame);
@@ -166,7 +169,7 @@ export default function testGameRoutes(
 
     describe('POST `/game/start`', () => {
       it('responds with 200 for anonymous user', async () => {
-        const mockGame = { gameId: 'game-123', nouns: [] };
+        const mockGame: StartGameDTO = { id: 'game-123', nouns: [] };
 
         mocks.usecases.startGameUC.execute.mockResolvedValue(mockGame);
 
@@ -186,7 +189,7 @@ export default function testGameRoutes(
 
         (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(userId);
 
-        const game = { gameId: 'game-123', nouns: [] };
+        const game: StartGameDTO = { id: 'game-123', nouns: [] };
 
         mocks.usecases.startGameUC.execute.mockResolvedValue(game);
 
