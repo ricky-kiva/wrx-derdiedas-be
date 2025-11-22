@@ -76,6 +76,19 @@ describe('EndGameUseCase', () => {
     );
   });
 
+  it('should delete game and return null when guest has 0 points', async () => {
+    const zeroPointGame = new Game({ id: mockGameId, points: 0, nouns: [] });
+
+    mockGameRepository.findById.mockResolvedValue(zeroPointGame);
+
+    const result = await endGameUseCase.execute({ gameId: mockGameId, name: 'Rezy' });
+
+    expect(result).toBeNull();
+    expect(mockGRDelete).toHaveBeenCalledWith(mockGameId);
+    expect(mockURCreate).not.toHaveBeenCalled();
+    expect(mockUPRSave).not.toHaveBeenCalled();
+  });
+
   it('should throw NotFoundError if game not found', async () => {
     mockGameRepository.findById.mockResolvedValue(null);
     await expect(endGameUseCase.execute({ gameId: mockGameId })).rejects.toThrow(NotFoundError);
