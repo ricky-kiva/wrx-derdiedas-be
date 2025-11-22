@@ -11,10 +11,15 @@ export default class EndGameUseCase {
     private readonly userRepository: UserRepository
   ) {}
 
-  async execute(cmd: EndGameCmd): Promise<string> {
+  async execute(cmd: EndGameCmd): Promise<string | null> {
     const game = await this.gameRepository.findById(cmd.gameId);
 
     if (!game) throw new NotFoundError('Game not found');
+
+    if (game.points <= 0) {
+      await this.gameRepository.delete(cmd.gameId);
+      return null;
+    }
 
     if (game.userId) {
       const user = await this.userRepository.findById(game.userId);
