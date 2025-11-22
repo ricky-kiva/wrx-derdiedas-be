@@ -2,7 +2,7 @@ import Noun from '../../noun/entities/Noun';
 
 export interface GamePayload {
   id: string;
-  nouns: Omit<Noun, ('meanings' | 'word')>[];
+  nouns: Noun[];
   userId?: string;
   points?: number;
 }
@@ -12,7 +12,7 @@ export type GameParams = GamePayload;
 export default class Game {
   public readonly id: string;
   public readonly userId?: string;
-  public readonly nouns: Omit<Noun, ('meanings' | 'word')>[];
+  public readonly nouns: Noun[];
   public points: number;
   
   constructor(params: GamePayload) {
