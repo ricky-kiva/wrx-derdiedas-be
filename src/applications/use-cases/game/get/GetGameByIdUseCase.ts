@@ -10,6 +10,11 @@ export default class GetGameByIdUseCase {
 
     if (!game) throw new NotFoundError("Game not found");
 
-    return game satisfies GetGameByIdDTO;
+    return {
+      id: game.id,
+      userId: game.userId,
+      points: game.points,
+      nouns: game.nouns.map(({ id, word, meanings }) => ({ id, word, meanings }))
+    } satisfies GetGameByIdDTO;
   }
 }

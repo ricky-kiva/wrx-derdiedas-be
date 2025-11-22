@@ -27,6 +27,11 @@ export default class UpdateGameUseCase {
 
     await this.gameRepository.save(updated);
 
-    return updated satisfies UpdateGameDTO;
+    return {
+      id: updated.id,
+      userId: updated.userId,
+      points: updated.points,
+      nouns: updated.nouns.map(({ id, word, meanings }) => ({ id, word, meanings }))
+    } satisfies UpdateGameDTO;
   }
 }

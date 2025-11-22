@@ -35,13 +35,8 @@ export default class SubmitAnswerUseCase {
 
     if (game.nouns.length === 0) {
       const randomNouns = await this.nounQueryRepository.getRandom();
-      
-      const gameNouns = randomNouns.map((n) => ({
-        id: n.id,
-        gender: n.gender
-      } satisfies Omit<Noun, ('meanings' | 'word')>));
 
-      game.nouns.push(...gameNouns);
+      game.nouns.push(...randomNouns);
 
       nouns = randomNouns.map((n) => ({
         id: n.id,
