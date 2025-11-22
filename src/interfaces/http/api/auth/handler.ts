@@ -59,11 +59,31 @@ export default class AuthHandler {
   }
 
   async refreshToken(req: CookieRequest, res: Response) {
+    const cookiesRefreshToken = req.cookies.refreshToken;
+
+    if (!cookiesRefreshToken) {
+      res.json({
+        status: 'fail',
+        message: 'No refresh token'
+      } satisfies ApiResponse);
+      
+      return;
+    }
+
     const { refreshToken } = RefreshTokenPayloadSchema.parse({
-      refreshToken: req.cookies.refreshToken
+      refreshToken: cookiesRefreshToken
     });
 
     const newTokens = await this.refreshTokenUseCase.execute(refreshToken);
+
+    if (!newTokens) {
+      res.json({
+        status: 'fail',
+        message: 'Refresh token is invalid'
+      } satisfies ApiResponse);
+
+      return;
+    }
 
     res
       .cookie('refreshToken', newTokens.refreshToken, {

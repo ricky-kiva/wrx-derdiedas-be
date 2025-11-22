@@ -8,12 +8,14 @@ export default class RefreshTokenUseCase {
     private readonly tokenStore: TokenStore
   ) {}
 
-  async execute(refreshToken: string): Promise<JwtTokenDTO> {
+  async execute(refreshToken: string): Promise<JwtTokenDTO | null> {
     this.tokenManager.verifyRefreshToken(refreshToken);
 
     const jwtPayload = this.tokenManager.decodePayload(refreshToken);
 
-    await this.tokenStore.verifyStoredRefreshToken(jwtPayload.userId, refreshToken);
+    const isValid = await this.tokenStore.verifyStoredRefreshToken(jwtPayload.userId, refreshToken);
+
+    if (!isValid) return null; 
 
     const newAccessToken = this.tokenManager.generateAccessToken(jwtPayload);
     const newRefreshToken = this.tokenManager.generateRefreshToken(jwtPayload);
