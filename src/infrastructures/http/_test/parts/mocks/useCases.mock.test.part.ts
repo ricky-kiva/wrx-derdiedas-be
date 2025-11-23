@@ -14,9 +14,11 @@ import GetUserPointUseCase from '../../../../../applications/use-cases/user/get-
 import UpdateUserUseCase from '../../../../../applications/use-cases/user/update/UpdateUserUseCase';
 import GetGameByIdUseCase from '../../../../../applications/use-cases/game/get/GetGameByIdUseCase';
 import UpdateGameUseCase from '../../../../../applications/use-cases/game/update/UpdateGameUseCase';
+import DeleteGameUseCase from '../../../../../applications/use-cases/game/delete/DeleteGameUseCase';
 
 export interface TestPartMocks {
   usecases: {
+    deleteGameUC: jest.Mocked<DeleteGameUseCase>,
     deleteUserUC: jest.Mocked<DeleteUserUseCase>,
     endGameUC: jest.Mocked<EndGameUseCase>,
     getGameByIdUC: jest.Mocked<GetGameByIdUseCase>,
@@ -33,6 +35,7 @@ export interface TestPartMocks {
     updateGameUC: jest.Mocked<UpdateGameUseCase>,
   },
   methods: {
+    deleteGameUC: { execute: jest.Mock },
     deleteUserUC: { execute: jest.Mock },
     endGameUC: { execute: jest.Mock },
     logoutUC: { execute: jest.Mock },
@@ -48,6 +51,7 @@ export interface TestPartMocks {
 }
 
 export default function useCasesMockTestPart(testContainer: DependencyContainer): TestPartMocks { 
+  const deleteGameUCExecute = jest.fn();
   const deleteUserUCExecute = jest.fn();
   const endGameUCExecute = jest.fn();
   const getGameByIdUCExecute = jest.fn();
@@ -60,6 +64,9 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
   const updateGameUCExecute = jest.fn();
   const updateUserUCExecute = jest.fn();
 
+  const deleteGameUC = {
+    execute: deleteGameUCExecute
+  } as unknown as jest.Mocked<DeleteGameUseCase>;
   
   const deleteUserUC = { 
     execute: deleteUserUCExecute 
@@ -118,6 +125,7 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
     execute: updateUserUCExecute 
   } as unknown as jest.Mocked<UpdateUserUseCase>;
 
+  testContainer.registerInstance(DITokens.DeleteGameUseCase, deleteGameUC);
   testContainer.registerInstance(DITokens.DeleteUserUseCase, deleteUserUC);
   testContainer.registerInstance(DITokens.EndGameUseCase, endGameUC);
   testContainer.registerInstance(DITokens.GetGameByIdUseCase, getGameByIdUC);
@@ -135,10 +143,11 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
 
   return { 
     usecases: { 
-      deleteUserUC, endGameUC, getGameByIdUC, getLeaderboardUC, getUserPointUC, loginUC, logoutUC, refreshTokenUC, seachNounUC, 
+      deleteGameUC, deleteUserUC, endGameUC, getGameByIdUC, getLeaderboardUC, getUserPointUC, loginUC, logoutUC, refreshTokenUC, seachNounUC, 
       startGameUC, submitAnswerUC, submitPointUC, updateGameUC, updateUserUC
     },
     methods: {
+      deleteGameUC: { execute: deleteGameUCExecute },
       deleteUserUC: { execute: deleteUserUCExecute },
       endGameUC: { execute: endGameUCExecute },
       getGameByIdUC: { execute: getGameByIdUCExecute },

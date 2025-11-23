@@ -34,6 +34,44 @@ export default function testGameRoutes(
       jest.restoreAllMocks();
     });
 
+    describe('DELETE `/game/:id`', () => {
+      it('responds with 204 on successful delete', async () => {
+        const gameId = 'game-123';
+
+        mocks.usecases.deleteGameUC.execute.mockResolvedValue(undefined);
+
+        const res = await request(app).delete(`${BASE_URL}/${gameId}`);
+
+        expect(res.status).toBe(204);
+        expect(res.body).toEqual({});
+
+        expect(mocks.methods.deleteGameUC.execute)
+          .toHaveBeenCalledWith(gameId);
+      });
+
+      it('responds with 404 if game not found', async () => {
+        mocks.usecases.deleteGameUC.execute.mockRejectedValue(
+          new NotFoundError('Game not found')
+        );
+
+        const res = await request(app).delete(`${BASE_URL}/missing`);
+
+        expect(res.status).toBe(404);
+        expect((res.body as ApiResponse).status).toBe('fail');
+      });
+
+      it('responds with 500 for unexpected error', async () => {
+        mocks.usecases.deleteGameUC.execute.mockRejectedValue(
+          new Error('Unexpected')
+        );
+
+        const res = await request(app).delete(`${BASE_URL}/err`);
+
+        expect(res.status).toBe(500);
+        expect((res.body as ApiResponse).status).toBe('error');
+      });
+    });
+
     describe('POST `/game/:id/end`', () => {
       it('responds with 200 when logged-in user ends game', async () => {
         const userId = 'user-123';
