@@ -9,6 +9,7 @@ import { EndGamePayloadSchema, GameIdParamSchema, SubmitAnswerPayloadSchema, Upd
 import EndGameUseCase from '../../../../applications/use-cases/game/end/EndGameUseCase';
 import UpdateGameUseCase from '../../../../applications/use-cases/game/update/UpdateGameUseCase';
 import GetGameByIdUseCase from '../../../../applications/use-cases/game/get/GetGameByIdUseCase';
+import DeleteGameUseCase from '../../../../applications/use-cases/game/delete/DeleteGameUseCase';
 
 @injectable()
 export default class GameHandler {
@@ -17,6 +18,8 @@ export default class GameHandler {
     private readonly headerUtils: HeaderUtils,
     @inject(DITokens.EndGameUseCase)
     private readonly endGameUseCase: EndGameUseCase,
+    @inject(DITokens.DeleteGameUseCase)
+    private readonly deleteGameUseCase: DeleteGameUseCase,
     @inject(DITokens.GetGameByIdUseCase)
     private readonly getGameByIdUseCase: GetGameByIdUseCase,
     @inject(DITokens.StartGameUseCase)
@@ -26,11 +29,20 @@ export default class GameHandler {
     @inject(DITokens.UpdateGameUseCase)
     private readonly updateGameUseCase: UpdateGameUseCase
   ) {
+    this.delete = this.delete.bind(this);
     this.end = this.end.bind(this);
     this.getById = this.getById.bind(this);
     this.start = this.start.bind(this);
     this.submitAnswer = this.submitAnswer.bind(this);
     this.update = this.update.bind(this);
+  }
+
+  async delete(req: Request, res: Response) {
+    const { id } = GameIdParamSchema.parse(req.params);
+
+    await this.deleteGameUseCase.execute(id);
+
+    res.status(204).send();
   }
 
   async end(req: Request, res: Response) {
