@@ -3,6 +3,7 @@ import { ClientError, ServerError } from '../../../../commons/exceptions';
 import ApiResponse from '../../types/ApiResponse';
 import { ZodError } from 'zod';
 import config from '../../../../commons/config';
+import mongoose from 'mongoose';
 
 const errorPreResponse: ErrorRequestHandler = (
   err: Error, 
@@ -20,6 +21,15 @@ const errorPreResponse: ErrorRequestHandler = (
       message: err.errors[0].message
     } satisfies ApiResponse);
 
+    return;
+  }
+
+  if (err instanceof mongoose.Error.ValidationError) {
+    const messages = Object.values(err.errors).map(e => e.message);
+    res.status(400).json({
+      status: 'fail',
+      message: messages.join('; ')
+    } satisfies ApiResponse);
     return;
   }
 
