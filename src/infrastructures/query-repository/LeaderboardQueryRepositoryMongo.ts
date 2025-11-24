@@ -17,6 +17,16 @@ export class LeaderboardQueryRepositoryMongo implements LeaderboardQueryReposito
 
     const [items, total] = await Promise.all([
       this.model.aggregate<LeaderboardEntryDTO>([
+        { $match: { point: { $gt: 0 } } },
+        { $sort: { point: -1, updatedAt: -1 } },
+        {
+          $setWindowFields: {
+            sortBy: { point: -1 },
+            output: {
+              rank: { $documentNumber: {} }
+            }
+          }
+        },
         {
           $lookup: {
             from: 'users',
@@ -28,22 +38,17 @@ export class LeaderboardQueryRepositoryMongo implements LeaderboardQueryReposito
         { $unwind: '$user' },
         {
           $project: {
-            _id: 0,
+            id: '$userId',
             name: '$user.name',
             point: 1,
-            updatedAt: 1
-          }
-        },
-        {
-          $sort: {
-            point: -1, 
-            updatedAt: -1
+            updatedAt: 1,
+            rank: 1
           }
         },
         { $skip: skip },
         { $limit: limit }
       ]),
-      this.model.countDocuments()
+      this.model.countDocuments({ point: { $gt: 0 } })
     ]);
 
     return {
