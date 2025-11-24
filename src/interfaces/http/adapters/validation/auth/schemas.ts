@@ -5,7 +5,9 @@ export const LoginPayloadSchema = z.object({
 });
 
 export const LogoutPayloadSchema = z.object({
-  id: z.string().min(1, "id of user is required")
+  id: z.string()
+    .min(1, "User ID is required")
+    .regex(/^[a-f\d]{24}$/i, "User ID is not valid")
 });
 
 export const RefreshTokenPayloadSchema = z.object({
