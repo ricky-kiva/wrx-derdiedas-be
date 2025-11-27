@@ -61,7 +61,7 @@ describe('DecayPointsUseCase', () => {
 
     await decayPointsUseCase.execute();
 
-    expect(mockUPRDecrement).toHaveBeenCalledWith(userId,USER_POINT_CONSTANTS.DECREMENT_POINT);
+    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECREMENT_POINT, false);
   });
 
   it('should delete user and userPoint if point <= DECREMENT_POINT and user not logged in', async () => {
@@ -120,7 +120,7 @@ describe('DecayPointsUseCase', () => {
 
     await decayPointsUseCase.execute();
 
-    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECREMENT_POINT);
+    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECREMENT_POINT, false);
     expect(mockURDelete).not.toHaveBeenCalled();
   });
 
