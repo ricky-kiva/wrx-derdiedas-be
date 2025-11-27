@@ -11,6 +11,10 @@ export default class UpdateUserUseCase {
 
     if (!updatedUser) throw new NotFoundError('User not found');
 
-    return updatedUser satisfies UpdateUserDTO;
+    return {
+      id: updatedUser.id,
+      name: updatedUser.name,
+      picture: updatedUser.picture
+    } satisfies UpdateUserDTO;
   }
 }
