@@ -41,7 +41,7 @@ export default class UserHandler {
 
     res.json({
       status: 'success',
-      data: { user: updatedUser }
+      data: { ...updatedUser }
     } satisfies ApiResponse);
   }
 
