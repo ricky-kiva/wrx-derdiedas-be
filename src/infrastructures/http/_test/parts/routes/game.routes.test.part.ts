@@ -16,6 +16,9 @@ export default function testGameRoutes(
   getMocks: () => TestPartMocks
 ) {
   const BASE_URL = '/game';
+  const mockGameId = '6c9f8c77-40b4-4c6b-a2a4-9ddf43e19c32';
+  const mockUserId = '507f1f77bcf86cd799439012';
+  const mockNounId = '507f1f88bcf86cd799439011';
 
   describe('Game Routes Integration', () => {
     let app: Application;
@@ -36,17 +39,15 @@ export default function testGameRoutes(
 
     describe('DELETE `/game/:id`', () => {
       it('responds with 204 on successful delete', async () => {
-        const gameId = 'game-123';
-
         mocks.usecases.deleteGameUC.execute.mockResolvedValue(undefined);
 
-        const res = await request(app).delete(`${BASE_URL}/${gameId}`);
+        const res = await request(app).delete(`${BASE_URL}/${mockGameId}`);
 
         expect(res.status).toBe(204);
         expect(res.body).toEqual({});
 
         expect(mocks.methods.deleteGameUC.execute)
-          .toHaveBeenCalledWith(gameId);
+          .toHaveBeenCalledWith(mockGameId);
       });
 
       it('responds with 404 if game not found', async () => {
@@ -54,7 +55,7 @@ export default function testGameRoutes(
           new NotFoundError('Game not found')
         );
 
-        const res = await request(app).delete(`${BASE_URL}/missing`);
+        const res = await request(app).delete(`${BASE_URL}/${mockGameId}`);
 
         expect(res.status).toBe(404);
         expect((res.body as ApiResponse).status).toBe('fail');
@@ -65,7 +66,7 @@ export default function testGameRoutes(
           new Error('Unexpected')
         );
 
-        const res = await request(app).delete(`${BASE_URL}/err`);
+        const res = await request(app).delete(`${BASE_URL}/${mockGameId}`);
 
         expect(res.status).toBe(500);
         expect((res.body as ApiResponse).status).toBe('error');
@@ -74,48 +75,43 @@ export default function testGameRoutes(
 
     describe('POST `/game/:id/end`', () => {
       it('responds with 200 when logged-in user ends game', async () => {
-        const userId = 'user-123';
-        const gameId = 'game-123';
+        (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(mockUserId);
 
-        (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(userId);
-
-        mocks.usecases.endGameUC.execute.mockResolvedValue(userId);
+        mocks.usecases.endGameUC.execute.mockResolvedValue(mockUserId);
 
         const res = await request(app)
-          .post(`${BASE_URL}/${gameId}/end`)
+          .post(`${BASE_URL}/${mockGameId}/end`)
           .send({ name: undefined });
 
         expect(res.status).toBe(200);
         expect(res.body).toEqual({
           status: 'success',
-          data: { userId }
+          data: { userId: mockUserId }
         });
 
         expect(mocks.methods.endGameUC.execute).toHaveBeenCalledWith({
-          gameId,
+          gameId: mockGameId,
           name: undefined
         });
       });
 
       it('responds with 200 when anonymous user ends game with name', async () => {
-        const gameId = 'game-456';
-        const newUserId = 'user-456';
         const name = 'Rickyslash';
 
-        mocks.usecases.endGameUC.execute.mockResolvedValue(newUserId);
+        mocks.usecases.endGameUC.execute.mockResolvedValue(mockUserId);
 
         const res = await request(app)
-          .post(`${BASE_URL}/${gameId}/end`)
+          .post(`${BASE_URL}/${mockGameId}/end`)
           .send({ name });
 
         expect(res.status).toBe(200);
         expect(res.body).toEqual({
           status: 'success',
-          data: { userId: newUserId }
+          data: { userId: mockUserId }
         });
 
         expect(mocks.methods.endGameUC.execute)
-          .toHaveBeenCalledWith({ gameId, name });
+          .toHaveBeenCalledWith({ gameId: mockGameId, name });
       });
 
       it('responds with 404 if game not found', async () => {
@@ -124,7 +120,7 @@ export default function testGameRoutes(
         );
 
         const res = await request(app)
-          .post(`${BASE_URL}/missing/end`)
+          .post(`${BASE_URL}/${mockGameId}/end`)
           .send({ name: 'A' });
 
         expect(res.status).toBe(404);
@@ -137,7 +133,7 @@ export default function testGameRoutes(
         );
 
         const res = await request(app)
-          .post(`${BASE_URL}/game-123/end`)
+          .post(`${BASE_URL}/${mockGameId}/end`)
           .send({});
 
         expect(res.status).toBe(400);
@@ -150,7 +146,7 @@ export default function testGameRoutes(
         );
 
         const res = await request(app)
-          .post(`${BASE_URL}/game-123/end`)
+          .post(`${BASE_URL}/${mockGameId}/end`)
           .send({ name: 'Rickyslash' });
 
         expect(res.status).toBe(500);
@@ -160,10 +156,8 @@ export default function testGameRoutes(
 
     describe('GET `/game/:id`', () => {
       it('responds with 200 and game data', async () => {
-        const gameId = 'game-123';
-
         const mockGame: GetGameByIdDTO = {
-          id: gameId,
+          id: mockGameId,
           userId: 'user-123',
           points: 10,
           nouns: [{ id: 'noun-123', word: 'Hund', meanings: ['dog'] }]
@@ -171,7 +165,7 @@ export default function testGameRoutes(
 
         mocks.usecases.getGameByIdUC.execute.mockResolvedValue(mockGame);
 
-        const res = await request(app).get(`${BASE_URL}/${gameId}`);
+        const res = await request(app).get(`${BASE_URL}/${mockGameId}`);
 
         expect(res.status).toBe(200);
         expect(res.body).toEqual({
@@ -179,7 +173,7 @@ export default function testGameRoutes(
           data: mockGame
         });
 
-        expect(mocks.methods.getGameByIdUC.execute).toHaveBeenCalledWith(gameId);
+        expect(mocks.methods.getGameByIdUC.execute).toHaveBeenCalledWith(mockGameId);
       });
 
       it('responds with 404 if game not found', async () => {
@@ -187,7 +181,7 @@ export default function testGameRoutes(
           new NotFoundError('Game not found')
         );
 
-        const res = await request(app).get(`${BASE_URL}/missing`);
+        const res = await request(app).get(`${BASE_URL}/${mockGameId}`);
 
         expect(res.status).toBe(404);
         expect((res.body as ApiResponse).status).toBe('fail');
@@ -198,7 +192,7 @@ export default function testGameRoutes(
           new Error('Unexpected')
         );
 
-        const res = await request(app).get(`${BASE_URL}/game-123`);
+        const res = await request(app).get(`${BASE_URL}/${mockGameId}`);
 
         expect(res.status).toBe(500);
         expect((res.body as ApiResponse).status).toBe('error');
@@ -207,7 +201,7 @@ export default function testGameRoutes(
 
     describe('POST `/game/start`', () => {
       it('responds with 200 for anonymous user', async () => {
-        const mockGame: StartGameDTO = { id: 'game-123', nouns: [] };
+        const mockGame: StartGameDTO = { id: mockGameId, nouns: [] };
 
         mocks.usecases.startGameUC.execute.mockResolvedValue(mockGame);
 
@@ -223,11 +217,9 @@ export default function testGameRoutes(
       });
 
       it('responds with 200 for logged-in user', async () => {
-        const userId = 'user-123';
+        (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(mockUserId);
 
-        (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(userId);
-
-        const game: StartGameDTO = { id: 'game-123', nouns: [] };
+        const game: StartGameDTO = { id: mockGameId, nouns: [] };
 
         mocks.usecases.startGameUC.execute.mockResolvedValue(game);
 
@@ -238,7 +230,7 @@ export default function testGameRoutes(
         expect(res.status).toBe(200);
         expect((res.body as ApiResponse).status).toBe('success');
 
-        expect(mocks.methods.startGameUC.execute).toHaveBeenCalledWith(userId);
+        expect(mocks.methods.startGameUC.execute).toHaveBeenCalledWith(mockUserId);
       });
 
       it('responds with 500 on unexpected error', async () => {
@@ -255,10 +247,8 @@ export default function testGameRoutes(
 
     describe('POST `/game/:id/answer`', () => {
       it('responds with 200 without nouns', async () => {
-        const gameId = 'g1';
-
         const payload = {
-          nounId: 'noun-1',
+          nounId: mockNounId,
           answer: 'feminine'
         };
 
@@ -271,7 +261,7 @@ export default function testGameRoutes(
         mocks.usecases.submitAnswerUC.execute.mockResolvedValue(mockResult);
 
         const res = await request(app)
-          .post(`${BASE_URL}/${gameId}/answer`)
+          .post(`${BASE_URL}/${mockGameId}/answer`)
           .send(payload);
 
         expect(res.status).toBe(200);
@@ -281,19 +271,17 @@ export default function testGameRoutes(
         });
 
         expect(mocks.methods.submitAnswerUC.execute)
-          .toHaveBeenCalledWith({ gameId, ...payload });
+          .toHaveBeenCalledWith({ gameId: mockGameId, ...payload });
       });
 
       it('responds with 200 with new nouns', async () => {
-        const gameId = 'game-123';
-
         const payload = {
-          nounId: 'noun-123',
+          nounId: mockNounId,
           answer: 'masculine'
         };
 
         const nouns = [
-          { id: 'noun-124', word: 'Tisch', meanings: ['table'] }
+          { id: (mockNounId.slice(0, -1) + '2'), word: 'Tisch', meanings: ['table'] }
         ];
 
         mocks.usecases.submitAnswerUC.execute.mockResolvedValue({
@@ -303,7 +291,7 @@ export default function testGameRoutes(
         });
 
         const res = await request(app)
-          .post(`${BASE_URL}/${gameId}/answer`)
+          .post(`${BASE_URL}/${mockGameId}/answer`)
           .send(payload);
 
         expect(res.status).toBe(200);
@@ -321,8 +309,8 @@ export default function testGameRoutes(
         );
 
         const res = await request(app)
-          .post(`${BASE_URL}/missing/answer`)
-          .send({ nounId: 'n-123', answer: 'feminine' });
+          .post(`${BASE_URL}/${mockGameId}/answer`)
+          .send({ nounId: mockNounId, answer: 'feminine' });
 
         expect(res.status).toBe(404);
         expect((res.body as ApiResponse).status).toBe('fail');
@@ -334,7 +322,7 @@ export default function testGameRoutes(
         );
 
         const res = await request(app)
-          .post(`${BASE_URL}/g1/answer`)
+          .post(`${BASE_URL}/${mockGameId}/answer`)
           .send({ nounId: 'missing', answer: 'feminine' });
 
         expect(res.status).toBe(400);
@@ -343,8 +331,8 @@ export default function testGameRoutes(
 
       it('responds with 400 for invalid payload', async () => {
         const res = await request(app)
-          .post(`${BASE_URL}/game-123/answer`)
-          .send({ nounId: 123 });
+          .post(`${BASE_URL}/${mockGameId}/answer`)
+          .send({ nounId: mockNounId });
 
         expect(res.status).toBe(400);
         expect((res.body as ApiResponse).status).toBe('fail');
@@ -353,20 +341,19 @@ export default function testGameRoutes(
 
     describe('PATCH `/game/:id`', () => {
       it('responds with 200 on successful update', async () => {
-        const gameId = 'g-123';
-        const payload = { userId: 'u-123' } satisfies UpdateGamePayload;
+        const payload = { userId: mockUserId } satisfies UpdateGamePayload;
 
         const updated: UpdateGameDTO = {
-          id: gameId,
+          id: mockGameId,
           nouns: [],
-          userId: 'u-234',
+          userId: mockUserId,
           points: 20
         };
 
         mocks.usecases.updateGameUC.execute.mockResolvedValue(updated);
 
         const res = await request(app)
-          .patch(`${BASE_URL}/${gameId}`)
+          .patch(`${BASE_URL}/${mockGameId}`)
           .send(payload);
 
         expect(res.status).toBe(200);
@@ -377,7 +364,7 @@ export default function testGameRoutes(
 
         expect(mocks.methods.updateGameUC.execute).toHaveBeenCalledWith({
           payload,
-          id: gameId
+          id: mockGameId
         } satisfies UpdateGameCmd);
       });
 
@@ -387,7 +374,7 @@ export default function testGameRoutes(
         );
 
         const res = await request(app)
-          .patch(`${BASE_URL}/missing`)
+          .patch(`${BASE_URL}/${mockGameId}`)
           .send({ paused: true });
 
         expect(res.status).toBe(404);
@@ -395,13 +382,13 @@ export default function testGameRoutes(
       });
 
       it('responds with 500 unexpected error', async () => {
-        mocks.usecases.updateGameUC.execute.mockRejectedValue(
+        mocks.methods.updateGameUC.execute.mockRejectedValue(
           new Error('Unexpected')
         );
 
         const res = await request(app)
-          .patch(`${BASE_URL}/err`)
-          .send({ paused: false });
+          .patch(`${BASE_URL}/${mockGameId}`)
+          .send({ userId: mockUserId });
 
         expect(res.status).toBe(500);
         expect((res.body as ApiResponse).status).toBe('error');

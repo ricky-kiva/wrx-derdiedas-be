@@ -12,6 +12,7 @@ export default function testAuthRoutes(
 ) {
   describe('Auth Routes Integration', () => {
     const baseRoute = '/auth';
+    const mockUserId = '507f1f77bcf86cd799439012';
 
     let app: Application;
     let mocks: TestPartMocks;
@@ -28,7 +29,7 @@ export default function testAuthRoutes(
           refreshToken: 'mock.refresh.token'
         },
         user: {
-          id: 'user-123',
+          id: mockUserId,
           email: 'r@g.com',
           name: 'Rickyslash'
         }
@@ -53,7 +54,7 @@ export default function testAuthRoutes(
     });
 
     it('responds to POST `/logout` with 204', async () => {
-      const payload = { id: 'user-123' } satisfies LogoutPayload;
+      const payload = { id: mockUserId } satisfies LogoutPayload;
 
       const res = await request(app)
         .post(`${baseRoute}/logout`)

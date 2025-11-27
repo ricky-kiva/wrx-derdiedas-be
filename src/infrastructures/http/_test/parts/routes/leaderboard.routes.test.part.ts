@@ -28,8 +28,8 @@ export default function testLeaderboardRoutes(
         const QUERY_LIMIT = 10;
 
         const mockLeaderboard: LeaderboardEntryDTO[] = [
-          { name: 'Rezy', point: 100, updatedAt: new Date() },
-          { name: 'Ricky', point: 90, updatedAt: new Date() }
+          { id: 'user-123', rank: 1, name: 'Rezy', point: 100, updatedAt: new Date() },
+          { id: 'user-124', rank: 2, name: 'Ricky', point: 90, updatedAt: new Date() }
         ];
 
         mocks.usecases.getLeaderboardUC.execute.mockResolvedValue({
@@ -67,8 +67,8 @@ export default function testLeaderboardRoutes(
 
       it('responds with default page and limit if no query parameters are provided', async () => {
         const mockLeaderboard: LeaderboardEntryDTO[] = [
-          { name: 'Rezy', point: 100, updatedAt: new Date() },
-          { name: 'Ricky', point: 90, updatedAt: new Date() }
+          { id: 'user-123', rank: 1, name: 'Rezy', point: 100, updatedAt: new Date() },
+          { id: 'user-124', rank: 2, name: 'Ricky', point: 90, updatedAt: new Date() }
         ];
 
         mocks.usecases.getLeaderboardUC.execute.mockResolvedValue({
