@@ -5,8 +5,10 @@ import {
 
 describe('User Schemas', () => {
   describe('UserIdParamSchema', () => {
+    const id = '0123456789abcdef01234567';
+
     it('passes with valid id', () => {
-      const result = UserIdParamSchema.safeParse({ id: 'user-123' });
+      const result = UserIdParamSchema.safeParse({ id });
       expect(result.success).toBe(true);
     });
 

@@ -32,11 +32,20 @@ describe('GetLeaderboardQPSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should fail if limit is less than 1', () => {
-    const query = { page: '1', limit: '0' };
+  it('should clamp limit to minimum 10', () => {
+    const query = { page: '1', limit: '5' };
     const result = GetLeaderboardQPSchema.safeParse(query);
 
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.limit).toBe(10);
+  });
+
+  it('should clamp limit to maximum 150', () => {
+    const query = { page: '1', limit: '500' };
+    const result = GetLeaderboardQPSchema.safeParse(query);
+
+    expect(result.success).toBe(true);
+    if (result.success) expect(result.data.limit).toBe(150);
   });
 });
 

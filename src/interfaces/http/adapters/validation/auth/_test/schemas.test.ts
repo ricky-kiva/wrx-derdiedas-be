@@ -34,8 +34,10 @@ describe('Auth Schemas', () => {
   });
 
   describe('LogoutPayloadSchema', () => {
+    const id = '0123456789abcdef01234567';
+
     it('passes with valid id', () => {
-      const payload = { id: '123' };
+      const payload = { id };
 
       const result = LogoutPayloadSchema.safeParse(payload);
 

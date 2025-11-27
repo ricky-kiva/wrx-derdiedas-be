@@ -8,7 +8,9 @@ import { GENDER_VALUES } from '../../../../../../domains/noun/entities/Noun';
 
 describe('GameIdParamSchema', () => {
   it('passes with valid id', () => {
-    const result = GameIdParamSchema.safeParse({ id: 'game-123' });
+    const result = GameIdParamSchema
+      .safeParse({ id: '550e8400-e29b-41d4-a716-446655440000' });
+    
     expect(result.success).toBe(true);
   });
 
@@ -36,9 +38,11 @@ describe('EndGamePayloadSchema', () => {
 });
 
 describe('SubmitAnswerPayloadSchema', () => {
+  const nounId = '0123456789abcdef01234567';
+  
   it('passes with valid payload', () => {
     const payload = {
-      nounId: 'noun-456',
+      nounId,
       answer: GENDER_VALUES[0]
     };
 
@@ -48,7 +52,7 @@ describe('SubmitAnswerPayloadSchema', () => {
 
   it('fails when answer is invalid', () => {
     const payload = {
-      nounId: 'noun-456',
+      nounId,
       answer: 'invalid-gender'
     };
 
@@ -68,8 +72,10 @@ describe('SubmitAnswerPayloadSchema', () => {
 });
 
 describe('UpdateGamePayloadSchema', () => {
+  const userId = '0123456789abcdef01234567';
+
   it('passes with userId provided', () => {
-    const result = UpdateGamePayloadSchema.safeParse({ userId: 'user-123' });
+    const result = UpdateGamePayloadSchema.safeParse({ userId });
     expect(result.success).toBe(true);
   });
 
