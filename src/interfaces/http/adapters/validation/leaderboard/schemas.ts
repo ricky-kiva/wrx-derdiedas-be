@@ -15,7 +15,6 @@ export const GetLeaderboardQPSchema = z.object({
     .int('Limit must be an integer')
     .default(25)
     .transform((val) => Math.min(Math.max(val, 10), 150))
-    .transform((val) => Math.min((Math.max(val, 10)), 150)),
 }) satisfies z.ZodType<GetLeaderboardQ, z.ZodTypeDef, unknown>;
 
 export const SubmitPointPayloadSchema = z.object({
