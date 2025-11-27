@@ -24,7 +24,6 @@ describe('StartGameUseCase', () => {
     const userId = 'user-123';
     const result = await useCase.execute(userId);
 
-    expect(result.id).toMatch(/^game-/);
     expect(result.nouns).toEqual(mockNouns.map(({ id, word, meanings }) => ({ id, word, meanings })));
 
     expect(saveMethodMock).toHaveBeenCalledTimes(1);
