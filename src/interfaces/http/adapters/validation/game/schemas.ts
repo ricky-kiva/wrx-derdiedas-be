@@ -13,7 +13,7 @@ export const EndGamePayloadSchema = z.object({
 export const GameIdParamSchema = z.object({
   id: z.string()
     .min(1, 'Game ID is required')
-    .regex(/^game-[0-9a-fA-F-]{36}$/, 'Game ID is not valid'),
+    .uuid('Game ID is not valid'),
 });
 
 export const SubmitAnswerPayloadSchema = z.object({
