@@ -28,12 +28,17 @@ describe('UpdateUserUseCase', () => {
 
   it('should update user name and return updated user', async () => {
     const updatedUser = new User({ id: mockId, name: mockNewName });
+    
     mockUserRepository.update.mockResolvedValue(updatedUser);
 
     const result = await updateUserUseCase.execute(mockCmd);
 
     expect(mockURUpdate).toHaveBeenCalledWith(mockId, { name: mockNewName });
-    expect(result).toBe(updatedUser);
+    expect(result).toEqual({
+      id: mockId,
+      name: mockNewName,
+      picture: undefined
+    });
   });
 
   it('should throw NotFoundError when user not found', async () => {
