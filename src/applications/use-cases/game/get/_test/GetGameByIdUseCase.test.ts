@@ -1,4 +1,3 @@
-import { NotFoundError } from '../../../../../commons/exceptions';
 import GameRepository from '../../../../../domains/game/GameRepository';
 import GetGameByIdUseCase from '../GetGameByIdUseCase';
 import { GetGameByIdDTO } from '../dto/GetGameByIdDTO';
@@ -40,10 +39,9 @@ describe('GetGameByIdUseCase', () => {
   it('should return null when game does not exist', async () => {
     mockFindById.mockResolvedValue(null);
 
-    await expect(getGameByIdUseCase.execute(mockGameId))
-      .rejects
-      .toBeInstanceOf(NotFoundError);
+    const result = await getGameByIdUseCase.execute(mockGameId);
 
     expect(mockFindById).toHaveBeenCalledWith(mockGameId);
+    expect(result).toBeNull();
   });
 });
