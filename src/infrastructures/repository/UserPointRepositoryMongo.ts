@@ -36,21 +36,21 @@ export default class UserPointRepositoryMongo implements UserPointRepository {
     );
   }
 
-  async decrement(userId: string, amount: number=USER_POINT_CONSTANTS.DECREMENT_POINT): Promise<void> {
+  async decrement(userId: string, amount: number=USER_POINT_CONSTANTS.DECREMENT_POINT, updateTimestamp: boolean=true): Promise<void> {
+    const setFields: Record<string, unknown> = {
+      point: {
+        $max: [
+          { $subtract: ["$point", Math.abs(amount)] },
+          0
+        ]
+      }
+    };
+
+    if (updateTimestamp) setFields.updatedAt = new Date();
+    
     await this.model.updateOne(
       { userId: new Types.ObjectId(userId) },
-      [
-        {
-          $set: {
-            point: {
-              $max: [
-                { $subtract: ["$point", Math.abs(amount)] }, 0
-              ]
-            },
-            updatedAt: new Date()
-          }
-        }
-      ],
+      [ { $set: setFields } ],
       { upsert: true }
     );
   }

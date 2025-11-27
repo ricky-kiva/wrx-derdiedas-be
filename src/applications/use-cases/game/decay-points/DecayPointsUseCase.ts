@@ -26,10 +26,10 @@ export default class DecayPointsUseCase {
             await this.userPointRepository.deleteByUserId(user.id);
             await this.userRepository.delete(user.id);
           } else {
-            await this.userPointRepository.decrement(up.userId, up.point);
+            await this.userPointRepository.decrement(up.userId, up.point, false);
           }
         } else {
-          await this.userPointRepository.decrement(up.userId, USER_POINT_CONSTANTS.DECREMENT_POINT);
+          await this.userPointRepository.decrement(up.userId, USER_POINT_CONSTANTS.DECREMENT_POINT, false);
         }
       }
     }
