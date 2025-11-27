@@ -66,6 +66,15 @@ export default class GameHandler {
 
     const game = await this.getGameByIdUseCase.execute(id);
 
+    if (!game) {
+      res.json({
+        status: 'fail',
+        message: 'Game not found'
+      } satisfies ApiResponse);
+      
+      return;
+    }
+
     res.json({
       status: 'success',
       data: game
