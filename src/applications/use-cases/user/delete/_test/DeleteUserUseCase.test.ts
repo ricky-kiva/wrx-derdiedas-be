@@ -1,25 +1,33 @@
 import { NotFoundError } from '../../../../../commons/exceptions';
 import UserRepository from '../../../../../domains/user/UserRepository';
+import UserPointRepository from '../../../../../domains/userPoint/UserPointRepository';
 import DeleteUserUseCase from '../DeleteUserUseCase';
 
 describe('DeleteUserUseCase', () => {
   const mockUserId = 'user-123';
 
   let mockUserRepository: jest.Mocked<UserRepository>;
+  let mockUserPointRepository: jest.Mocked<UserPointRepository>;
   let deleteUserUseCase: DeleteUserUseCase;
   let mockURFindById: jest.Mock;
   let mockURDelete: jest.Mock;
+  let mockUPRDeleteByUId: jest.Mock;
 
   beforeEach(() => {
     mockURFindById = jest.fn();
     mockURDelete = jest.fn();
+    mockUPRDeleteByUId = jest.fn();
 
     mockUserRepository = {
       findById: mockURFindById,
       delete: mockURDelete,
     } as unknown as jest.Mocked<UserRepository>;
 
-    deleteUserUseCase = new DeleteUserUseCase(mockUserRepository);
+    mockUserPointRepository = {
+      deleteByUserId: mockUPRDeleteByUId
+    } as unknown as jest.Mocked<UserPointRepository>;
+
+    deleteUserUseCase = new DeleteUserUseCase(mockUserRepository, mockUserPointRepository);
   });
 
   it('should delete user if found', async () => {
@@ -28,6 +36,7 @@ describe('DeleteUserUseCase', () => {
     await deleteUserUseCase.execute(mockUserId);
 
     expect(mockURFindById).toHaveBeenCalledWith(mockUserId);
+    expect(mockUPRDeleteByUId).toHaveBeenCalledWith(mockUserId);
     expect(mockURDelete).toHaveBeenCalledWith(mockUserId);
   });
 
@@ -37,6 +46,7 @@ describe('DeleteUserUseCase', () => {
     await expect(deleteUserUseCase.execute(mockUserId))
       .rejects.toThrow(NotFoundError);
 
+    expect(mockUPRDeleteByUId).not.toHaveBeenCalled();
     expect(mockURDelete).not.toHaveBeenCalled();
   });
 });
