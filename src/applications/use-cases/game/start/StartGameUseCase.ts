@@ -1,6 +1,5 @@
 import Game from '../../../../domains/game/entities/Game';
 import GameRepository from '../../../../domains/game/GameRepository';
-// import Noun from '../../../../domains/noun/entities/Noun';
 import NounQueryRepository from '../../../query-repositories/noun/NounQueryRepository';
 import { StartGameDTO } from './dto/StartGameDTO';
 
@@ -11,7 +10,7 @@ export default class StartGameUseCase {
   ) {}
 
   async execute(userId?: string): Promise<StartGameDTO> {
-    const id = `game-${crypto.randomUUID()}`;
+    const id = crypto.randomUUID();
 
     const randomNouns = await this.nounQueryRepository.getRandom();
 
