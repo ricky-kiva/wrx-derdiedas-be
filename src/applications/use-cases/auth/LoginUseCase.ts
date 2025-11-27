@@ -22,7 +22,7 @@ export default class LoginUseCase {
 
     return {
       jwt: await this.issueTokenUseCase.execute({ userId: user.id }),
-      user: { id: user.id, email, name }
+      user: { email, id: user.id, name: user.name }
     } satisfies LoginDTO;
   }
 }
