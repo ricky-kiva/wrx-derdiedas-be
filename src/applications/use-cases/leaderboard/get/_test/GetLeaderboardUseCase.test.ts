@@ -10,8 +10,8 @@ describe('GetLeaderboardUseCase', () => {
     
     const mockResult: PagedDTO<LeaderboardEntryDTO> = {
       items: [
-        { name: 'Rickyslash', point: 100, updatedAt: new Date() },
-        { name: 'Rezy', point: 150, updatedAt: new Date() }
+        { id: 'user-123', name: 'Rickyslash', point: 100, rank: 1, updatedAt: new Date() },
+        { id: 'user-124', name: 'Rezy', point: 150, rank: 2, updatedAt: new Date() }
       ],
       page: q.page,
       totalPages: Math.ceil(q.limit/q.page)
