@@ -88,4 +88,62 @@ describe('UserPointRepositoryMongo', () => {
       ).resolves.not.toThrow();
     });
   });
+
+  describe('increment', () => {
+    it('should increase point and update updatedAt', async () => {
+      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
+      await UserPointModel.create(payload);
+
+      const before = await UserPointModel.findOne({ userId: payload.userId });
+      const beforePoint = before!.point;
+      const beforeUpdatedAt = before!.updatedAt;
+
+      await userPointRepositoryMongo.increment(payload.userId, 20);
+
+      const after = await UserPointModel.findOne({ userId: payload.userId });
+
+      expect(after!.point).toBe(beforePoint + 20);
+      expect(after!.updatedAt.getTime()).not.toBe(beforeUpdatedAt.getTime());
+    });
+
+    it('should create a new document when none exists', async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+
+      await userPointRepositoryMongo.increment(userId, 10);
+
+      const doc = await UserPointModel.findOne({ userId });
+
+      expect(doc).not.toBeNull();
+      expect(doc!.point).toBe(10);
+      expect(doc!.updatedAt).toBeInstanceOf(Date);
+    });
+  });
+
+  describe('decrement', () => {
+    it('should update updatedAt when updateTimestamp = true', async () => {
+      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
+      await UserPointModel.create(payload);
+
+      const before = (await UserPointModel.findOne({ userId: payload.userId }))!.updatedAt;
+
+      await userPointRepositoryMongo.decrement(payload.userId, 10, true);
+
+      const after = (await UserPointModel.findOne({ userId: payload.userId }))!.updatedAt;
+
+      expect(after.getTime()).not.toBe(before.getTime());
+    });
+
+    it('should not update updatedAt when updateTimestamp = false', async () => {
+      const payload: UserPointPayload = UserPointsCollectionTestHelper.getPayloads()[0];
+      await UserPointModel.create(payload);
+
+      const before = (await UserPointModel.findOne({ userId: payload.userId }))!.updatedAt;
+
+      await userPointRepositoryMongo.decrement(payload.userId, 10, false);
+
+      const after = (await UserPointModel.findOne({ userId: payload.userId }))!.updatedAt;
+
+      expect(after.getTime()).toBe(before.getTime());
+    });
+  });
 });
