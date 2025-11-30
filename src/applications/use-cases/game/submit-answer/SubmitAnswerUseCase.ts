@@ -30,6 +30,7 @@ export default class SubmitAnswerUseCase {
     game.nouns.splice(questionIndex, 1);
 
     if (isCorrect) game.incrementPoints(USER_POINT_CONSTANTS.INCREMENT_POINT);
+    else game.decrementPoints(USER_POINT_CONSTANTS.DECREMENT_POINT);
 
     let nouns: Omit<Noun, 'gender'>[] | undefined;
 
