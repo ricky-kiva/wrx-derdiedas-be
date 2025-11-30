@@ -1,5 +1,5 @@
 import UserRepository from '../../../../domains/user/UserRepository';
-import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstancts';
+import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstants';
 import UserPointRepository from '../../../../domains/userPoint/UserPointRepository';
 import { UserPointQueryRepository } from '../../../query-repositories/user-point/UserPointQueryRepository';
 
@@ -19,7 +19,7 @@ export default class DecayPointsUseCase {
 
     for (const up of userPoints) {
       if (up.updatedAt <= threshold) {
-        if (up.point <= USER_POINT_CONSTANTS.DECREMENT_POINT) {
+        if (up.point <= USER_POINT_CONSTANTS.DECAY_POINT) {
           const user = await this.userRepository.findById(up.userId);
 
           if (user && !user.email) {
@@ -29,7 +29,7 @@ export default class DecayPointsUseCase {
             await this.userPointRepository.decrement(up.userId, up.point, false);
           }
         } else {
-          await this.userPointRepository.decrement(up.userId, USER_POINT_CONSTANTS.DECREMENT_POINT, false);
+          await this.userPointRepository.decrement(up.userId, USER_POINT_CONSTANTS.DECAY_POINT, false);
         }
       }
     }

@@ -2,7 +2,7 @@ import { InvariantError, NotFoundError } from '../../../../commons/exceptions';
 import Game from '../../../../domains/game/entities/Game';
 import GameRepository from '../../../../domains/game/GameRepository';
 import Noun from '../../../../domains/noun/entities/Noun';
-import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstancts';
+import { USER_POINT_CONSTANTS } from '../../../../domains/userPoint/constants/userPointConstants';
 import NounQueryRepository from '../../../query-repositories/noun/NounQueryRepository';
 import { SubmitAnswerCmd } from './command/SubmitAnswerCmd';
 import { SubmitAnswerDTO } from './dto/SubmitAnswerDTO';

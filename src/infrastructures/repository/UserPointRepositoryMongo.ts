@@ -4,7 +4,7 @@ import { UserPointPayload } from '../../domains/userPoint/entities/UserPoint';
 import { DITokens } from '../../commons/DITokens';
 import { Model, Types } from 'mongoose';
 import { UserPointDocument } from '../database/mongoose/models/UserPointModel';
-import { USER_POINT_CONSTANTS } from '../../domains/userPoint/constants/userPointConstancts';
+import { USER_POINT_CONSTANTS } from '../../domains/userPoint/constants/userPointConstants';
 
 @injectable()
 export default class UserPointRepositoryMongo implements UserPointRepository {

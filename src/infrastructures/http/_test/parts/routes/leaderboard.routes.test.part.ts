@@ -5,7 +5,7 @@ import ApiResponse from '../../../../../interfaces/http/types/ApiResponse';
 import { TestPartMocks } from '../mocks/useCases.mock.test.part';
 import GetLeaderboardQ from '../../../../../applications/use-cases/leaderboard/get/query/GetLeaderboardQ';
 import SubmitPointCmd from '../../../../../applications/use-cases/leaderboard/submit-point/command/SubmitPointCmd';
-import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstancts';
+import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstants';
 
 export default function testLeaderboardRoutes(
   getApp: () => Application,
