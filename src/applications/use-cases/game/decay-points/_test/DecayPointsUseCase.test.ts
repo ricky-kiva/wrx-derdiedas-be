@@ -1,6 +1,6 @@
 import User from '../../../../../domains/user/entities/User';
 import UserRepository from '../../../../../domains/user/UserRepository';
-import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstancts';
+import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstants';
 import UserPoint from '../../../../../domains/userPoint/entities/UserPoint';
 import UserPointRepository from '../../../../../domains/userPoint/UserPointRepository';
 import { UserPointQueryRepository } from '../../../../query-repositories/user-point/UserPointQueryRepository';
@@ -42,7 +42,7 @@ describe('DecayPointsUseCase', () => {
     );
   });
 
-  it('should decrement user points by default amount if updatedAt <= threshold and point > DECREMENT_POINT', async () => {
+  it('should decrement user points by default amount if updatedAt <= threshold and point > DECAY_POINT', async () => {
     const thresholdDate = new Date();
 
     thresholdDate.setDate(thresholdDate.getDate() - 8);
@@ -52,7 +52,7 @@ describe('DecayPointsUseCase', () => {
     const mockUserPoints = [
       new UserPoint({
         userId,
-        point: USER_POINT_CONSTANTS.DECREMENT_POINT + 5,
+        point: USER_POINT_CONSTANTS.DECAY_POINT + 5,
         updatedAt: thresholdDate,
       }),
     ];
@@ -61,10 +61,10 @@ describe('DecayPointsUseCase', () => {
 
     await decayPointsUseCase.execute();
 
-    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECREMENT_POINT, false);
+    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECAY_POINT, false);
   });
 
-  it('should delete user and userPoint if point <= DECREMENT_POINT and user not logged in', async () => {
+  it('should delete user and userPoint if point <= DECAY_POINT and user not logged in', async () => {
     const thresholdDate = new Date();
 
     thresholdDate.setDate(thresholdDate.getDate() - 8);
@@ -74,7 +74,7 @@ describe('DecayPointsUseCase', () => {
     const mockUserPoints = [
       new UserPoint({
         userId,
-        point: USER_POINT_CONSTANTS.DECREMENT_POINT,
+        point: USER_POINT_CONSTANTS.DECAY_POINT,
         updatedAt: thresholdDate,
       }),
     ];
@@ -104,7 +104,7 @@ describe('DecayPointsUseCase', () => {
     const mockUserPoints = [
       new UserPoint({
         userId,
-        point: USER_POINT_CONSTANTS.DECREMENT_POINT,
+        point: USER_POINT_CONSTANTS.DECAY_POINT,
         updatedAt: thresholdDate,
       }),
     ];
@@ -120,7 +120,7 @@ describe('DecayPointsUseCase', () => {
 
     await decayPointsUseCase.execute();
 
-    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECREMENT_POINT, false);
+    expect(mockUPRDecrement).toHaveBeenCalledWith(userId, USER_POINT_CONSTANTS.DECAY_POINT, false);
     expect(mockURDelete).not.toHaveBeenCalled();
   });
 
