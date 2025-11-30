@@ -63,7 +63,10 @@ describe('SubmitAnswerUseCase', () => {
     expect(mockGRSaveMethod).toHaveBeenCalled();
   });
 
-  it('should mark answer incorrect, not increment points, remove noun, and save game', async () => {
+  it('should mark answer incorrect, decrement points, remove noun, and save game', async () => {
+    mockGame.points = USER_POINT_CONSTANTS.DECREMENT_POINT + 5;
+    
+    const initialPoints = mockGame.points;
     const targetNoun = mockGame.nouns[0];
 
     const cmd: SubmitAnswerCmd = {
@@ -75,10 +78,26 @@ describe('SubmitAnswerUseCase', () => {
     const result = await submitAnswerUseCase.execute(cmd);
 
     expect(result.correct).toBe(false);
-    expect(result.currentScore).toBe(0);
+    expect(result.currentScore).toBe(initialPoints - USER_POINT_CONSTANTS.DECREMENT_POINT);
     expect(result.nouns).toBeUndefined();
     expect(mockGame.nouns.find(n => n.id === targetNoun.id)).toBeUndefined();
     expect(mockGRSaveMethod).toHaveBeenCalled();
+  });
+
+  it('should floor points to zero when decrement would go negative', async () => {
+    mockGame.points = USER_POINT_CONSTANTS.DECREMENT_POINT - 100;
+    
+    const targetNoun = mockGame.nouns[0];
+
+    const cmd: SubmitAnswerCmd = {
+      gameId: mockGame.id,
+      nounId: targetNoun.id,
+      answer: 'neuter' as Gender,
+    };
+
+    const result = await submitAnswerUseCase.execute(cmd);
+
+    expect(result.currentScore).toBe(0);
   });
 
   it('should throw NotFoundError if game does not exist', async () => {
