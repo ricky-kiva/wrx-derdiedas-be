@@ -25,4 +25,9 @@ export default class Game {
   incrementPoints(amount: number) {
     this.points += amount;
   }
+
+  decrementPoints(amount: number) {
+    this.points -= amount;
+    if (this.points < 0) this.points = 0;
+  }
 }
