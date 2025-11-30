@@ -28,4 +28,28 @@ describe('Game', () => {
 
     expect(game.userId).toBeUndefined();
   });
+
+    it('should increment points correctly', () => {
+    const game = new Game({ id: 'game-123', nouns: [], points: 0 });
+
+    game.incrementPoints(5);
+
+    expect(game.points).toBe(5);
+  });
+
+  it('should decrement points correctly', () => {
+    const game = new Game({ id: 'game-123', nouns: [], points: 10 });
+
+    game.decrementPoints(5);
+
+    expect(game.points).toBe(5);
+  });
+
+  it('should decrement points but never go below zero', () => {
+    const game = new Game({ id: 'game-123', nouns: [], points: 3 });
+
+    game.decrementPoints(5);
+
+    expect(game.points).toBe(0);
+  });
 });
