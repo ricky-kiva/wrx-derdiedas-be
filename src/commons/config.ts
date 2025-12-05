@@ -38,6 +38,8 @@ const config: Config = {
       password: getEnvVar('MONGO_PASSWORD')
     },
     redis: {
+      host: getEnvVar('REDIS_HOST'),
+      port: Number(getEnvVar('REDIS_PORT', '6379')),
       database: Number(getEnvVar('REDIS_DATABASE')),
       password: getEnvVar('REDIS_PASSWORD')
     }

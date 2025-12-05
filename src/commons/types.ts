@@ -12,6 +12,8 @@ interface DBMongoDBConfig {
 }
 
 interface DBRedisConfig {
+  host: string,
+  port: number,
   database: number,
   password: string
 }
