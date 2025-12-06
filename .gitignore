@@ -1,4 +1,6 @@
 .env
+.mongo.env
+.redis.env
 .test.env
 build
 coverage
