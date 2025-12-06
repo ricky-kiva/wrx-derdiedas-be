@@ -1,0 +1,40 @@
+services:
+  backend:
+    build:
+      context: .
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+      - redis
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis
+      - MONGO_HOST=mongo
+  
+  mongo:
+    image: mongo
+    ports:
+      - 27027:27017
+    env_file:
+      - .mongo.env
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7.4.5-alpine3.21
+    env_file:
+      - .redis.env
+    ports:
+      - 6379:6379
+    command: >
+      sh -c "redis-server --appendonly yes --requirepass \"$REDIS_PASSWORD\""
+    volumes:
+      - redis_data:/data
+
+volumes:
+  mongo_data:
+  redis_data:
