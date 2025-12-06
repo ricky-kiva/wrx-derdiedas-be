@@ -5,6 +5,7 @@ import SeedData from './types/SeedData';
 import { NounSetMetadataRepository } from '../../../domains/nounSetMetadata/NounSetMetadataRepository';
 import NounRepository from '../../../domains/noun/NounRepository';
 import path from 'path';
+import config from '../../../commons/config';
 
 @injectable()
 export default class NounSeeder {
@@ -17,7 +18,6 @@ export default class NounSeeder {
     const filePath = path.resolve(process.cwd(), 'data', 'nouns.json');
     const fileContent = await fs.readFile(filePath, 'utf-8');
     const seedData = JSON.parse(fileContent) as SeedData;
-    const totalData = seedData.data.length;
 
     const existingMetadata = await this.metadataRepository.find();
 
@@ -28,6 +28,7 @@ export default class NounSeeder {
 
       const batchSize = 100;
       const seedingStartTime = Date.now();
+      const totalData = seedData.data.length;
 
       for (let i = 0; i < totalData; i += batchSize) {
         const batch = seedData.data.slice(i, i + batchSize);
@@ -41,6 +42,12 @@ export default class NounSeeder {
       }
 
       await this.metadataRepository.save(seedData.metadata);
+
+      if (process.env.NODE_ENV === config.env.production) {
+        seedData.data = [];
+        await fs.writeFile(filePath, JSON.stringify(seedData, null, 2), 'utf-8');
+        console.log('Emptied nouns.json data array after seeding');
+      }
 
       const totalElapsed = Math.round((Date.now() - seedingStartTime) / 1000);
 
