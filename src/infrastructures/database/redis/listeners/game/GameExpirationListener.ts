@@ -17,6 +17,8 @@ export default class GameExpirationListener {
     await this.redis.config('SET', 'notify-keyspace-events', 'Ex');
 
     const sub = new Redis({
+      host: config.database.redis.host,
+      port: config.database.redis.port,
       db: config.database.redis.database,
       password: config.database.redis.password
     });
