@@ -37,14 +37,15 @@ jobs:
           MONGO_USER: ${{ secrets.MONGO_USER }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
         run: |
-          docker exec mongo mongosh --username "$MONGO_ROOT_USER" --password "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin <<EOF
-          use $MONGO_DATABASE;
-          db.createUser({
-            user: "$MONGO_USER",
-            pwd: "$MONGO_PASSWORD",
-            roles: [{ role: "dbOwner", db: "$MONGO_DATABASE" }]
-          });
-          EOF
+          node -e "
+          import { MongoClient } from 'mongodb';
+          const client = new MongoClient('mongodb://$MONGO_ROOT_USER:$MONGO_ROOT_PASSWORD@mongo:27017/admin');
+          await client.connect();
+          const db = client.db('$MONGO_DATABASE');
+          await db.addUser('$MONGO_USER', '$MONGO_PASSWORD', { roles: [{ role: 'dbOwner', db: '$MONGO_DATABASE' }] });
+          await client.close();
+          console.log('MongoDB app user created.');
+          "
       - name: Start Redis service
         run: |
           docker run -d --name redis -p 6379:6379 \
