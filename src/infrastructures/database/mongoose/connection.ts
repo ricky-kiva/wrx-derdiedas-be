@@ -9,12 +9,13 @@ export default async function connectToDatabase(): Promise<void> {
 
   const uri = `mongodb://${encodedUser}:${encodedPassword}@${host}:${port}/${database}`;
 
+  console.log(uri);
+
   try {
     await mongoose.connect(uri);
     console.log(`MongoDB connected! (${database})`);
   } catch (e) {
     console.error(`MongoDB connection error: ${e}`);
-    if (process.env.NODE_ENV === config.env.test) throw e;
-    else process.exit(1);
+    process.exit(1);
   }
 };
