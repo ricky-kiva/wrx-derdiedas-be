@@ -14,6 +14,7 @@ export default async function connectToDatabase(): Promise<void> {
     console.log(`MongoDB connected! (${database})`);
   } catch (e) {
     console.error(`MongoDB connection error: ${e}`);
-    process.exit(1);
+    if (process.env.NODE_ENV === config.env.test) throw e;
+    else process.exit(1);
   }
 };
