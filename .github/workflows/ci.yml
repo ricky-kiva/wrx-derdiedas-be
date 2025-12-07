@@ -30,10 +30,10 @@ jobs:
       redis:
         image: redis:7.4.5-alpine3.21
         env:
-          REDIS_PASSWORD: $REDIS_PASSWORD
+          REDIS_PASSWORD: password
         options: >-
-          --requirepass $REDIS_PASSWORD
-          --health-cmd "redis-cli -a $REDIS_PASSWORD ping"
+          --requirepass password
+          --health-cmd "redis-cli -a password ping"
           --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v3
