@@ -12,20 +12,39 @@ jobs:
     strategy:
       matrix:
         node-version: ['20.x']
+    services:
+      mongo:
+        image: mongo:8.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+        options: >-
+          --health-cmd "mongosh --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Start Mongo service
+      - name: Create MongoDB App User
+        env:
+          MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
+          MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
+          MONGO_USER: ${{ secrets.MONGO_USER }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
         run: |
-          docker run -d --name mongo -p 27017:27017 \
-          -e MONGO_INITDB_ROOT_USERNAME=${{ secrets.MONGO_USER }} \
-          -e MONGO_INITDB_ROOT_PASSWORD=${{ secrets.MONGO_PASSWORD }} \
-          -e MONGO_INITDB_DATABASE=${{ secrets.MONGO_DATABASE }} \
-          -v ${{ github.workspace }}/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro \
-          mongo:8.0
+          mongosh --host mongo --username "$MONGO_ROOT_USER" --password "$MONGO_ROOT_PASSWORD" --authenticationDatabase admin <<EOF
+            use $MONGO_DATABASE;
+            db.createUser({
+              user: "$MONGO_USER",
+              pwd: "$MONGO_PASSWORD",
+              roles: [{ role: "dbOwner", db: "$MONGO_DATABASE" }]
+            });
+          EOF
       - name: Start Redis service
         run: |
           docker run -d --name redis -p 6379:6379 \
