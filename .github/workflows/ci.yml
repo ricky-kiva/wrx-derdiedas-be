@@ -15,7 +15,6 @@ jobs:
     env:
       MONGO_USER: ${{ secrets.MONGO_USER }}
       MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
     services:
       mongo:
         image: mongo:8
@@ -27,20 +26,17 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      redis:
-        image: redis:7.4.5-alpine3.21
-        env:
-          REDIS_PASSWORD: password
-        options: >-
-          --requirepass password
-          --health-cmd "redis-cli -a password ping"
-          --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Start Redis service
+        run: |
+          docker run -d --name redis -p 6379:6379 \
+          -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
+          redis:7.4.5-alpine3.21 redis-server --requirepass "${{ secrets.REDIS_PASSWORD }}"
       - name: Install and test
         run: |
           npm install
