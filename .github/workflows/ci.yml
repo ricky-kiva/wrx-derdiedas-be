@@ -1,0 +1,55 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x']
+    services:
+      mongo:
+        image: mongo:8
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_USER }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+        options: >-
+          --health-cmd "mongo --eval 'db.adminCommand(\"ping\")' -u ${{ secrets.MONGO_USER }} -p ${{ secrets.MONGO_PASSWORD }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7.4.5-alpine3.21
+        env:
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        options: >-
+          --health-cmd "redis-cli -a ${{ secrets.REDIS_PASSWORD }} ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install and test
+        run: |
+          npm install
+          npm run test
+        env:
+          CI: true
+          NODE_ENV: test
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          PORT: ${{ secrets.PORT }}
+          JWT_ACCESS_TOKEN_SECRET: ${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
+          JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
+          JWT_ACCESS_TOKEN_EXPIRY: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRY }}
+          JWT_REFRESH_TOKEN_EXPIRY: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRY }}
+          MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
+          MONGO_USER: ${{ secrets.MONGO_USER }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+          REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
