@@ -9,8 +9,6 @@ export default async function connectToDatabase(): Promise<void> {
 
   const uri = `mongodb://${encodedUser}:${encodedPassword}@${host}:${port}/${database}`;
 
-  console.log(uri);
-
   try {
     await mongoose.connect(uri);
     console.log(`MongoDB connected! (${database})`);
