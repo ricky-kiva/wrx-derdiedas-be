@@ -25,44 +25,33 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 3
-      # redis:
-      #   image: redis:7.4.5-alpine3.21
-      #   env:
-      #     REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
-      #   ports:
-      #     - 6379:6379
-      #   command: >
-      #     redis-server
+    env:
+      MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
+      MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+      MONGO_USER: ${{ secrets.MONGO_USER }}
+      MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+      MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
+      MONGO_HOST: ${{ secrets.MONGO_HOST }}
+      MONGO_PORT: ${{ secrets.MONGO_PORT }}
+      REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      # - name: Start MongoDB (supercharge)
-      #   uses: supercharge/mongodb-github-action@1.11.0
-      #   with:
-      #     mongodb-version: '8.0'
-      #     mongodb-username: ${{ secrets.MONGO_ROOT_USER }}
-      #     mongodb-password: ${{ secrets.MONGO_ROOT_PASSWORD }}
-      #     mongodb-db: ${{ secrets.MONGO_DATABASE }}
       - name: Install dependencies
         run: npm ci
       - name: Initialize MongoDB
-        run: node mongo-init.js
+        run: node scripts/cicd/mongo/init.js
         env:
           MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
           MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-          MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
-          MONGO_HOST: ${{ secrets.MONGO_HOST }}
-          MONGO_PORT: ${{ secrets.MONGO_PORT }}
       - name: Start Redis service
         run: |
           docker run -d --name redis -p 6379:6379 \
-          -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
-          redis:7.4.5-alpine3.21 redis-server --requirepass "${{ secrets.REDIS_PASSWORD }}"
+          -e REDIS_PASSWORD=${REDIS_PASSWORD} \
+          redis:7.4.5-alpine3.21 redis-server --requirepass "${REDIS_PASSWORD}"
       - name: Test
         run: npm run test
         env:
@@ -74,12 +63,6 @@ jobs:
           JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
           JWT_ACCESS_TOKEN_EXPIRY: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRY }}
           JWT_REFRESH_TOKEN_EXPIRY: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRY }}
-          MONGO_HOST: ${{ secrets.MONGO_HOST }}
-          MONGO_PORT: ${{ secrets.MONGO_PORT }}
-          MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }}
-          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
