@@ -29,18 +29,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      # - name: Install dependencies
-      #   run: npm ci
-      # - name: Initialize MongoDB
-      #   run: node mongo-init.js
-      #   env:
-      #     MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
-      #     MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
-      #     MONGO_USER: ${{ secrets.MONGO_USER }}
-      #     MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-      #     MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
-      #     MONGO_HOST: mongo
-      #     MONGO_PORT: 27017
       - name: Start MongoDB (supercharge)
         uses: supercharge/mongodb-github-action@1.11.0
         with:
@@ -48,16 +36,18 @@ jobs:
           mongodb-username: ${{ secrets.MONGO_ROOT_USER }}
           mongodb-password: ${{ secrets.MONGO_ROOT_PASSWORD }}
           mongodb-db: ${{ secrets.MONGO_DATABASE }}
+      - name: Install dependencies
+        run: npm ci
       - name: Initialize MongoDB
-        run: mongosh --host localhost \
-          --username "${MONGO_ROOT_USER}" \
-          --password "${MONGO_ROOT_PASSWORD}" \
-          --authenticationDatabase admin \
-          mongo-init.js
+        run: node mongo-init.js
         env:
           MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
           MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          MONGO_USER: ${{ secrets.MONGO_USER }}
+          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
           MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
+          MONGO_HOST: mongo
+          MONGO_PORT: 27017
       - name: Start Redis service
         run: |
           docker run -d --name redis -p 6379:6379 \
@@ -65,7 +55,6 @@ jobs:
           redis:7.4.5-alpine3.21 redis-server --requirepass "${{ secrets.REDIS_PASSWORD }}"
       - name: Install and test
         run: |
-          npm install
           npm run test
         env:
           CI: true

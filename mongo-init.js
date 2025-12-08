@@ -1,11 +1,49 @@
-print("[DEBUG] Running mongodb/init.js");
+import { MongoClient } from 'mongodb';
+import dotenv from 'dotenv';
 
-const user = process.env.MONGO_USER;
-const pwd = process.env.MONGO_PASSWORD;
-const initDb = process.env.MONGO_DATABASE;
+dotenv.config();
 
-db = db.getSiblingDB(initDb);
+async function initDB() {
+  const rootUser = process.env.MONGO_ROOT_USER;
+  const rootPassword = process.env.MONGO_ROOT_PASSWORD;
+  const host = process.env.MONGO_HOST;
+  const port = process.env.MONGO_PORT;
+  const createDb = process.env.MONGO_DATABASE;
+  const user = process.env.MONGO_USER;
+  const password = process.env.MONGO_PASSWORD;
 
-db.createUser({ user, pwd, roles: [{ role: "dbOwner", db: initDb }]});
+  if (!rootUser || !rootPassword || !host || !port || !createDb || !user || !password) {
+    throw new Error('One or more required env. are missing to init. Mongo DB');
+  }
 
-print("[DEBUG] Finished mongodb/init.js");
+  const encodedRootUser = encodeURIComponent(rootUser);
+  const encodedRootPassword = encodeURIComponent(rootPassword);
+
+  const rootUri = `mongodb://${encodedRootUser}:${encodedRootPassword}@${host}:${port}/admin`;
+  const client = new MongoClient(rootUri);
+
+  console.log(rootUri);
+
+  try {
+    await client.connect();
+    
+    const db = client.db(createDb);
+    
+    const users = await db.command({ usersInfo: user });
+
+    if (!users.users.length) {
+      await db.addUser(user, password, { roles: [{ role: 'dbOwner', db: createDb }] });
+      console.log(`User created successfully`);
+    } else {
+      console.log(`User already exists`);
+    }
+
+    console.log(`Database is ready`);
+  } catch (err) {
+    console.error(`Failed to initialize DB: ${err}`)
+  } finally {
+    await client.close();
+  }
+}
+
+initDB();
