@@ -22,6 +22,8 @@ async function initDB() {
   const rootUri = `mongodb://${encodedRootUser}:${encodedRootPassword}@${host}:${port}/admin`;
   const client = new MongoClient(rootUri);
 
+  console.log(rootUri);
+
   try {
     await client.connect();
     
