@@ -12,30 +12,34 @@ jobs:
     strategy:
       matrix:
         node-version: ['20.x']
-    # services:
-    #   mongo:
-    #     image: mongo:8.0
-    #     env:
-    #       MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
-    #       MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
-    #     options: >-
-    #       --health-cmd "mongosh --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' --quiet"
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
+    services:
+      mongo:
+        image: mongo:8.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+        options: >-
+          --health-cmd "mongosh --username $MONGO_INITDB_ROOT_USERNAME \
+            --password $MONGO_INITDB_ROOT_PASSWORD \
+            --authenticationDatabase admin \
+            --eval 'db.runCommand({ ping: 1 })' \
+            --quiet"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Start MongoDB (supercharge)
-        uses: supercharge/mongodb-github-action@1.11.0
-        with:
-          mongodb-version: '8.0'
-          mongodb-username: ${{ secrets.MONGO_ROOT_USER }}
-          mongodb-password: ${{ secrets.MONGO_ROOT_PASSWORD }}
-          mongodb-db: ${{ secrets.MONGO_DATABASE }}
+      # - name: Start MongoDB (supercharge)
+      #   uses: supercharge/mongodb-github-action@1.11.0
+      #   with:
+      #     mongodb-version: '8.0'
+      #     mongodb-username: ${{ secrets.MONGO_ROOT_USER }}
+      #     mongodb-password: ${{ secrets.MONGO_ROOT_PASSWORD }}
+      #     mongodb-db: ${{ secrets.MONGO_DATABASE }}
       - name: Install dependencies
         run: npm ci
       - name: Initialize MongoDB
