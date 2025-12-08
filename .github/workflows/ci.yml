@@ -31,18 +31,18 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm ci
-      - name: Wait for MongoDB to be ready
-        run: |
-          for i in {1..30}; do
-            if nc -z mongo 27017; then
-              echo "MongoDB is up"
-              exit 0
-            fi
-            echo "Waiting for MongoDB..."
-            sleep 2
-          done
-          echo "MongoDB did not become ready in time"
-          exit 1
+      # - name: Wait for MongoDB to be ready
+      #   run: |
+      #     for i in {1..30}; do
+      #       if nc -z mongo 27017; then
+      #         echo "MongoDB is up"
+      #         exit 0
+      #       fi
+      #       echo "Waiting for MongoDB..."
+      #       sleep 2
+      #     done
+      #     echo "MongoDB did not become ready in time"
+      #     exit 1
       - name: Initialize MongoDB
         run: node mongo-init.js
         env:
