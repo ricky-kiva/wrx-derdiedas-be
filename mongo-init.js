@@ -22,8 +22,6 @@ async function initDB() {
   const rootUri = `mongodb://${encodedRootUser}:${encodedRootPassword}@${host}:${port}/admin`;
   const client = new MongoClient(rootUri);
 
-  console.log(rootUri);
-
   try {
     await client.connect();
     
@@ -32,7 +30,9 @@ async function initDB() {
     const users = await db.command({ usersInfo: user });
 
     if (!users.users.length) {
-      await db.addUser(user, password, { roles: [{ role: 'dbOwner', db: createDb }] });
+      await db.command({ createUser: user, pwd: password, roles: [
+        { role: 'dbOwner', db: createDb }
+      ]});
       console.log(`User created successfully`);
     } else {
       console.log(`User already exists`);
