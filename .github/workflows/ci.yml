@@ -18,11 +18,21 @@ jobs:
         env:
           MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
           MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+        ports:
+          - 27017:27017
         options: >-
           --health-cmd "mongosh --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' --quiet"
           --health-interval 5s
           --health-timeout 5s
           --health-retries 3
+      # redis:
+      #   image: redis:7.4.5-alpine3.21
+      #   env:
+      #     REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+      #   ports:
+      #     - 6379:6379
+      #   command: >
+      #     redis-server
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js ${{ matrix.node-version }}
