@@ -29,23 +29,18 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Create MongoDB App User
+      - name: Install dependencies
+        run: npm ci
+      - name: Initialize MongoDB
+        run: node mongo-init.js
         env:
           MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
           MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
-          MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
           MONGO_USER: ${{ secrets.MONGO_USER }}
           MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-        run: |
-          node -e "
-          import { MongoClient } from 'mongodb';
-          const client = new MongoClient('mongodb://$MONGO_ROOT_USER:$MONGO_ROOT_PASSWORD@mongo:27017/admin');
-          await client.connect();
-          const db = client.db('$MONGO_DATABASE');
-          await db.addUser('$MONGO_USER', '$MONGO_PASSWORD', { roles: [{ role: 'dbOwner', db: '$MONGO_DATABASE' }] });
-          await client.close();
-          console.log('MongoDB app user created.');
-          "
+          MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
+          MONGO_HOST: ${{ secrets.MONGO_HOST }}
+          MONGO_PORT: ${{ secrets.MONGO_PORT }}
       - name: Start Redis service
         run: |
           docker run -d --name redis -p 6379:6379 \
