@@ -12,54 +12,61 @@ jobs:
     strategy:
       matrix:
         node-version: ['20.x']
-    services:
-      mongo:
-        image: mongo:8.0
-        env:
-          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
-          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
-        options: >-
-          --health-cmd "mongosh --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' --quiet"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # services:
+    #   mongo:
+    #     image: mongo:8.0
+    #     env:
+    #       MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
+    #       MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+    #     options: >-
+    #       --health-cmd "mongosh --username $MONGO_INITDB_ROOT_USERNAME --password $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --eval 'db.runCommand({ ping: 1 })' --quiet"
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: npm ci
-      # - name: Wait for MongoDB to be ready
-      #   run: |
-      #     for i in {1..30}; do
-      #       if nc -z mongo 27017; then
-      #         echo "MongoDB is up"
-      #         exit 0
-      #       fi
-      #       echo "Waiting for MongoDB..."
-      #       sleep 2
-      #     done
-      #     echo "MongoDB did not become ready in time"
-      #     exit 1
+      # - name: Install dependencies
+      #   run: npm ci
+      # - name: Initialize MongoDB
+      #   run: node mongo-init.js
+      #   env:
+      #     MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
+      #     MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
+      #     MONGO_USER: ${{ secrets.MONGO_USER }}
+      #     MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
+      #     MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
+      #     MONGO_HOST: mongo
+      #     MONGO_PORT: 27017
+      - name: Start MongoDB (supercharge)
+        uses: supercharge/mongodb-github-action@1.11.0
+        with:
+          mongodb-version: '8.0'
+          mongodb-username: ${{ secrets.MONGO_ROOT_USER }}
+          mongodb-password: ${{ secrets.MONGO_ROOT_PASSWORD }}
+          mongodb-db: ${{ secrets.MONGO_DATABASE }}
       - name: Initialize MongoDB
-        run: node mongo-init.js
+        run: mongosh --host localhost \
+          --username "${MONGO_ROOT_USER}" \
+          --password "${MONGO_ROOT_PASSWORD}" \
+          --authenticationDatabase admin \
+          mongo-init.js
         env:
           MONGO_ROOT_USER: ${{ secrets.MONGO_ROOT_USER }}
           MONGO_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASSWORD }}
-          MONGO_USER: ${{ secrets.MONGO_USER }}
-          MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
           MONGO_DATABASE: ${{ secrets.MONGO_DATABASE }}
-          MONGO_HOST: mongo
-          MONGO_PORT: 27017
       - name: Start Redis service
         run: |
           docker run -d --name redis -p 6379:6379 \
           -e REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} \
           redis:7.4.5-alpine3.21 redis-server --requirepass "${{ secrets.REDIS_PASSWORD }}"
       - name: Install and test
-        run: npm run test
+        run: |
+          npm install
+          npm run test
         env:
           CI: true
           NODE_ENV: test
