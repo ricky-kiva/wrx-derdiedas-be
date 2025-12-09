@@ -66,3 +66,14 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }}
+      - name: Capture metadata
+        run: |
+          mkdir -p meta
+          echo "${GITHUB_REF}" > meta/ref.txt
+          echo "${GITHUB_REF_NAME}" > meta/ref_name.txt
+          echo "${GITHUB_SHA}" > meta/sha.txt
+      - name: Upload metadata
+        uses: actions/upload-artifact@v4
+        with:
+          name: meta-build
+          path: meta/

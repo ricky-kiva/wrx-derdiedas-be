@@ -13,5 +13,31 @@ jobs:
       - name: Login to Gitlab Container Registry
         run: |
           echo "${{ secrets.GITLAB_REGISTRY_PAT }}" \
-          | docker login registry.gitlab.com -u rickyslash --password-stdin
-    
+          | docker login registry.gitlab.com -u "${{ vars.GITLAB_USERNAME }}" --password-stdin
+      - name: Download workflow metadata
+        uses: actions/download-artifact@v4
+        with:
+          name: meta-build
+          path: meta
+      - name: Read workflow metadata
+        id: read-meta
+        run: |
+          echo "ref=$(cat meta/ref.txt)" >> $GITHUB_OUTPUT
+          echo "ref_name=$(cat meta/ref_name.txt)" >> $GITHUB_OUTPUT
+          echo "sha=$(cat meta/sha.txt)" >> $GITHUB_OUTPUT
+      - name: Build and push Docker image
+        run: |
+          IMAGE="registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
+          
+          REF="${{ steps.read-meta.outputs.ref }}"
+          REF_NAME="${{ steps.read-meta.outputs.ref_name }}"
+          SHA="${{ steps.read-meta.outputs.sha }}"
+          SHA_TAG="${SHA::8}"
+
+          docker build -t $IMAGE:$SHA_TAG .
+          docker push "$IMAGE:$SHA_TAG"
+
+          if [[ "$REF" == refs/tags/* ]]; then
+            docker tag "$IMAGE:$SHA_TAG" "$IMAGE:$REF_NAME"
+            docker push "$IMAGE:$REF_NAME"
+          fi
