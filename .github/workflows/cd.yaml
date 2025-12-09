@@ -20,7 +20,7 @@ jobs:
           FULL_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           SHA_TAG="${FULL_SHA::8}"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} \
             "export SHA_TAG=${SHA_TAG} GITLAB_GROUP=${{ vars.GITLAB_GROUP }} GITLAB_PROJECT=${{ vars.GITLAB_PROJECT }};
             
             echo Logging in to GitLab Registry..;
