@@ -13,6 +13,8 @@ services:
       - NODE_ENV=production
       - REDIS_HOST=redis
       - MONGO_HOST=mongo
+    volumes:
+      - ./data:/usr/src/app/data
   
   mongo:
     image: mongo
@@ -23,6 +25,7 @@ services:
     volumes:
       - ./scripts/docker/mongo/init.js:/docker-entrypoint-initdb.d/mongo-init.js
       - mongo_data:/data/db
+    command: ["mongod", "--quiet"]
 
   redis:
     image: redis:7.4.5-alpine3.21
