@@ -1,4 +1,4 @@
-name: ci-test
+name: ci
 on:
   pull_request:
     branches:
@@ -6,6 +6,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - '*'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -66,14 +68,28 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }}
-      - name: Capture metadata
+  build-and-push:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Login to Gitlab Container Registry
         run: |
-          mkdir -p meta
-          echo "${GITHUB_REF}" > meta/ref.txt
-          echo "${GITHUB_REF_NAME}" > meta/ref_name.txt
-          echo "${GITHUB_SHA}" > meta/sha.txt
-      - name: Upload metadata
-        uses: actions/upload-artifact@v4
-        with:
-          name: meta-build
-          path: meta/
+          echo "${{ secrets.GITLAB_REGISTRY_PAT }}" \
+          | docker login registry.gitlab.com -u "${{ vars.GITLAB_USERNAME }}" --password-stdin
+      - name: Build and push Docker image
+        env:
+          IMAGE="registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
+        run: |
+          SHA_TAG="${GITHUB_SHA::8}"
+
+          docker build -t "$IMAGE:$SHA_TAG" .
+          docker push "$IMAGE:$SHA_TAG"
+
+          # if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+          #   TAG="${GITHUB_REF#refs/tags/}"
+
+          #   docker tag "$IMAGE:$SHA_TAG" "$IMAGE:$TAG"
+          #   docker push "$IMAGE:$TAG"
+          # fi
+      
