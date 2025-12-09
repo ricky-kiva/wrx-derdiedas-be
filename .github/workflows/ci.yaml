@@ -79,7 +79,7 @@ jobs:
           | docker login registry.gitlab.com -u "${{ vars.GITLAB_USERNAME }}" --password-stdin
       - name: Build and push Docker image
         env:
-          IMAGE="registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
+          IMAGE: "registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
         run: |
           SHA_TAG="${GITHUB_SHA::8}"
 
