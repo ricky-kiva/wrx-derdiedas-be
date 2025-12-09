@@ -18,16 +18,14 @@ jobs:
         env:
           IMAGE: "registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
           FULL_SHA: ${{ github.event.workflow_run.head_sha }}
-          GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
-          GITLAB_REGISTRY_PAT: ${{ secrets.GITLAB_REGISTRY_PAT }}
         run: |
           SHA_TAG="${FULL_SHA::8}"
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << EOF
             echo "Logging in to GitLab Registry.."
-            echo "${GITLAB_REGISTRY_PAT}" | docker login registry.gitlab.com -u "${GITLAB_USERNAME}" --password-stdin
+            echo "${{ secrets.GITLAB_REGISTRY_PAT }}" | docker login registry.gitlab.com -u "${{ vars.GITLAB_USERNAME }}" --password-stdin
 
             echo "Pulling new Docker image.."
-            docker pull registry.gitlab.com/${GITLAB_GROUP}/${GITLAB_PROJECT}:${SHA_TAG}
+            docker pull $IMAGE:${SHA_TAG}
 
             DEPLOY_DIR=/srv/derdiedas/backend
 
