@@ -9,31 +9,57 @@ jobs:
   deploy:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
+    env:
+      FULL_SHA: ${{ github.event.workflow_run.head_sha }}
     steps:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
-      - name: Deploy to VPS
+      - name: Login and pull image from Gitlab
         env:
           IMAGE: "registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
-          FULL_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           SHA_TAG="${FULL_SHA::8}"
           ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << EOF
-            echo "Logging in to GitLab Registry.."
-            echo "${{ secrets.GITLAB_REGISTRY_PAT }}" | docker login registry.gitlab.com -u "${{ vars.GITLAB_USERNAME }}" --password-stdin
+            set -e
+            trap 'echo "Failed command: $BASH_COMMAND at line $LINENO"; exit 1' ERR
 
-            echo "Pulling new Docker image.."
-            docker pull $IMAGE:${SHA_TAG}
+            login_gitlab() {
+              echo "Logging in to GitLab Registry.."
+              echo "${{ secrets.GITLAB_REGISTRY_PAT }}" | docker login registry.gitlab.com -u "${{ vars.GITLAB_USERNAME }}" --password-stdin
+            }
+
+            pull_image() {
+              echo "Pulling new Docker image.."
+              docker pull $IMAGE:${SHA_TAG}
+            }
+
+            login_gitlab
+            pull_image            
+          EOF
+      - name: Deploy to VPS
+        run: |
+          SHA_TAG="${FULL_SHA::8}"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << EOF
+            set -e
+            trap 'echo "Failed command: $BASH_COMMAND at line $LINENO"; exit 1' ERR
 
             DEPLOY_DIR=/srv/derdiedas/backend
 
-            echo "SHA_TAG=${SHA_TAG}" > \$DEPLOY_DIR/.deploy.env
-            echo "GITLAB_GROUP=${{ vars.GITLAB_GROUP }}" >> \$DEPLOY_DIR/.deploy.env
-            echo "GITLAB_PROJECT=${{ vars.GITLAB_PROJECT }}" >> \$DEPLOY_DIR/.deploy.env
+            create_deploy_env() {
+              echo "Creating .deploy.env file.."
+              echo "SHA_TAG=${SHA_TAG}" > \$DEPLOY_DIR/.deploy.env
+              echo "GITLAB_GROUP=${{ vars.GITLAB_GROUP }}" >> \$DEPLOY_DIR/.deploy.env
+              echo "GITLAB_PROJECT=${{ vars.GITLAB_PROJECT }}" >> \$DEPLOY_DIR/.deploy.env
+            }
+            
+            update_containers() {
+              echo "Updating containers.."
+              cd \$DEPLOY_DIR || exit
+              docker compose --env-file .deploy.env -p backend up -d --remove-orphans
+            }
 
-            echo "Updating containers.."
-            cd \$DEPLOY_DIR || exit
-            docker compose --env-file .deploy.env -p backend up -d --remove-orphans
+            create_deploy_env
+            update_containers
           EOF
