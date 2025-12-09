@@ -20,20 +20,20 @@ jobs:
           FULL_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
           SHA_TAG="${FULL_SHA::8}"
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
-            echo "Logging in to GitLab Registry.."
-            echo "${GITLAB_REGISTRY_PAT}" | docker login registry.gitlab.com -u "${GITLAB_USERNAME}" --password-stdin
-
-            echo "Pulling new Docker image.."
-            docker pull registry.gitlab.com/${GITLAB_GROUP}/${GITLAB_PROJECT}:${SHA_TAG}
-
-            DEPLOY_DIR=/srv/derdiedas/backend
-
-            echo "SHA_TAG=${SHA_TAG}" > \$DEPLOY_DIR/.deploy.env
-            echo "GITLAB_GROUP=${{ vars.GITLAB_GROUP }}" >> \$DEPLOY_DIR/.deploy.env
-            echo "GITLAB_PROJECT=${{ vars.GITLAB_PROJECT }}" >> \$DEPLOY_DIR/.deploy.env
-
-            echo "Updating containers.."
-            cd \$DEPLOY_DIR || exit
-            docker compose --env-file .deploy.env -p backend up -d --remove-orphans
-          EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} \
+            "export SHA_TAG=${SHA_TAG} GITLAB_GROUP=${{ vars.GITLAB_GROUP }} GITLAB_PROJECT=${{ vars.GITLAB_PROJECT }};
+            
+            echo Logging in to GitLab Registry..;
+            echo '${GITLAB_REGISTRY_PAT}' | docker login registry.gitlab.com -u '${GITLAB_USERNAME}' --password-stdin;
+            
+            echo Pulling new Docker image..;
+            docker pull registry.gitlab.com/\$GITLAB_GROUP/\$GITLAB_PROJECT:\$SHA_TAG;
+            
+            DEPLOY_DIR=/srv/derdiedas/backend;
+            
+            echo SHA_TAG=\$SHA_TAG > \$DEPLOY_DIR/.deploy.env;
+            echo GITLAB_GROUP=\$GITLAB_GROUP >> \$DEPLOY_DIR/.deploy.env;
+            echo GITLAB_PROJECT=\$GITLAB_PROJECT >> \$DEPLOY_DIR/.deploy.env;
+            
+            cd \$DEPLOY_DIR || exit;
+            docker compose --env-file .deploy.env -p backend up -d --remove-orphans"
