@@ -19,6 +19,7 @@ jobs:
         with:
           name: meta-build
           path: meta
+          run-id: ${{ github.event.workflow_run.id }}
       - name: Read workflow metadata
         id: read-meta
         run: |
