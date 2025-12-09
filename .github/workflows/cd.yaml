@@ -17,7 +17,7 @@ jobs:
       - name: Deploy to VPS
         env:
           IMAGE: "registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
-          SHA_TAG: ${{ github.event.workflow_run.head_sha[0:8] }}
+          SHA_TAG: ${{ substr(github.event.workflow_run.head_sha, 0, 8) }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << EOF
             echo "Logging in to GitLab Registry.."
