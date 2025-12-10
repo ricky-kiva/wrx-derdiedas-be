@@ -85,11 +85,38 @@ jobs:
 
           docker build -t "$IMAGE:$SHA_TAG" .
           docker push "$IMAGE:$SHA_TAG"
+  cleanup-registry:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean up GitLab Container Registry
+        env:
+          GITLAB_REGISTRY_PAT: ${{ secrets.GITLAB_REGISTRY_PAT }}
+          GITLAB_PROJECT_ID: ${{ vars.GITLAB_PROJECT_ID }}
+        run: |
+          API="https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/registry/repositories"
 
-          # if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-          #   TAG="${GITHUB_REF#refs/tags/}"
+          REPO_ID=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API" | jq -r '.[0].id')
 
-          #   docker tag "$IMAGE:$SHA_TAG" "$IMAGE:$TAG"
-          #   docker push "$IMAGE:$TAG"
-          # fi
-      
+          TAGS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API/$REPO_ID/tags")
+
+          echo "$TAGS" | jq -r '.[].name' > all_tags.txt
+
+          grep -E '^v?[0-9]+\.[0-9]+' all_tags.txt > version_tags.txt || true
+          grep -E '^[0-9a-f]{8}$' all_tags.txt > sha_tags.txt || true
+
+          jq -r '.[] | select(.name|test("^[0-9a-f]{8}$")) | "\(.created_at) \(.name)"' <<< "$TAGS" \
+            | sort -r \
+            | awk '{print $2}' \
+            | tail -n +4 > old_sha_tags.txt
+
+          echo "SHA tags to delete:"
+          cat old_sha_tags.txt
+
+          while read -r TAG; do
+            [ -z "$TAG" ] && continue
+            echo "Deleting tag: $TAG"
+            curl -s --request DELETE \
+              --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" \
+              "$API/$REPO_ID/tags/$TAG"
+          done < old_sha_tags.txt
