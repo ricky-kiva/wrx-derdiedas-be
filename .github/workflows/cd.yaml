@@ -45,19 +45,20 @@ jobs:
             set -e
             trap 'echo "Failed command: \$BASH_COMMAND at line \$LINENO"; exit 1' ERR
 
-            DEPLOY_DIR=/srv/derdiedas/backend
+            DEPLOY_DIR=/srv/derdiedas
 
             create_deploy_env() {
-              echo "Creating .deploy.env file.."
-              echo "SHA_TAG=${SHA_TAG}" > \$DEPLOY_DIR/.deploy.env
-              echo "GITLAB_GROUP=${{ vars.GITLAB_GROUP }}" >> \$DEPLOY_DIR/.deploy.env
-              echo "GITLAB_PROJECT=${{ vars.GITLAB_PROJECT }}" >> \$DEPLOY_DIR/.deploy.env
+              echo "Updating .deploy.env file.."
+              mkdir -p \$DEPLOY_DIR
+              touch \$DEPLOY_DIR/.deploy.env
+              sed -i '/^BE_SHA_TAG=/d' \$DEPLOY_DIR/.deploy.env
+              echo "BE_SHA_TAG=${SHA_TAG}" >> \$DEPLOY_DIR/.deploy.env
             }
             
             update_containers() {
               echo "Updating containers.."
               cd \$DEPLOY_DIR || exit
-              docker compose --env-file .deploy.env -p backend up -d --remove-orphans
+              docker compose --env-file .deploy.env -p derdiedas up -d --remove-orphans
             }
 
             create_deploy_env
