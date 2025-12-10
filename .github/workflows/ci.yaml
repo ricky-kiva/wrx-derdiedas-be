@@ -91,32 +91,54 @@ jobs:
     steps:
       - name: Clean up GitLab Container Registry
         env:
-          GITLAB_REGISTRY_PAT: ${{ secrets.GITLAB_REGISTRY_PAT }}
-          GITLAB_PROJECT_ID: ${{ vars.GITLAB_PROJECT_ID }}
+          GROUP: ${{ vars.GITLAB_GROUP }}
+          PROJECT: ${{ vars.GITLAB_PROJECT }}
+          GITLAB_USERNAME: ${{ vars.GITLAB_USERNAME }}
+          GITLAB_TOKEN: ${{ secrets.GITLAB_REGISTRY_PAT }}
         run: |
-          API="https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/registry/repositories"
+          REG_URL="https://registry.gitlab.com/v2/$GROUP/$PROJECT"
+          
+          # Get all tags
+          curl -s -u "$GITLAB_USERNAME:$GITLAB_TOKEN" \
+            "$REG_URL/tags/list" \
+            | jq -r '.tags[]' > all_tags.txt
 
-          REPO_ID=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API" | jq -r '.[0].id')
-
-          TAGS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API/$REPO_ID/tags")
-
-          echo "$TAGS" | jq -r '.[].name' > all_tags.txt
-
-          grep -E '^v?[0-9]+\.[0-9]+' all_tags.txt > version_tags.txt || true
+          # SHA tags only
           grep -E '^[0-9a-f]{8}$' all_tags.txt > sha_tags.txt || true
 
-          jq -r '.[] | select(.name|test("^[0-9a-f]{8}$")) | "\(.created_at) \(.name)"' <<< "$TAGS" \
-            | sort -r \
-            | awk '{print $2}' \
-            | tail -n +4 > old_sha_tags.txt
+          echo "" > tags_with_dates.txt
 
-          echo "SHA tags to delete:"
-          cat old_sha_tags.txt
-
+          # Fetch creation date per tag
           while read -r TAG; do
+            MANIFEST=$(curl -s -u "$GITLAB_USERNAME:$GITLAB_TOKEN" \
+              -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+              "$REG_URL/manifests/$TAG")
+
+            DIGEST=$(echo "$MANIFEST" | jq -r '.config.digest')
+
+            CONFIG=$(curl -s -u "$GITLAB_USERNAME:$GITLAB_TOKEN" \
+              "$REG_URL/blobs/$DIGEST")
+
+            CREATED=$(echo "$CONFIG" | jq -r '.created')
+
+            echo "$CREATED $TAG" >> tags_with_dates.txt
+          done < sha_tags.txt
+
+          # Sort oldest → newest
+          sort tags_with_dates.txt > sorted_tags.txt
+
+          # Keep latest 3 → delete the rest
+          DEL=$(head -n -3 sorted_tags.txt || true)
+
+          echo "$DEL"
+
+          while read -r LINE; do
+            TAG=$(echo "$LINE" | awk '{print $2}')
             [ -z "$TAG" ] && continue
-            echo "Deleting tag: $TAG"
-            curl -s --request DELETE \
-              --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" \
-              "$API/$REPO_ID/tags/$TAG"
-          done < old_sha_tags.txt
+
+            echo "Deleting $TAG"
+
+            curl -s -X DELETE \
+              -u "$GITLAB_USERNAME:$GITLAB_TOKEN" \
+              "$REG_URL/manifests/$TAG"
+          done <<< "$DEL"
