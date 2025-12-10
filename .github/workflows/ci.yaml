@@ -96,15 +96,28 @@ jobs:
         run: |
           API="https://gitlab.com/api/v4/projects/${GITLAB_PROJECT_ID}/registry/repositories"
 
-          REPO_ID=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API" | jq -r '.[0].id')
+          # Fetch repositories
+          REPOS_JSON=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API")
+          
+          # Debug: show JSON and type
+          echo "DEBUG: raw repositories JSON:"
+          echo "$REPOS_JSON" | jq .
+          echo "DEBUG: JSON type:"
+          echo "$REPOS_JSON" | jq 'type'
 
+          # Safely extract REPO_ID whether response is array or object
+          REPO_ID=$(echo "$REPOS_JSON" | jq -r 'if type=="array" then .[0].id else .id end')
+          echo "Using REPO_ID: $REPO_ID"
+
+          # List all tags
           TAGS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_REGISTRY_PAT" "$API/$REPO_ID/tags")
-
           echo "$TAGS" | jq -r '.[].name' > all_tags.txt
 
+          # Separate version tags and SHA tags
           grep -E '^v?[0-9]+\.[0-9]+' all_tags.txt > version_tags.txt || true
           grep -E '^[0-9a-f]{8}$' all_tags.txt > sha_tags.txt || true
 
+          # Fetch created_at for each SHA tag individually
           echo "" > tags_with_dates.txt
           while read -r TAG; do
             [ -z "$TAG" ] && continue
@@ -113,11 +126,13 @@ jobs:
             echo "$CREATED $TAG" >> tags_with_dates.txt
           done < sha_tags.txt
 
+          # Sort by created_at descending and keep only older SHA tags
           sort -r tags_with_dates.txt | awk '{print $2}' | tail -n +4 > old_sha_tags.txt
 
           echo "SHA tags to delete:"
           cat old_sha_tags.txt
 
+          # Delete old SHA tags
           while read -r TAG; do
             [ -z "$TAG" ] && continue
             echo "Deleting tag: $TAG"
