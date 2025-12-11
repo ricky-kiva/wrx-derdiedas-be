@@ -27,6 +27,14 @@ interface ClientIdConfig {
   google: string
 }
 
+interface GameConfig {
+  jwt: GameJWTConfig
+}
+
+interface GameJWTConfig {
+  accessToken: JwtTokenConfig
+}
+
 interface JwtTokenConfig {
   secret: string,
   expiry: number
@@ -48,5 +56,6 @@ export interface Config {
   clientId: ClientIdConfig,
   database: DatabaseConfig,
   env: EnvConfig,
+  game: GameConfig
   jwt: JwtConfig,
 }

@@ -49,6 +49,14 @@ const config: Config = {
     development: ENV_DEVELOPMENT,
     test: ENV_TEST
   },
+  game: {
+    jwt: {
+      accessToken: {
+        secret: getEnvVar('GAME_JWT_ACCESS_TOKEN_SECRET'),
+        expiry: Number(getEnvVar('GAME_JWT_ACCESS_TOKEN_EXPIRY'))
+      }
+    }
+  },
   jwt: {
     accessToken: {
       secret: getEnvVar('JWT_ACCESS_TOKEN_SECRET'),
