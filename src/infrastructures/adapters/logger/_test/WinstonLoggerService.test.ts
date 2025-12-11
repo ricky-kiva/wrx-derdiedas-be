@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import { ServiceUnavailableError } from '../../../../commons/exceptions';
 import WinstonLoggerService from '../WinstonLoggerService';
 

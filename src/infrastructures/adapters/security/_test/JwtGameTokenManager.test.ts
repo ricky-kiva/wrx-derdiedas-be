@@ -1,3 +1,5 @@
+import 'reflect-metadata';
+
 import jwt from 'jsonwebtoken';
 import JwtGamePayloadDTO from '../../../../applications/ports/security/dto/JwtGamePayloadDTO';
 import { InvariantError } from '../../../../commons/exceptions';
