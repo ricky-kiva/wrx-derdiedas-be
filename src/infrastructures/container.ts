@@ -108,6 +108,7 @@ container.register(DITokens.DeleteUserUseCase, {
 container.register(DITokens.EndGameUseCase, {
   useFactory: (c) => new EndGameUseCase(
     c.resolve(DITokens.GameRepository),
+    c.resolve(DITokens.GameTokenManager),
     c.resolve(DITokens.UserPointRepository),
     c.resolve(DITokens.UserRepository)
   )

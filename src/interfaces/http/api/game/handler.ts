@@ -52,11 +52,14 @@ export default class GameHandler {
   }
 
   async end(req: Request, res: Response) {
+    const gameToken = this.headerUtils.getGameToken(req);
+
     const { id: gameId } = GameIdParamSchema.parse(req.params);
     
     const p = EndGamePayloadSchema.parse(req.body);
 
     const result = await this.endGameUseCase.execute({ 
+      gameToken,
       gameId, 
       name: p?.name 
     });

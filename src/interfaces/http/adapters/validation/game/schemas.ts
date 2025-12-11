@@ -8,7 +8,7 @@ export const EndGamePayloadSchema = z.object({
   name: z.string()
     .max(30, 'Name cannot exceed 30 characters')
     .optional()
-}).optional() satisfies z.ZodType<(Omit<EndGameCmd, 'gameId'> | undefined), z.ZodTypeDef, unknown>;
+}).optional() satisfies z.ZodType<(Omit<EndGameCmd, ('gameId' | 'gameToken') > | undefined), z.ZodTypeDef, unknown>;
 
 export const GameIdParamSchema = z.object({
   id: z.string()

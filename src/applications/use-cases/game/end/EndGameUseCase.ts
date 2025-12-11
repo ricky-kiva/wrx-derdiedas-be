@@ -2,16 +2,21 @@ import { InvariantError, NotFoundError } from '../../../../commons/exceptions';
 import GameRepository from '../../../../domains/game/GameRepository';
 import UserRepository from '../../../../domains/user/UserRepository';
 import UserPointRepository from '../../../../domains/userPoint/UserPointRepository';
+import GameTokenManager from '../../../ports/security/GameTokenManager';
 import { EndGameCmd } from './commands/EndGameCmd';
 
 export default class EndGameUseCase {
   constructor(
     private readonly gameRepository: GameRepository,
+    private readonly gameTokenManager: GameTokenManager,
     private readonly userPointRepository: UserPointRepository,
     private readonly userRepository: UserRepository
   ) {}
 
   async execute(cmd: EndGameCmd): Promise<string | null> {
+    this.gameTokenManager.verifyGameToken(cmd.gameToken);
+    this.gameTokenManager.verifyPayload(cmd.gameToken);
+
     const game = await this.gameRepository.findById(cmd.gameId);
 
     if (!game) throw new NotFoundError('Game not found');
