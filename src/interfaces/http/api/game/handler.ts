@@ -128,11 +128,14 @@ export default class GameHandler {
   }
 
   async update(req: Request, res: Response) {
+    const gameToken = this.headerUtils.getGameToken(req);
+
     const { id } = GameIdParamSchema.parse(req.params);
     
     const p = UpdateGamePayloadSchema.parse(req.body);
 
-    const updated = await this.updateGameUseCase.execute({ id, payload: p });
+    const updated = await this.updateGameUseCase
+      .execute({ id, gameToken, payload: p });
 
     res.json({
       status: 'success',

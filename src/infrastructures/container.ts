@@ -199,6 +199,7 @@ container.register(DITokens.SubmitPointUseCase, {
 container.register(DITokens.UpdateGameUseCase, {
   useFactory: (c) => new UpdateGameUseCase(
     c.resolve(DITokens.GameRepository),
+    c.resolve(DITokens.GameTokenManager),
     c.resolve(DITokens.UserRepository)
   )
 });
