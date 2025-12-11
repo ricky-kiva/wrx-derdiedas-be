@@ -61,6 +61,8 @@ jobs:
           NODE_ENV: test
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           PORT: ${{ secrets.PORT }}
+          GAME_JWT_ACCESS_TOKEN_SECRET: ${{ secrets.GAME_JWT_ACCESS_TOKEN_SECRET }}
+          GAME_JWT_ACCESS_TOKEN_EXPIRY: ${{ secrets.GAME_JWT_ACCESS_TOKEN_EXPIRY }}
           JWT_ACCESS_TOKEN_SECRET: ${{ secrets.JWT_ACCESS_TOKEN_SECRET }}
           JWT_REFRESH_TOKEN_SECRET: ${{ secrets.JWT_REFRESH_TOKEN_SECRET }}
           JWT_ACCESS_TOKEN_EXPIRY: ${{ secrets.JWT_ACCESS_TOKEN_EXPIRY }}
@@ -68,6 +70,7 @@ jobs:
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
           REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }}
+          
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
