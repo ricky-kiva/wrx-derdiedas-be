@@ -60,12 +60,14 @@ export default function testUserRoutes(
 
     describe('PATCH `/users/:id`', () => {
       it('responds with 200 and updated user', async () => {
+        (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(mockUserId);
+
         const mockUpdatedUser: UpdateUserDTO = { id: mockUserId, name: 'New Name', picture: 'old.picture' };
 
         mocks.usecases.updateUserUC.execute.mockResolvedValue(mockUpdatedUser);
 
         const res = await request(app)
-          .patch(`${BASE_URL}/${mockUserId}`)
+          .patch(`${BASE_URL}/me`)
           .send({ name: mockUpdatedUser.name });
 
         expect(res.status).toBe(200);
@@ -84,7 +86,7 @@ export default function testUserRoutes(
         mocks.usecases.updateUserUC.execute.mockRejectedValue(new NotFoundError('User not found'));
 
         const res = await request(app)
-          .patch(`${BASE_URL}/${mockUserId}`)
+          .patch(`${BASE_URL}/me`)
           .send({ name: 'New Name' });
 
         expect(res.status).toBe(404);
@@ -97,9 +99,11 @@ export default function testUserRoutes(
 
     describe('DELETE `/users/:id`', () => {
       it('responds with 204 when deletion succeeds', async () => {
+        (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(mockUserId);
+
         mocks.usecases.deleteUserUC.execute.mockResolvedValue(undefined);
 
-        const res = await request(app).delete(`${BASE_URL}/${mockUserId}`);
+        const res = await request(app).delete(`${BASE_URL}/me`);
 
         expect(res.status).toBe(204);
         expect(mocks.methods.deleteUserUC.execute).toHaveBeenCalledWith(mockUserId);
@@ -108,7 +112,7 @@ export default function testUserRoutes(
       it('responds with 404 if user not found', async () => {
         mocks.usecases.deleteUserUC.execute.mockRejectedValue(new NotFoundError('User not found'));
 
-        const res = await request(app).delete(`${BASE_URL}/${mockUserId}`);
+        const res = await request(app).delete(`${BASE_URL}/me`);
 
         expect(res.status).toBe(404);
         expect(res.body).toMatchObject({
