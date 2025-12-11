@@ -441,7 +441,7 @@ export default function testGameRoutes(
         expect(res.status).toBe(200);
         expect(res.body).toEqual({
           status: 'success',
-          data: mockToken
+          data: { token: mockToken }
         });
         expect(mocks.methods.issueGameTokenUC.execute).toHaveBeenCalled();
       });
