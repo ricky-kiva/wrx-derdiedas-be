@@ -1,38 +1,72 @@
 import NounsCollectionTestHelper from '../../../../../../tests/NounsCollectionTestHelper';
+import { InvariantError } from '../../../../../commons/exceptions';
 import GameRepository from '../../../../../domains/game/GameRepository';
+import GameTokenManager from '../../../../ports/security/GameTokenManager';
 import NounQueryRepository from '../../../../query-repositories/noun/NounQueryRepository';
 import StartGameUseCase from '../StartGameUseCase';
 
 describe('StartGameUseCase', () => {
-  it('should create a game and return StartGameDTO', async () => {
-    const mockNouns = Object.values(NounsCollectionTestHelper.getNouns());
+  let mockNounRepository: NounQueryRepository;
+  let mockGameRepository: GameRepository;
+  let mockGameTokenManager: GameTokenManager;
+  let startGameUseCase: StartGameUseCase;
+  let mockNRGetRandom: jest.Mock;
+  let mockGRSave: jest.Mock;
+  let mockGTMGToken: jest.Mock;
+  let mockGTMVPayload: jest.Mock;
 
-    const nounRepoMock: NounQueryRepository = {
-      getRandom: jest.fn().mockResolvedValue(mockNouns),
+  const mockNouns = Object.values(NounsCollectionTestHelper.getNouns());
+  const validToken = 'valid-token';
+
+  beforeEach(() => {
+    mockNRGetRandom = jest.fn().mockResolvedValue(mockNouns);
+    mockGRSave = jest.fn().mockResolvedValue(undefined);
+    mockGTMGToken = jest.fn();
+    mockGTMVPayload = jest.fn();
+
+    mockNounRepository = {
+      getRandom: mockNRGetRandom,
     } as Partial<NounQueryRepository> as NounQueryRepository;
 
-    const saveMethodMock = jest.fn().mockResolvedValue(undefined);
-
-    const gameRepoMock: GameRepository = {
-      save: saveMethodMock,
-      findById: jest.fn(),
-      delete: jest.fn(),
+    mockGameRepository = {
+      save: mockGRSave,
     } as Partial<GameRepository> as GameRepository;
 
-    const useCase = new StartGameUseCase(gameRepoMock, nounRepoMock);
+    mockGameTokenManager = {
+      verifyGameToken: mockGTMGToken,
+      verifyPayload: mockGTMVPayload,
+    } as Partial<GameTokenManager> as GameTokenManager;
 
+    startGameUseCase = new StartGameUseCase(mockGameRepository, mockGameTokenManager, mockNounRepository);
+  });
+
+  it('should create a game and return StartGameDTO', async () => {
     const userId = 'user-123';
-    const result = await useCase.execute(userId);
+    const result = await startGameUseCase.execute(validToken, userId);
 
-    expect(result.nouns).toEqual(mockNouns.map(({ id, word, meanings }) => ({ id, word, meanings })));
+    expect(mockGTMGToken).toHaveBeenCalledWith(validToken);
+    expect(mockGTMVPayload).toHaveBeenCalledWith(validToken);
 
-    expect(saveMethodMock).toHaveBeenCalledTimes(1);
-    expect(saveMethodMock).toHaveBeenCalledWith(
+    expect(result.nouns).toEqual(
+      mockNouns.map(({ id, word, meanings }) => ({ id, word, meanings }))
+    );
+
+    expect(mockGRSave).toHaveBeenCalledTimes(1);
+    expect(mockGRSave).toHaveBeenCalledWith(
       expect.objectContaining({
         userId,
-        nouns: mockNouns
-          .map(n => ({ id: n.id, gender: n.gender, word: n.word, meanings: n.meanings }))
+        nouns: mockNouns.map(n => ({ id: n.id, gender: n.gender, word: n.word, meanings: n.meanings }))
       })
     );
+  });
+
+  it('should throw if token verification fails', async () => {
+    mockGameTokenManager.verifyGameToken = jest.fn(() => { throw new InvariantError('Invalid token'); });
+    await expect(startGameUseCase.execute(validToken)).rejects.toThrow(InvariantError);
+  });
+
+  it('should throw if payload verification fails', async () => {
+    mockGameTokenManager.verifyPayload = jest.fn(() => { throw new InvariantError('Invalid payload'); });
+    await expect(startGameUseCase.execute(validToken)).rejects.toThrow(InvariantError);
   });
 });
