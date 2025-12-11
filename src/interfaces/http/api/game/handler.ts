@@ -10,6 +10,7 @@ import EndGameUseCase from '../../../../applications/use-cases/game/end/EndGameU
 import UpdateGameUseCase from '../../../../applications/use-cases/game/update/UpdateGameUseCase';
 import GetGameByIdUseCase from '../../../../applications/use-cases/game/get/GetGameByIdUseCase';
 import DeleteGameUseCase from '../../../../applications/use-cases/game/delete/DeleteGameUseCase';
+import IssueGameTokenUseCase from '../../../../applications/use-cases/game/issue-game-token/IssueGameTokenUseCase';
 
 @injectable()
 export default class GameHandler {
@@ -22,6 +23,8 @@ export default class GameHandler {
     private readonly deleteGameUseCase: DeleteGameUseCase,
     @inject(DITokens.GetGameByIdUseCase)
     private readonly getGameByIdUseCase: GetGameByIdUseCase,
+    @inject(DITokens.IssueGameTokenUseCase)
+    private readonly issueGameTokenUseCase: IssueGameTokenUseCase,
     @inject(DITokens.StartGameUseCase)
     private readonly startGameUseCase: StartGameUseCase,
     @inject(DITokens.SubmitAnswerUseCase)
@@ -32,6 +35,7 @@ export default class GameHandler {
     this.delete = this.delete.bind(this);
     this.end = this.end.bind(this);
     this.getById = this.getById.bind(this);
+    this.issueToken = this.issueToken.bind(this);
     this.start = this.start.bind(this);
     this.submitAnswer = this.submitAnswer.bind(this);
     this.update = this.update.bind(this);
@@ -81,10 +85,20 @@ export default class GameHandler {
     } satisfies ApiResponse);
   }
 
+  issueToken(_: Request, res: Response) {
+    const token = this.issueGameTokenUseCase.execute();
+    
+    res.json({
+      status: 'success',
+      data: token
+    } satisfies ApiResponse);
+  }
+
   async start(req: Request, res: Response) {
     const userId = this.headerUtils.extractUserId(req);
+    const gameToken = this.headerUtils.getGameToken(req);
 
-    const game = await this.startGameUseCase.execute(userId);
+    const game = await this.startGameUseCase.execute(gameToken, userId);
 
     res.json({
       status: 'success',
