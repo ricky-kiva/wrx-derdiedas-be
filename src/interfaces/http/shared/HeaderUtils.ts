@@ -2,7 +2,7 @@ import { inject, injectable } from 'tsyringe';
 import { DITokens } from '../../../commons/DITokens';
 import TokenManager from '../../../applications/ports/security/TokenManager';
 import { Request } from 'express';
-import { AuthenticationError } from '../../../commons/exceptions';
+import { AuthenticationError, InvariantError } from '../../../commons/exceptions';
 
 @injectable()
 export default class HeaderUtils {
@@ -10,7 +10,7 @@ export default class HeaderUtils {
     @inject(DITokens.TokenManager)
     private readonly tokenManager: TokenManager
   ) {}
-
+  
   extractUserId(req: Request): string | undefined {
     const authHeader = req.headers.authorization;
 
@@ -26,5 +26,17 @@ export default class HeaderUtils {
     } catch {
       throw new AuthenticationError("Invalid or expired token");
     }
+  }
+
+  getGameToken(req: Request) {
+    const tokenHeader = req.headers['x-game-token'];
+
+    if (!tokenHeader) throw new InvariantError("Missing Game token");
+
+    const token = Array.isArray(tokenHeader) 
+      ? tokenHeader[0] 
+      : tokenHeader;
+    
+    return token;
   }
 }
