@@ -93,7 +93,8 @@ container.register(DITokens.DecayPointsUseCase, {
 
 container.register(DITokens.DeleteGameUseCase, {
   useFactory: (c) => new DeleteGameUseCase(
-    c.resolve(DITokens.GameRepository)
+    c.resolve(DITokens.GameRepository),
+    c.resolve(DITokens.GameTokenManager)
   )
 });
 

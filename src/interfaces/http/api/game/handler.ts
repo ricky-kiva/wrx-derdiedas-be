@@ -42,9 +42,11 @@ export default class GameHandler {
   }
 
   async delete(req: Request, res: Response) {
+    const gameToken = this.headerUtils.getGameToken(req);
+
     const { id } = GameIdParamSchema.parse(req.params);
 
-    await this.deleteGameUseCase.execute(id);
+    await this.deleteGameUseCase.execute(gameToken, id);
 
     res.status(204).send();
   }
