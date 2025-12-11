@@ -46,12 +46,15 @@ import UpdateUserUseCase from '../applications/use-cases/user/update/UpdateUserU
 import GetGameByIdUseCase from '../applications/use-cases/game/get/GetGameByIdUseCase';
 import UpdateGameUseCase from '../applications/use-cases/game/update/UpdateGameUseCase';
 import DeleteGameUseCase from '../applications/use-cases/game/delete/DeleteGameUseCase';
+import JwtGameTokenManager from './adapters/security/JwtGameTokenManager';
+import IssueGameTokenUseCase from '../applications/use-cases/game/issue-game-token/IssueGameTokenUseCase';
 
 container.register(DITokens.NounSeeder, { useClass: NounSeeder });
 
 container.registerSingleton(DITokens.AuthHandler, AuthHandler);
 container.registerSingleton(DITokens.GameExpirationListener, GameExpirationListener);
 container.registerSingleton(DITokens.GameHandler, GameHandler);
+container.registerSingleton(DITokens.GameTokenManager, JwtGameTokenManager);
 container.registerSingleton(DITokens.HeaderUtils, HeaderUtils);
 container.registerSingleton(DITokens.LeaderboardHandler, LeaderboardHandler);
 container.registerSingleton(DITokens.RootHandler, RootHandler);
@@ -135,6 +138,12 @@ container.register(DITokens.IssueTokenUseCase, {
   )
 });
 
+container.register(DITokens.IssueGameTokenUseCase, {
+  useFactory: (c) => new IssueGameTokenUseCase(
+    c.resolve(DITokens.GameTokenManager)
+  )
+});
+
 container.register(DITokens.LoginUseCase, {
   useFactory: (c) => new LoginUseCase(
     c.resolve(DITokens.GoogleAuthService),
@@ -165,6 +174,7 @@ container.register(DITokens.SearchNounUseCase, {
 container.register(DITokens.StartGameUseCase, {
   useFactory: (c) => new StartGameUseCase(
     c.resolve(DITokens.GameRepository),
+    c.resolve(DITokens.GameTokenManager),
     c.resolve(DITokens.NounQueryRepository)
   )
 });
