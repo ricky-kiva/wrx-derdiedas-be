@@ -17,7 +17,7 @@ export default defineConfig([
     languageOptions: {
       globals: globals.node,
       parserOptions: {
-        project: path.join(__dirname, 'tsconfig.json'),
+        project: path.join(__dirname, 'tsconfig.eslint.json'),
         tsconfigRootDir: __dirname,
       }
     },
