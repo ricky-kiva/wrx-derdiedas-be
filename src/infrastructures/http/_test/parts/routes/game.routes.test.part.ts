@@ -430,5 +430,32 @@ export default function testGameRoutes(
         expect((res.body as ApiResponse).status).toBe('error');
       });
     });
+
+    describe('GET `/game/token`', () => {
+      it('responds with 200 and returns token', async () => {
+        const mockToken = 'game-token-123';
+        mocks.usecases.issueGameTokenUC.execute.mockReturnValue(mockToken);
+
+        const res = await request(app).get('/game/token');
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({
+          status: 'success',
+          data: mockToken
+        });
+        expect(mocks.methods.issueGameTokenUC.execute).toHaveBeenCalled();
+      });
+
+      it('responds with 500 on unexpected error', async () => {
+        mocks.usecases.issueGameTokenUC.execute.mockImplementation(() => {
+          throw new Error('Unexpected');
+        });
+
+        const res = await request(app).get('/game/token');
+
+        expect(res.status).toBe(500);
+        expect((res.body as ApiResponse).status).toBe('error');
+      });
+    });
   });
 }
