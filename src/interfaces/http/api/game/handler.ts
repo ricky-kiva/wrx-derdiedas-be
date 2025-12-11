@@ -95,7 +95,7 @@ export default class GameHandler {
     
     res.json({
       status: 'success',
-      data: token
+      data: { token }
     } satisfies ApiResponse);
   }
 
