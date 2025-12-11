@@ -5,17 +5,23 @@ import Game from '../../../../../domains/game/entities/Game';
 import GameRepository from '../../../../../domains/game/GameRepository';
 import Noun, { Gender } from '../../../../../domains/noun/entities/Noun';
 import { USER_POINT_CONSTANTS } from '../../../../../domains/userPoint/constants/userPointConstants';
+import GameTokenManager from '../../../../ports/security/GameTokenManager';
 import NounQueryRepository from '../../../../query-repositories/noun/NounQueryRepository';
 import { SubmitAnswerCmd } from '../command/SubmitAnswerCmd';
 import SubmitAnswerUseCase from '../SubmitAnswerUseCase';
 
 describe('SubmitAnswerUseCase', () => {
+  const mockGameToken = 'mock.game.token';
+
   let mockGameRepository: GameRepository;
+  let mockGameTokenManager: GameTokenManager;
   let mockNounQueryRepository: NounQueryRepository;
   let submitAnswerUseCase: SubmitAnswerUseCase;
   let mockGame: Game;
   let mockGRSaveMethod: jest.Mock;
   let mockNQRGRandom: jest.Mock;
+  let mockGTMGToken: jest.Mock;
+  let mockGTMVPayload: jest.Mock;
 
   beforeEach(() => {
     const nouns = Object.values(NounsCollectionTestHelper.getNouns())
@@ -31,6 +37,8 @@ describe('SubmitAnswerUseCase', () => {
 
     mockGRSaveMethod = jest.fn().mockResolvedValue(undefined);
     mockNQRGRandom = jest.fn().mockResolvedValue(randomNouns);
+    mockGTMGToken = jest.fn();
+    mockGTMVPayload = jest.fn();
 
     mockGameRepository = {
       findById: jest.fn().mockResolvedValue(mockGame),
@@ -42,7 +50,12 @@ describe('SubmitAnswerUseCase', () => {
       getRandom: mockNQRGRandom
     } as Partial<NounQueryRepository> as NounQueryRepository;
 
-    submitAnswerUseCase = new SubmitAnswerUseCase(mockGameRepository, mockNounQueryRepository);
+    mockGameTokenManager = {
+      verifyGameToken: mockGTMGToken,
+      verifyPayload: mockGTMVPayload,
+    } as Partial<GameTokenManager> as GameTokenManager;
+
+    submitAnswerUseCase = new SubmitAnswerUseCase(mockGameRepository, mockGameTokenManager, mockNounQueryRepository);
   });
 
   it('should mark answer correct, increment points, remove noun, and save game', async () => {
@@ -52,6 +65,7 @@ describe('SubmitAnswerUseCase', () => {
       gameId: mockGame.id,
       nounId: targetNoun.id,
       answer: targetNoun.gender,
+      gameToken: mockGameToken
     };
 
     const result = await submitAnswerUseCase.execute(cmd);
@@ -73,6 +87,7 @@ describe('SubmitAnswerUseCase', () => {
       gameId: mockGame.id,
       nounId: targetNoun.id,
       answer: 'neuter' as Gender,
+      gameToken: mockGameToken
     };
 
     const result = await submitAnswerUseCase.execute(cmd);
@@ -93,6 +108,7 @@ describe('SubmitAnswerUseCase', () => {
       gameId: mockGame.id,
       nounId: targetNoun.id,
       answer: 'neuter' as Gender,
+      gameToken: mockGameToken
     };
 
     const result = await submitAnswerUseCase.execute(cmd);
@@ -107,6 +123,7 @@ describe('SubmitAnswerUseCase', () => {
       gameId: 'nonexistent',
       nounId: 'noun-123',
       answer: 'masculine',
+      gameToken: mockGameToken
     };
 
     await expect(submitAnswerUseCase.execute(cmd)).rejects.toThrow(NotFoundError);
@@ -117,6 +134,7 @@ describe('SubmitAnswerUseCase', () => {
       gameId: mockGame.id,
       nounId: 'nonexistent-id',
       answer: 'masculine',
+      gameToken: mockGameToken
     };
 
     await expect(submitAnswerUseCase.execute(cmd)).rejects.toThrow(InvariantError);
@@ -135,6 +153,7 @@ describe('SubmitAnswerUseCase', () => {
       gameId: singleNounGame.id,
       nounId: 'noun-123',
       answer: 'masculine',
+      gameToken: mockGameToken
     };
 
     const result = await submitAnswerUseCase.execute(cmd);
@@ -154,5 +173,21 @@ describe('SubmitAnswerUseCase', () => {
         ) as Noun[],
       } as Partial<Game>)
     );
+  });
+
+  it('should call verifyGameToken and verifyPayload', async () => {
+    const targetNoun = mockGame.nouns[0];
+
+    const cmd: SubmitAnswerCmd = {
+      gameId: mockGame.id,
+      nounId: targetNoun.id,
+      answer: targetNoun.gender,
+      gameToken: mockGameToken,
+    };
+
+    await submitAnswerUseCase.execute(cmd);
+
+    expect(mockGTMGToken).toHaveBeenCalledWith(mockGameToken);
+    expect(mockGTMVPayload).toHaveBeenCalledWith(mockGameToken);
   });
 });
