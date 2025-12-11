@@ -10,6 +10,8 @@ import { UpdateGamePayload } from '../../../../../interfaces/http/adapters/valid
 import { UpdateGameCmd } from '../../../../../applications/use-cases/game/update/commands/UpdateGameCmd';
 import { GetGameByIdDTO } from '../../../../../applications/use-cases/game/get/dto/GetGameByIdDTO';
 import { StartGameDTO } from '../../../../../applications/use-cases/game/start/dto/StartGameDTO';
+import { SubmitAnswerCmd } from '../../../../../applications/use-cases/game/submit-answer/command/SubmitAnswerCmd';
+import { Gender } from '../../../../../domains/noun/entities/Noun';
 
 export default function testGameRoutes(
   getApp: () => Application,
@@ -258,10 +260,14 @@ export default function testGameRoutes(
 
 
     describe('POST `/game/:id/answer`', () => {
+      beforeEach(() => {
+        (HeaderUtils.prototype.getGameToken as jest.Mock).mockReturnValue(mockGameToken);
+      });
+
       it('responds with 200 without nouns', async () => {
         const payload = {
           nounId: mockNounId,
-          answer: 'feminine'
+          answer: 'feminine' as Gender
         };
 
         const mockResult = {
@@ -283,7 +289,7 @@ export default function testGameRoutes(
         });
 
         expect(mocks.methods.submitAnswerUC.execute)
-          .toHaveBeenCalledWith({ gameId: mockGameId, ...payload });
+          .toHaveBeenCalledWith({ gameId: mockGameId, gameToken: mockGameToken, ...payload } satisfies SubmitAnswerCmd);
       });
 
       it('responds with 200 with new nouns', async () => {
