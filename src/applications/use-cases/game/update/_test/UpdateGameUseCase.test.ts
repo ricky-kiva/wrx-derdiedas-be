@@ -1,21 +1,26 @@
 import { NotFoundError } from '../../../../../commons/exceptions';
 import GameRepository from '../../../../../domains/game/GameRepository';
 import UserRepository from '../../../../../domains/user/UserRepository';
+import GameTokenManager from '../../../../ports/security/GameTokenManager';
 import UpdateGameUseCase from '../UpdateGameUseCase';
 import { UpdateGameCmd } from '../commands/UpdateGameCmd';
 import { UpdateGameDTO } from '../dto/UpdateGameDTO';
 
 describe('UpdateGameUseCase', () => {
   let mockGameRepository: jest.Mocked<GameRepository>;
+  let mockGameTokenManager: jest.Mocked<GameTokenManager>;
   let mockUserRepository: jest.Mocked<UserRepository>;
   let updateGameUseCase: UpdateGameUseCase;
 
   let mockGRFindById: jest.Mock;
   let mockGRSave: jest.Mock;
   let mockURFindById: jest.Mock;
+  let mockGTMVerifyToken: jest.Mock;
+  let mockGTMVerifyPayload: jest.Mock;
 
   const mockGameId = 'game-123';
   const mockUserId = 'user-123';
+  const mockGameToken = 'mock.game.token';
 
   const baseGameData = {
     id: mockGameId,
@@ -26,6 +31,7 @@ describe('UpdateGameUseCase', () => {
 
   const mockCmd: UpdateGameCmd = {
     id: mockGameId,
+    gameToken: mockGameToken,
     payload: { userId: 'user-999' }
   };
 
@@ -33,17 +39,24 @@ describe('UpdateGameUseCase', () => {
     mockGRFindById = jest.fn();
     mockGRSave = jest.fn();
     mockURFindById = jest.fn();
+    mockGTMVerifyToken = jest.fn();
+    mockGTMVerifyPayload = jest.fn();
 
     mockGameRepository = {
       findById: mockGRFindById,
       save: mockGRSave
     } as unknown as jest.Mocked<GameRepository>;
 
+    mockGameTokenManager = {
+      verifyGameToken: mockGTMVerifyToken,
+      verifyPayload: mockGTMVerifyPayload,
+    } as unknown as jest.Mocked<GameTokenManager>;
+
     mockUserRepository = {
       findById: mockURFindById,
     } as unknown as jest.Mocked<UserRepository>;
 
-    updateGameUseCase = new UpdateGameUseCase(mockGameRepository,mockUserRepository);
+    updateGameUseCase = new UpdateGameUseCase(mockGameRepository, mockGameTokenManager, mockUserRepository);
   });
 
   it('should update game and return updated DTO when new user exists', async () => {
