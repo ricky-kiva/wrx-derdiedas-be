@@ -12,6 +12,7 @@ import { GetGameByIdDTO } from '../../../../../applications/use-cases/game/get/d
 import { StartGameDTO } from '../../../../../applications/use-cases/game/start/dto/StartGameDTO';
 import { SubmitAnswerCmd } from '../../../../../applications/use-cases/game/submit-answer/command/SubmitAnswerCmd';
 import { Gender } from '../../../../../domains/noun/entities/Noun';
+import { EndGameCmd } from '../../../../../applications/use-cases/game/end/commands/EndGameCmd';
 
 export default function testGameRoutes(
   getApp: () => Application,
@@ -84,6 +85,10 @@ export default function testGameRoutes(
     });
 
     describe('POST `/game/:id/end`', () => {
+      beforeEach(() => {
+        (HeaderUtils.prototype.getGameToken as jest.Mock).mockReturnValue(mockGameToken);
+      });
+
       it('responds with 200 when logged-in user ends game', async () => {
         (HeaderUtils.prototype.extractUserId as jest.Mock).mockReturnValue(mockUserId);
 
@@ -101,8 +106,9 @@ export default function testGameRoutes(
 
         expect(mocks.methods.endGameUC.execute).toHaveBeenCalledWith({
           gameId: mockGameId,
+          gameToken: mockGameToken,
           name: undefined
-        });
+        } satisfies EndGameCmd);
       });
 
       it('responds with 200 when anonymous user ends game with name', async () => {
@@ -120,8 +126,11 @@ export default function testGameRoutes(
           data: { userId: mockUserId }
         });
 
-        expect(mocks.methods.endGameUC.execute)
-          .toHaveBeenCalledWith({ gameId: mockGameId, name });
+        expect(mocks.methods.endGameUC.execute).toHaveBeenCalledWith({ 
+          gameId: mockGameId, 
+          gameToken: mockGameToken, 
+          name 
+        } satisfies EndGameCmd);
       });
 
       it('responds with 404 if game not found', async () => {
