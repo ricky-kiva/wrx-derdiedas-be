@@ -3,7 +3,9 @@ import JwtGamePayloadDTO from '../../../applications/ports/security/dto/JwtGameP
 import GameTokenManager from '../../../applications/ports/security/GameTokenManager';
 import { InvariantError } from '../../../commons/exceptions';
 import config from '../../../commons/config';
+import { injectable } from 'tsyringe';
 
+@injectable()
 export default class JwtGameTokenManager implements GameTokenManager {
   generateAccessToken(payload: JwtGamePayloadDTO): string {
     const gameJwtConfig = config.game.jwt.accessToken;

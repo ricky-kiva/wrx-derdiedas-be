@@ -3,7 +3,9 @@ import TokenManager from '../../../applications/ports/security/TokenManager';
 import jwt from 'jsonwebtoken';
 import config from '../../../commons/config';
 import { AuthenticationError } from '../../../commons/exceptions';
+import { injectable } from 'tsyringe';
 
+@injectable()
 export default class JwtTokenManager implements TokenManager {
   generateAccessToken(payload: JwtPayloadDTO): string {
     return jwt.sign(payload, config.jwt.accessToken.secret, { expiresIn: config.jwt.accessToken.expiry });

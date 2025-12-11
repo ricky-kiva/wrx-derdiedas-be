@@ -2,7 +2,9 @@ import { Logger, createLogger, format } from 'winston';
 import LoggerService from '../../../applications/ports/logger/LoggerService';
 import path from 'path';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { injectable } from 'tsyringe';
 
+@injectable()
 export default class WinstonLoggerService implements LoggerService {
   private readonly logger: Logger;
   
