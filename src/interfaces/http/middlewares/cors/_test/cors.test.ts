@@ -11,7 +11,7 @@ describe('CORS Middleware\'s Origin Callback', () => {
   });
 
   test('allows requests from whitelisted origin', done => {
-    originCallback('http://localhost:5173', (err, allowed) => {
+    originCallback('http://derdiedas.my.id', (err, allowed) => {
       expect(err).toBeNull();
       expect(allowed).toBe(true);
       done();
