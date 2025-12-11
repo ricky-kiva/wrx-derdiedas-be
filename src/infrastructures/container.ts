@@ -182,6 +182,7 @@ container.register(DITokens.StartGameUseCase, {
 container.register(DITokens.SubmitAnswerUseCase, {
   useFactory: (c) => new SubmitAnswerUseCase(
     c.resolve(DITokens.GameRepository),
+    c.resolve(DITokens.GameTokenManager),
     c.resolve(DITokens.NounQueryRepository)
   )
 });

@@ -23,7 +23,7 @@ export const SubmitAnswerPayloadSchema = z.object({
   answer: z.enum(GENDER_VALUES, { 
     errorMap: () => ({ message: 'Answer must be masculine, feminine, or neuter' }) 
   })
-}) satisfies z.ZodType<Omit<SubmitAnswerCmd, 'gameId'>, z.ZodTypeDef, unknown>;
+}) satisfies z.ZodType<Omit<SubmitAnswerCmd, 'gameId' | 'gameToken'>, z.ZodTypeDef, unknown>;
 
 export const UpdateGamePayloadSchema = z.object({
   userId: z.string()
