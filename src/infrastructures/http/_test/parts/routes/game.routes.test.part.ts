@@ -44,6 +44,10 @@ export default function testGameRoutes(
     });
 
     describe('DELETE `/game/:id`', () => {
+      beforeEach(() => {
+        (HeaderUtils.prototype.getGameToken as jest.Mock).mockReturnValue(mockGameToken);
+      });
+
       it('responds with 204 on successful delete', async () => {
         mocks.usecases.deleteGameUC.execute.mockResolvedValue(undefined);
 
@@ -53,7 +57,7 @@ export default function testGameRoutes(
         expect(res.body).toEqual({});
 
         expect(mocks.methods.deleteGameUC.execute)
-          .toHaveBeenCalledWith(mockGameId);
+          .toHaveBeenCalledWith(mockGameToken, mockGameId);
       });
 
       it('responds with 404 if game not found', async () => {
