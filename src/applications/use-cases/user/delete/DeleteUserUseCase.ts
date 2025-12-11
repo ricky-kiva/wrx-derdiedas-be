@@ -1,4 +1,4 @@
-import { NotFoundError } from '../../../../commons/exceptions';
+import { AuthenticationError, NotFoundError } from '../../../../commons/exceptions';
 import UserRepository from '../../../../domains/user/UserRepository';
 import UserPointRepository from '../../../../domains/userPoint/UserPointRepository';
 
@@ -8,7 +8,9 @@ export default class DeleteUserUseCase {
     private readonly userPointRepository: UserPointRepository
   ) {}
 
-  async execute(id: string): Promise<void> {
+  async execute(id?: string): Promise<void> {
+    if (!id) throw new AuthenticationError("Invalid or expired token");
+
     const user = await this.userRepository.findById(id);
 
     if (!user) throw new NotFoundError("User not found");
