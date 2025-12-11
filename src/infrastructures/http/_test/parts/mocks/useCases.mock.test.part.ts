@@ -15,6 +15,7 @@ import UpdateUserUseCase from '../../../../../applications/use-cases/user/update
 import GetGameByIdUseCase from '../../../../../applications/use-cases/game/get/GetGameByIdUseCase';
 import UpdateGameUseCase from '../../../../../applications/use-cases/game/update/UpdateGameUseCase';
 import DeleteGameUseCase from '../../../../../applications/use-cases/game/delete/DeleteGameUseCase';
+import IssueGameTokenUseCase from '../../../../../applications/use-cases/game/issue-game-token/IssueGameTokenUseCase';
 
 export interface TestPartMocks {
   usecases: {
@@ -24,6 +25,7 @@ export interface TestPartMocks {
     getGameByIdUC: jest.Mocked<GetGameByIdUseCase>,
     getLeaderboardUC: jest.Mocked<GetLeaderboardUseCase>,
     getUserPointUC: jest.Mocked<GetUserPointUseCase>,
+    issueGameTokenUC: jest.Mocked<IssueGameTokenUseCase>
     loginUC: jest.Mocked<LoginUseCase>,
     logoutUC: jest.Mocked<LogoutUseCase>,
     updateUserUC: jest.Mocked<UpdateUserUseCase>,
@@ -42,6 +44,7 @@ export interface TestPartMocks {
     getGameByIdUC: { execute: jest.Mock },
     getLeaderboardUC: { execute: jest.Mock },
     getUserPointUC: { execute: jest.Mock },
+    issueGameTokenUC: { execute: jest.Mock },
     startGameUC: { execute: jest.Mock },
     submitAnswerUC: { execute: jest.Mock },
     submitPointUC: { execute: jest.Mock },
@@ -57,6 +60,7 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
   const getGameByIdUCExecute = jest.fn();
   const getLeaderboardUCExecute = jest.fn();
   const getUserPointUCExecute = jest.fn();
+  const issueGameTokenUCExecute = jest.fn();
   const logoutUCExecute = jest.fn();
   const startGameUCExecute = jest.fn();
   const submitAnswerUCExecute = jest.fn();
@@ -84,10 +88,13 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
     execute: getLeaderboardUCExecute
   } as unknown as jest.Mocked<GetLeaderboardUseCase>;
 
-  
   const getUserPointUC = { 
     execute: getUserPointUCExecute 
   } as unknown as jest.Mocked<GetUserPointUseCase>;
+
+  const issueGameTokenUC = {
+    execute: issueGameTokenUCExecute
+  } as unknown as jest.Mocked<IssueGameTokenUseCase>;
   
   const loginUC = {
     execute: jest.fn()
@@ -131,6 +138,7 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
   testContainer.registerInstance(DITokens.GetGameByIdUseCase, getGameByIdUC);
   testContainer.registerInstance(DITokens.GetLeaderboardUseCase, getLeaderboardUC);
   testContainer.registerInstance(DITokens.GetUserPointUseCase, getUserPointUC);
+  testContainer.registerInstance(DITokens.IssueGameTokenUseCase, issueGameTokenUC);
   testContainer.registerInstance(DITokens.LoginUseCase, loginUC);
   testContainer.registerInstance(DITokens.LogoutUseCase, logoutUC);
   testContainer.registerInstance(DITokens.RefreshTokenUseCase, refreshTokenUC);
@@ -143,7 +151,7 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
 
   return { 
     usecases: { 
-      deleteGameUC, deleteUserUC, endGameUC, getGameByIdUC, getLeaderboardUC, getUserPointUC, loginUC, logoutUC, refreshTokenUC, seachNounUC, 
+      deleteGameUC, deleteUserUC, endGameUC, getGameByIdUC, getLeaderboardUC, getUserPointUC, issueGameTokenUC, loginUC, logoutUC, refreshTokenUC, seachNounUC, 
       startGameUC, submitAnswerUC, submitPointUC, updateGameUC, updateUserUC
     },
     methods: {
@@ -151,9 +159,10 @@ export default function useCasesMockTestPart(testContainer: DependencyContainer)
       deleteUserUC: { execute: deleteUserUCExecute },
       endGameUC: { execute: endGameUCExecute },
       getGameByIdUC: { execute: getGameByIdUCExecute },
-      logoutUC: { execute: logoutUCExecute },
       getLeaderboardUC: { execute: getLeaderboardUCExecute },
       getUserPointUC: { execute: getUserPointUCExecute },
+      issueGameTokenUC: { execute: issueGameTokenUCExecute },
+      logoutUC: { execute: logoutUCExecute },
       startGameUC: { execute: startGameUCExecute },
       submitAnswerUC: { execute: submitAnswerUCExecute },
       submitPointUC: { execute: submitPointUCExecute },

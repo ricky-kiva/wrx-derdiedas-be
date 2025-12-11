@@ -19,6 +19,7 @@ export default function testGameRoutes(
   const mockGameId = '6c9f8c77-40b4-4c6b-a2a4-9ddf43e19c32';
   const mockUserId = '507f1f77bcf86cd799439012';
   const mockNounId = '507f1f88bcf86cd799439011';
+  const mockGameToken = 'mock.game.token';
 
   describe('Game Routes Integration', () => {
     let app: Application;
@@ -31,6 +32,9 @@ export default function testGameRoutes(
       jest
         .spyOn(HeaderUtils.prototype, 'extractUserId')
         .mockImplementation(() => undefined);
+      jest
+        .spyOn(HeaderUtils.prototype, 'getGameToken')
+        .mockReturnValue(mockGameToken);
     });
 
     afterEach(() => {
@@ -200,6 +204,10 @@ export default function testGameRoutes(
     });
 
     describe('POST `/game/start`', () => {
+      beforeEach(() => {
+        (HeaderUtils.prototype.getGameToken as jest.Mock).mockReturnValue(mockGameToken);
+      });
+
       it('responds with 200 for anonymous user', async () => {
         const mockGame: StartGameDTO = { id: mockGameId, nouns: [] };
 
@@ -213,7 +221,7 @@ export default function testGameRoutes(
           data: mockGame
         });
 
-        expect(mocks.methods.startGameUC.execute).toHaveBeenCalledWith(undefined);
+        expect(mocks.methods.startGameUC.execute).toHaveBeenCalledWith(mockGameToken, undefined);
       });
 
       it('responds with 200 for logged-in user', async () => {
@@ -228,15 +236,18 @@ export default function testGameRoutes(
           .set('Authorization', 'Bearer x');
 
         expect(res.status).toBe(200);
-        expect((res.body as ApiResponse).status).toBe('success');
 
-        expect(mocks.methods.startGameUC.execute).toHaveBeenCalledWith(mockUserId);
+        const body = res.body as ApiResponse;
+        
+        if (body.status !== 'success') throw new Error('Expected success response');
+
+        expect(body.data).toEqual(game);
+
+        expect(mocks.methods.startGameUC.execute).toHaveBeenCalledWith(mockGameToken, mockUserId);
       });
 
       it('responds with 500 on unexpected error', async () => {
-        mocks.usecases.startGameUC.execute.mockRejectedValue(
-          new Error('Unexpected')
-        );
+        mocks.usecases.startGameUC.execute.mockRejectedValue(new Error('Unexpected'));
 
         const res = await request(app).post(`${BASE_URL}/start`);
 
@@ -244,6 +255,7 @@ export default function testGameRoutes(
         expect((res.body as ApiResponse).status).toBe('error');
       });
     });
+
 
     describe('POST `/game/:id/answer`', () => {
       it('responds with 200 without nouns', async () => {

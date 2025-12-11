@@ -10,10 +10,12 @@ import GameHandler from '../../../../../interfaces/http/api/game/handler';
 import HeaderUtils from '../../../../../interfaces/http/shared/HeaderUtils';
 import JwtTokenManager from '../../../../adapters/security/JwtTokenManager';
 import UserHandler from '../../../../../interfaces/http/api/user/handler';
+import JwtGameTokenManager from '../../../../adapters/security/JwtGameTokenManager';
 
 export default function containerRegistersTestPart(testContainer: DependencyContainer) {
   testContainer.registerSingleton(DITokens.AuthHandler, AuthHandler);
   testContainer.registerSingleton(DITokens.GameHandler, GameHandler);
+  testContainer.registerSingleton(DITokens.GameTokenManager, JwtGameTokenManager);
   testContainer.registerSingleton(DITokens.HeaderUtils, HeaderUtils);
   testContainer.registerSingleton(DITokens.LeaderboardHandler, LeaderboardHandler);
   testContainer.registerSingleton(DITokens.LoggerService, WinstonLoggerService);
