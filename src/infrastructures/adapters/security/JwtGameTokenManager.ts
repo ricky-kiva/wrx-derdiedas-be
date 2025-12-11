@@ -9,8 +9,16 @@ export default class JwtGameTokenManager implements GameTokenManager {
     const gameJwtConfig = config.game.jwt.accessToken;
     return jwt.sign(payload, gameJwtConfig.secret, { expiresIn: gameJwtConfig.expiry });
   }
+
+  verifyGameToken(token: string): void {
+    try {
+      jwt.verify(token, config.game.jwt.accessToken.secret);
+    } catch {
+      throw new InvariantError('Invalid game token');
+    }
+  }
   
-  decodePayload(token: string): JwtGamePayloadDTO {
+  verifyPayload(token: string) {
     const decoded = jwt.decode(token);
         
     if (!decoded || typeof decoded !== 'object') {
@@ -19,10 +27,6 @@ export default class JwtGameTokenManager implements GameTokenManager {
 
     if (!('jti' in decoded) || typeof decoded.jti !== 'string') {
       throw new InvariantError('Invalid JWT payload');
-    } 
-    
-    return { 
-      jti: decoded.jti 
-    } satisfies JwtGamePayloadDTO;
+    }
   }
 }
