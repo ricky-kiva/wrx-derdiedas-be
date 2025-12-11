@@ -107,11 +107,14 @@ export default class GameHandler {
   }
 
   async submitAnswer(req: Request, res: Response) {
+    const gameToken = this.headerUtils.getGameToken(req);
+
     const { id: gameId } = GameIdParamSchema.parse(req.params);
 
     const p = SubmitAnswerPayloadSchema.parse(req.body);
 
-    const result = await this.submitAnswerUseCase.execute({ gameId, ...p  });
+    const result = await this.submitAnswerUseCase
+      .execute({ gameId, gameToken, ...p  });
 
     res.json({
       status: 'success',
