@@ -371,6 +371,10 @@ export default function testGameRoutes(
     });
 
     describe('PATCH `/game/:id`', () => {
+      beforeEach(() => {
+        (HeaderUtils.prototype.getGameToken as jest.Mock).mockReturnValue(mockGameToken);
+      });
+      
       it('responds with 200 on successful update', async () => {
         const payload = { userId: mockUserId } satisfies UpdateGamePayload;
 
@@ -395,7 +399,8 @@ export default function testGameRoutes(
 
         expect(mocks.methods.updateGameUC.execute).toHaveBeenCalledWith({
           payload,
-          id: mockGameId
+          id: mockGameId,
+          gameToken: mockGameToken
         } satisfies UpdateGameCmd);
       });
 
