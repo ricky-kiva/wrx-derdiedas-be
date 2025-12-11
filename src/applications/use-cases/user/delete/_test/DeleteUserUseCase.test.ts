@@ -1,4 +1,4 @@
-import { NotFoundError } from '../../../../../commons/exceptions';
+import { AuthenticationError, NotFoundError } from '../../../../../commons/exceptions';
 import UserRepository from '../../../../../domains/user/UserRepository';
 import UserPointRepository from '../../../../../domains/userPoint/UserPointRepository';
 import DeleteUserUseCase from '../DeleteUserUseCase';
@@ -47,6 +47,11 @@ describe('DeleteUserUseCase', () => {
       .rejects.toThrow(NotFoundError);
 
     expect(mockUPRDeleteByUId).not.toHaveBeenCalled();
+    expect(mockURDelete).not.toHaveBeenCalled();
+  });
+
+  it('should throw AuthenticationError when id is missing', async () => {
+    await expect(deleteUserUseCase.execute(undefined)).rejects.toThrow(AuthenticationError);
     expect(mockURDelete).not.toHaveBeenCalled();
   });
 });

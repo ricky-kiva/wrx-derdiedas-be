@@ -1,4 +1,4 @@
-import { NotFoundError } from '../../../../../commons/exceptions';
+import { AuthenticationError, NotFoundError } from '../../../../../commons/exceptions';
 import UserRepository from '../../../../../domains/user/UserRepository';
 import UpdateUserUseCase from '../UpdateUserUseCase';
 import { UpdateUserCmd } from '../commands/UpdateUserCmd';
@@ -47,5 +47,16 @@ describe('UpdateUserUseCase', () => {
     await expect(updateUserUseCase.execute(mockCmd)).rejects.toThrow(NotFoundError);
 
     expect(mockURUpdate).toHaveBeenCalledWith(mockId, { name: mockNewName });
+  });
+
+  it('should throw AuthenticationError when id is missing', async () => {
+    const invalidCmd: UpdateUserCmd = { 
+      id: undefined, 
+      payload: { name: mockNewName }
+    };
+
+    await expect(updateUserUseCase.execute(invalidCmd)).rejects.toThrow(AuthenticationError);
+
+    expect(mockURUpdate).not.toHaveBeenCalled();
   });
 });
