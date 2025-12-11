@@ -8,8 +8,8 @@ export default function userRoutes(c: DependencyContainer): Router {
   const h = c.resolve<UserHandler>(DITokens.UserHandler);
 
   r.get('/:id/points', (req, res) => h.getPoint(req, res));
-  r.patch('/:id', (req, res) => h.update(req, res));
-  r.delete('/:id', (req, res) => h.delete(req, res));
+  r.patch('/me', (req, res) => h.update(req, res));
+  r.delete('/me', (req, res) => h.delete(req, res));
 
   return r;
 }

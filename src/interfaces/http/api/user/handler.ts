@@ -6,10 +6,13 @@ import { Request, Response } from 'express';
 import { UpdateUserPayloadSchema, UserIdParamSchema } from '../../adapters/validation/user/schemas';
 import ApiResponse from '../../types/ApiResponse';
 import UpdateUserUseCase from '../../../../applications/use-cases/user/update/UpdateUserUseCase';
+import HeaderUtils from '../../shared/HeaderUtils';
 
 @injectable()
 export default class UserHandler {
   constructor(
+    @inject(DITokens.HeaderUtils)
+    private readonly headerUtils: HeaderUtils,
     @inject(DITokens.DeleteUserUseCase)
     private readonly deleteUserUseCase: DeleteUserUseCase,
     @inject(DITokens.GetUserPointUseCase)
@@ -34,7 +37,7 @@ export default class UserHandler {
   }
 
   async update(req: Request, res: Response) {
-    const { id } = UserIdParamSchema.parse(req.params);
+    const id = this.headerUtils.extractUserId(req);
     const p = UpdateUserPayloadSchema.parse(req.body);
 
     const updatedUser = await this.updateUserUseCase.execute({ id, payload: p });
@@ -46,7 +49,7 @@ export default class UserHandler {
   }
 
   async delete(req: Request, res: Response) {
-    const { id } = UserIdParamSchema.parse(req.params);
+    const id = this.headerUtils.extractUserId(req);
 
     await this.deleteUserUseCase.execute(id);
 
