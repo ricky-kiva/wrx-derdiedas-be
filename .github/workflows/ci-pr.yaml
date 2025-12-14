@@ -1,11 +1,8 @@
-name: ci
+name: ci-pr
 on:
   pull_request:
     branches:
       - main
-  push:
-    tags:
-      - 'v*.*.*'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -67,13 +64,19 @@ jobs:
           JWT_REFRESH_TOKEN_EXPIRY: ${{ secrets.JWT_REFRESH_TOKEN_EXPIRY }}
           REDIS_HOST: ${{ secrets.REDIS_HOST }}
           REDIS_PORT: ${{ secrets.REDIS_PORT }}
-          REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }}
-          
+          REDIS_DATABASE: ${{ secrets.REDIS_DATABASE }} 
   build-and-push:
     needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Set Docker image tag
+        run: |
+          IMAGE_TAG=$(jq -r .pull_request.head.sha "$GITHUB_EVENT_PATH")
+          IMAGE_TAG="${IMAGE_TAG::8}"
+
+          echo "$IMAGE_TAG"
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
       - name: Login to Gitlab Container Registry
         run: |
           echo "${{ secrets.GITLAB_REGISTRY_PAT }}" \
@@ -82,10 +85,31 @@ jobs:
         env:
           IMAGE: "registry.gitlab.com/${{ vars.GITLAB_GROUP }}/${{ vars.GITLAB_PROJECT }}"
         run: |
-          SHA_TAG="${GITHUB_SHA::8}"
+          docker build -t "$IMAGE:$IMAGE_TAG" .
+          docker push "$IMAGE:$IMAGE_TAG"
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Write PR number temp. file on VPS
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << EOF
+            set -e
+            trap 'echo "Failed command: \$BASH_COMMAND at line \$LINENO"; exit 1' ERR
 
-          docker build -t "$IMAGE:$SHA_TAG" .
-          docker push "$IMAGE:$SHA_TAG"
+            DEPLOY_DIR=/srv/derdiedas
+
+            create_ci_temp() {
+              echo "Updating .ci.temp file.."
+              mkdir -p \$DEPLOY_DIR
+              touch \$DEPLOY_DIR/.ci.temp
+              sed -i '/^BE_PR_NUMBER=/d' \$DEPLOY_DIR/.ci.temp
+              echo "BE_PR_NUMBER=${PR_NUMBER}" >> \$DEPLOY_DIR/.ci.temp
+            }
+
+            create_ci_temp
+          EOF
   cleanup-registry:
     needs: build-and-push
     runs-on: ubuntu-latest
