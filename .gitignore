@@ -5,6 +5,7 @@
 build
 coverage
 data
+experiment
 node_modules
 notes
 logs
