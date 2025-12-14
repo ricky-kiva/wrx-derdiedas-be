@@ -34,7 +34,7 @@ export default class AuthHandler {
         httpOnly: true,
         secure: config.env.production ? true : false,
         sameSite: 'strict',
-        path: '/auth/refresh-token'
+        path: '/auth/refresh-token/'
       })
       .json({
         status: 'success',
@@ -90,7 +90,7 @@ export default class AuthHandler {
         httpOnly: true,
         secure: config.env.production ? true : false,
         sameSite: 'strict',
-        path: '/auth/refresh-token'
+        path: '/auth/refresh-token/'
       })
       .json({
         status: 'success',
