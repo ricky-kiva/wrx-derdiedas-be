@@ -5,7 +5,7 @@ const prodWhitelist = [
   'https://derdiedas.my.id',
   'http://www.derdiedas.my.id',
   'https://www.derdiedas.my.id',
-  'http://142.171.191.162'
+  'http://192.129.135.234'
 ];
 
 const devWhitelist = [
