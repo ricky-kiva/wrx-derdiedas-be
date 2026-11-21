@@ -1,12 +1,43 @@
-.env
-.mongo.env
-.redis.env
-.test.env
+# Environment & secrets
+*.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
+*.keystore
+
+# Sources & build output
 build
+dist
 coverage
+*.tsbuildinfo
+
+# Runtime data & logs
 data
-experiment
-node_modules
-notes
 logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Local-only / infra experiments
+experiment
+notes
 production
+
+# Agent harness
+.agents
+skills-lock.json
+
+# Dependencies
+node_modules
+
+# Editor & OS
+.vscode
+.idea
+.DS_Store
+Thumbs.db
