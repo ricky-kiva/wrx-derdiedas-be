@@ -6,12 +6,17 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
       - name: Assign image tag
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           BE_PR_NUMBER=$(ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} '
             grep "^BE_PR_NUMBER=" /srv/derdiedas/.ci.temp | cut -d"=" -f2 | tr -d "[:space:]"
@@ -22,11 +27,27 @@ jobs:
             exit 1
           fi
 
-          LATEST_JSON=$(curl -sL -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GH_PAT }}" \
-            https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${BE_PR_NUMBER}/commits)
+          RESPONSE_FILE=$(mktemp)
+          HTTP_STATUS=$(curl -sS -o "$RESPONSE_FILE" -w '%{http_code}' \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/pulls/${BE_PR_NUMBER}/commits")
 
-          LATEST_SHA=$(echo "$LATEST_JSON" | jq -r '.[-1].sha')
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "GitHub API returned HTTP $HTTP_STATUS for PR #${BE_PR_NUMBER}:"
+            cat "$RESPONSE_FILE"
+            rm -f "$RESPONSE_FILE"
+            exit 1
+          fi
+
+          LATEST_SHA=$(jq -r '.[-1].sha // empty' "$RESPONSE_FILE")
+          rm -f "$RESPONSE_FILE"
+
+          if [ -z "$LATEST_SHA" ]; then
+            echo "No commits found for PR #${BE_PR_NUMBER}"
+            exit 1
+          fi
+
           IMAGE_TAG="${LATEST_SHA::8}"
 
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
