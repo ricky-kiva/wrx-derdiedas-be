@@ -19,17 +19,17 @@
 
 DerDieDas is a German noun-gender trainer. Search a noun to see its article (`der`, `die`, `das`), meanings, and similar words, or play the ranked guessing game and climb the global leaderboard.
 
-This repository contains the frontend only. The API lives in the [frontend repository](https://github.com/ricky-kiva/wrx-derdiedas-fe).
+This repository contains the backend only. The frontend lives in the [frontend repository](https://github.com/ricky-kiva/wrx-derdiedas-fe).
 
 ## Features
 
-- **Google sign-in.** `POST /auth/login` verifies a Google ID token and creates the user on first sign-in. It returns an access JWT and writes the refresh token to an `httpOnly`, `SameSite=Strict` cookie. `POST /auth/refresh-token` rotates both tokens; refresh tokens are stored in Redis, and `POST /auth/logout` deletes the stored one.
-- **Endless game rounds.** `GET /game/token` issues a game token sent as `x-game-token`. `POST /game/start` deals 10 random nouns; a correct answer adds 10 points and a wrong one subtracts 5, with the score floored at 0. When the dealt nouns are used up, the next 10 arrive with the answer response. Game state lives in Redis for one hour.
-- **Guest and signed-in play.** A game can start without a bearer token. `POST /game/:id/end` saves a guest score under a required name (max 30 characters); games that end at 0 points are discarded.
-- **Leaderboard.** `GET /leaderboard?page=&limit=` ranks positive scores by points and last update (`limit` is clamped to 10–150, default 25). `POST /leaderboard` submits a score.
-- **Fuzzy noun search.** `POST /search` with `{ "word": "..." }` matches the normalized noun corpus through Fuse.js.
-- **Score decay.** A cron job at 02:30 server time reduces the score of players inactive for 7 days or more by 5 points (or to zero if the score is lower) and deletes anonymous profiles whose score is 5 or lower.
-- **Profile and score.** `GET /users/:id/points` reads a score, `PATCH /users/me` renames, and `DELETE /users/me` removes the profile and its score.
+- **Google sign-in** — `POST /auth/login` verifies a Google ID token, creates the user on first sign-in, and returns an access JWT with an `httpOnly`, `SameSite=Strict` refresh cookie. `POST /auth/refresh-token` rotates both tokens; `POST /auth/logout` deletes the Redis-stored refresh token.
+- **Endless rounds** — `GET /game/token` issues the value for the `x-game-token` header. `POST /game/start` deals 10 random nouns: correct answers add 10 points, wrong answers subtract 5 (floor 0), and 10 new nouns arrive once the set is exhausted. Game state lives in Redis for one hour.
+- **Guest and signed-in play** — a game starts with or without a bearer token. `POST /game/:id/end` saves a guest score under a required name (max 30 characters); games ending at 0 points are discarded.
+- **Leaderboard** — `GET /leaderboard?page=&limit=` returns positive scores ranked by points, then latest update (`limit` 10–150, default 25). `POST /leaderboard` submits a score.
+- **Noun search** — `POST /search` with `{ "word": "..." }` fuzzy-matches the normalized noun corpus through Fuse.js.
+- **Score decay** — a daily 02:30 cron subtracts 5 points (minimum 0) from players inactive for 7+ days and deletes anonymous profiles at 5 points or less.
+- **Profile** — `GET /users/:id/points` reads a score, `PATCH /users/me` renames, and `DELETE /users/me` deletes the profile and its score.
 
 ## Preview
 
@@ -39,16 +39,19 @@ This repository contains the frontend only. The API lives in the [frontend repos
 
 ## Quick Start
 
-Requires Node.js 22, MongoDB 8 and Redis 7.4.
+**Requirements:** Node.js 22, MongoDB 8, Redis 7.4.
 
 ```bash
-# create .env and fill in the variables listed below
-
 npm install
+# create .env (see the variables below)
 npm run dev
 ```
 
-Environment variables are read from `.env` (`NODE_ENV=test` reads `.test.env` instead). The files are not tracked in git. A missing required variable aborts the boot with `Missing environment variable: <name>`; only the ones noted below have a fallback. `NODE_ENV` also selects the bind host — `production` listens on `0.0.0.0`, anything else on `localhost`.
+**Environment**
+
+- `.env` and `.test.env` are untracked; `NODE_ENV=test` reads `.test.env`, otherwise `.env`.
+- A missing required variable aborts boot with `Missing environment variable: <name>`; only `REDIS_PORT` has a fallback.
+- `NODE_ENV=production` binds `0.0.0.0`; every other value binds `localhost`.
 
 | Variable | Purpose |
 |---|---|
@@ -61,7 +64,7 @@ Environment variables are read from `.env` (`NODE_ENV=test` reads `.test.env` in
 | `JWT_ACCESS_TOKEN_EXPIRY`, `JWT_REFRESH_TOKEN_EXPIRY` | Lifetimes in seconds |
 | `GAME_JWT_ACCESS_TOKEN_SECRET`, `GAME_JWT_ACCESS_TOKEN_EXPIRY` | Secret and lifetime for game tokens |
 
-The whole stack (API, MongoDB, Redis) can also run through Docker: `docker compose up --build`, which reads `.env`, `.mongo.env` and `.redis.env`.
+**Docker:** `docker compose up --build` runs the API with MongoDB and Redis, reading `.env`, `.mongo.env` and `.redis.env`.
 
 ## Commands
 
@@ -76,22 +79,24 @@ The whole stack (API, MongoDB, Redis) can also run through Docker: `docker compo
 
 ## Architecture
 
-This repository follows Clean Architecture. Dependencies point inward: a layer may depend on the layers closer to the domain, never on the layers further out.
+Clean Architecture: dependencies point inward, from delivery to domain.
 
 ```mermaid
 flowchart LR
-  interfaces["interfaces/http<br/>routers, handlers, validation"] --> applications["applications<br/>use cases, ports, query repositories"]
-  applications --> domains["domains<br/>entities, repository contracts"]
-  infrastructures["infrastructures<br/>MongoDB, Redis, JWT, Google, Winston, cron"] -. implements .-> applications
+  interfaces["interfaces/http"] --> applications["applications"]
+  applications --> domains["domains"]
+  infrastructures["infrastructures"] -. implements .-> applications
   infrastructures -. implements .-> domains
 ```
 
-- `src/domains/` — the innermost layer: entities and repository contracts per aggregate (`game`, `noun`, `nounSetMetadata`, `user`, `userPoint`). It imports nothing outside `src/domains/`.
-- `src/applications/` — use cases, the ports they depend on (`security`, `logger`, `auth`, `search`) and read-model query repositories. It depends only on `src/domains/` and `src/commons/`.
-- `src/infrastructures/` — adapters that implement the domain repository contracts and application ports: Mongoose/MongoDB, Redis (game state and refresh-token store), JWT, Google ID-token verification, Winston logging, Fuse.js search and the point-decay cron.
-- `src/interfaces/http/` — the delivery layer: Express routers, handlers, Zod validation adapters and middlewares (CORS, Helmet, request logging, 404, error normalization).
-- `src/commons/` — shared kernel: config loading, exceptions, shared types, DI tokens and the CORS whitelist. It holds no business rules and is used by the application, infrastructure and interface layers.
+| Layer | Path | Responsibility |
+|---|---|---|
+| Domain | `src/domains/` | Entities and repository contracts per aggregate (`game`, `noun`, `nounSetMetadata`, `user`, `userPoint`); no outward imports |
+| Application | `src/applications/` | Use cases, ports (`security`, `logger`, `auth`, `search`) and read-model query repositories; depends only on domain and `commons` |
+| Infrastructure | `src/infrastructures/` | Adapters implementing domain repository contracts and application ports: Mongoose, Redis, JWT, Google auth, Winston, Fuse.js, decay cron |
+| Interface | `src/interfaces/http/` | Express routers, handlers, Zod validation adapters and CORS, Helmet, logging, 404 and error middleware |
+| Shared kernel | `src/commons/` | Config, exceptions, shared types, DI tokens and the CORS whitelist; no business rules |
 
-`tsyringe` builds the object graph in `src/infrastructures/container.ts`, the composition root (tokens live in `src/commons/DITokens.ts`). Requests flow `route → handler → use case → repository contract → adapter`, and errors are normalised by `src/interfaces/http/middlewares/error/errorPreResponse.ts` into the `{ status, message }` / `{ status, data }` envelope.
+`tsyringe` wires the graph in `src/infrastructures/container.ts` (composition root; tokens in `src/commons/DITokens.ts`). Requests flow `route → handler → use case → repository contract → adapter`; errors are normalized by `src/interfaces/http/middlewares/error/errorPreResponse.ts` into `{ status, message }` or `{ status, data }`.
 
 © 2026 Ricky Fadel M. All rights reserved.
