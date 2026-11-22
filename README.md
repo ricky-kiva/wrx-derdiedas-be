@@ -23,11 +23,11 @@ This repository contains the backend only. The frontend lives in the [frontend r
 
 ## Features
 
-- **Google sign-in** — `POST /auth/login` verifies a Google ID token, creates the user on first sign-in, and returns an access JWT with an `httpOnly`, `SameSite=Strict` refresh cookie. `POST /auth/refresh-token` rotates both tokens; `POST /auth/logout` deletes the Redis-stored refresh token.
+- **Noun search** — `POST /search` with `{ "word": "..." }` fuzzy-matches the normalized noun corpus through Fuse.js.
 - **Endless rounds** — `GET /game/token` issues the value for the `x-game-token` header. `POST /game/start` deals 10 random nouns: correct answers add 10 points, wrong answers subtract 5 (floor 0), and 10 new nouns arrive once the set is exhausted. Game state lives in Redis for one hour.
 - **Guest and signed-in play** — a game starts with or without a bearer token. `POST /game/:id/end` saves a guest score under a required name (max 30 characters); games ending at 0 points are discarded.
+- **Google sign-in** — `POST /auth/login` verifies a Google ID token, creates the user on first sign-in, and returns an access JWT with an `httpOnly`, `SameSite=Strict` refresh cookie. `POST /auth/refresh-token` rotates both tokens; `POST /auth/logout` deletes the Redis-stored refresh token.
 - **Leaderboard** — `GET /leaderboard?page=&limit=` returns positive scores ranked by points, then latest update (`limit` 10–150, default 25). `POST /leaderboard` submits a score.
-- **Noun search** — `POST /search` with `{ "word": "..." }` fuzzy-matches the normalized noun corpus through Fuse.js.
 - **Score decay** — a daily 02:30 cron subtracts 5 points (minimum 0) from players inactive for 7+ days and deletes anonymous profiles at 5 points or less.
 - **Profile** — `GET /users/:id/points` reads a score, `PATCH /users/me` renames, and `DELETE /users/me` deletes the profile and its score.
 
